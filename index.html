@@ -2273,7 +2273,19 @@ function ContactPage({
     message: ''
   });
   const [sent, setSent] = useState(false);
-  const submit = () => {
+  const [sending, setSending] = useState(false);
+
+  // ─────────────────────────────────────────────────────────────
+  // 📬 FORMSPREE SETUP — takes 2 minutes:
+  //   1. Go to https://formspree.io and create a FREE account
+  //   2. Click "New Form", give it a name (e.g. "Bouquet Studio Contact")
+  //   3. Copy your form ID (looks like: xyzabcde)
+  //   4. Replace xnjrqbqj below with that ID
+  //   5. Every submission lands in your email inbox automatically
+  // ─────────────────────────────────────────────────────────────
+  const FORMSPREE_ID = 'xnjrqbqj';
+
+  const submit = async () => {
     if (!form.name || !form.email || !form.message) {
       toast('Please fill in all required fields');
       return;
@@ -2282,8 +2294,33 @@ function ContactPage({
       toast('Please enter a valid email');
       return;
     }
-    setSent(true);
-    toast('Message sent! We\'ll be in touch soon 🌸');
+
+    // (live mode — ID is set, proceed to real fetch below)
+
+    setSending(true);
+    try {
+      const res = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          subject: form.subject,
+          message: form.message,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setSent(true);
+        toast('Message sent! We\'ll be in touch soon 🌸');
+      } else {
+        toast(data.errors?.[0]?.message || 'Something went wrong. Please try again.');
+      }
+    } catch (err) {
+      toast('Network error. Please check your connection and try again.');
+    } finally {
+      setSending(false);
+    }
   };
   const set = k => e => setForm(p => ({
     ...p,
@@ -2393,8 +2430,9 @@ function ContactPage({
     onChange: set('message')
   })), /*#__PURE__*/React.createElement(MagBtn, {
     className: "btn-gold btn-full",
-    onClick: submit
-  }, "Send Message \u2192")) : /*#__PURE__*/React.createElement("div", {
+    onClick: sending ? undefined : submit,
+    style: sending ? {opacity:0.65, cursor:'not-allowed'} : {}
+  }, sending ? "Sending\u2026" : "Send Message \u2192")) : /*#__PURE__*/React.createElement("div", {
     style: {
       textAlign: 'center',
       padding: '48px 0'
