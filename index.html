@@ -14,23 +14,27 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 
 <style>
+/* ── DESIGN TOKENS ── */
 :root{
   --cream:#faf6f0; --cream2:#f2ece2;
   --dark:#1a2b1c;  --dark2:#111a12;
   --gold:#c4973a;  --gold-light:#e8d5a3;
   --blush:#deb8b0; --blush-light:#f5e8e4;
   --text:#2c2c2a;  --muted:#7a7060;
-  --border:rgba(196,151,58,.2);
+  --border:rgba(196,151,58,.18);
+  --border-neutral:rgba(44,44,42,.1);
   --sh-sm:0 1px 4px rgba(0,0,0,.05);
-  --sh-md:0 4px 24px rgba(0,0,0,.07);
-  --sh-lg:0 16px 56px rgba(0,0,0,.11);
-  --sh-xl:0 28px 72px rgba(0,0,0,.14);
-  --px:64px; --py:96px; --nav-h:76px;
-  --r-sm:12px; --r-md:20px; --r-lg:28px; --pill:100px;
+  --sh-md:0 4px 16px rgba(0,0,0,.07);
+  --sh-lg:0 8px 32px rgba(0,0,0,.1);
+  --px:64px; --py:88px; --nav-h:72px;
+  --r-sm:10px; --r-md:16px; --r-lg:20px; --pill:100px;
   --ease-expo:cubic-bezier(.16,1,.3,1);
+  /* Consistent spacing scale */
+  --sp-1:8px; --sp-2:16px; --sp-3:24px; --sp-4:32px;
+  --sp-5:40px; --sp-6:48px; --sp-8:64px;
 }
-@media(max-width:1024px){:root{--px:40px;--py:80px}}
-@media(max-width:767px) {:root{--px:20px;--py:64px;--nav-h:60px}}
+@media(max-width:1024px){:root{--px:40px;--py:72px}}
+@media(max-width:767px) {:root{--px:20px;--py:56px;--nav-h:60px}}
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
@@ -38,438 +42,468 @@ img{display:block;max-width:100%}
 button{font-family:inherit}
 ul{list-style:none}
 a{text-decoration:none}
+/* Removed: cursor:none — custom cursor deleted */
 body{font-family:'Outfit',sans-serif;background:var(--cream);color:var(--text);overflow-x:hidden}
-@media(hover:hover){body{cursor:none}}
 
-.grain{position:fixed;inset:0;pointer-events:none;z-index:9000;opacity:.035;
+/* Subtle grain texture — kept but reduced opacity */
+.grain{position:fixed;inset:0;pointer-events:none;z-index:9000;opacity:.022;
   background-size:200px 200px;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 
-#cur,#cur-r{position:fixed;top:0;left:0;pointer-events:none;border-radius:50%;transform:translate(-50%,-50%);opacity:0;z-index:9999}
-#cur  {width:8px;height:8px;background:var(--gold);transition:width .18s,height .18s,background .18s}
-#cur-r{width:30px;height:30px;border:1.5px solid var(--gold);z-index:9998;opacity:0}
-body:has(a:hover) #cur,body:has(button:hover) #cur{width:34px;height:34px;background:var(--blush)}
-@media(hover:none){#cur,#cur-r{display:none}}
+/* ── TOAST ── */
+#toast-root{position:fixed;bottom:24px;right:24px;z-index:8000;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{background:var(--dark);color:var(--cream);padding:11px 18px;border-radius:var(--pill);
+  font-size:12.5px;font-weight:500;letter-spacing:.03em;
+  display:flex;align-items:center;gap:9px;
+  box-shadow:var(--sh-lg);pointer-events:none;
+  transform:translateY(12px);opacity:0}
+.toast-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);flex-shrink:0}
 
-#toast-root{position:fixed;bottom:28px;right:28px;z-index:8000;display:flex;flex-direction:column;gap:10px;pointer-events:none}
-.toast{background:var(--dark);color:var(--cream);padding:12px 20px;border-radius:var(--pill);
-  font-size:13px;font-weight:500;letter-spacing:.04em;
-  display:flex;align-items:center;gap:10px;
-  box-shadow:var(--sh-xl);pointer-events:none;
-  transform:translateY(16px);opacity:0}
-.toast-dot{width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0}
-
-/* NAV */
+/* ── NAV ── */
 .nav{position:fixed;inset:0 0 auto 0;z-index:200;
   display:flex;align-items:center;justify-content:space-between;
   height:var(--nav-h);padding:0 var(--px);
-  transition:background .45s,border-color .45s,backdrop-filter .45s}
-.nav.scrolled{background:rgba(250,246,240,.92);backdrop-filter:blur(20px) saturate(1.4);border-bottom:1px solid var(--border)}
+  transition:background .3s,border-color .3s}
+.nav.scrolled{background:rgba(250,246,240,.94);backdrop-filter:blur(16px);border-bottom:1px solid var(--border-neutral)}
 .nav.nav-light .nav-logo{color:var(--cream)}
 .nav.nav-light .nav-logo span{color:var(--gold)}
-.nav.nav-light .nav-links a{color:var(--cream)}
-.nav.nav-light .nav-links a:hover,.nav.nav-light .nav-links a.active{color:var(--gold)}
-.nav.nav-light .nav-cart-btn{color:var(--cream)}
+.nav.nav-light .nav-links a{color:rgba(250,246,240,.65)}
+.nav.nav-light .nav-links a:hover,.nav.nav-light .nav-links a.active{color:var(--gold);opacity:1}
 .nav.nav-light .hamburger span{background:var(--cream)}
-.nav.nav-light .btn-nav{background:rgba(250,246,240,.15);border:1.5px solid rgba(250,246,240,.3);color:var(--cream)}
-.nav.nav-light .btn-nav:hover{background:var(--gold);border-color:var(--gold);color:var(--dark)}
-.nav-logo{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;letter-spacing:.08em;color:var(--dark);cursor:pointer}
+.nav.nav-light .nav-cart-btn{color:var(--cream);opacity:.75}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:600;letter-spacing:.07em;color:var(--dark);cursor:pointer}
 .nav-logo span{color:var(--gold)}
-.nav-links{display:flex;gap:32px}
-.nav-links a{font-size:11.5px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--text);opacity:.62;transition:opacity .2s,color .2s;cursor:pointer}
+.nav-links{display:flex;gap:28px}
+.nav-links a{font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--text);opacity:.55;transition:opacity .2s,color .2s;cursor:pointer}
 .nav-links a:hover,.nav-links a.active{opacity:1;color:var(--gold)}
-.nav-actions{display:flex;gap:12px;align-items:center}
-.nav-cart-btn{background:none;border:none;cursor:pointer;font-size:12px;font-weight:500;letter-spacing:.08em;color:var(--text);opacity:.62;transition:opacity .2s;display:flex;align-items:center;gap:5px}
+.nav-actions{display:flex;gap:10px;align-items:center}
+.nav-cart-btn{background:none;border:none;cursor:pointer;font-size:11px;font-weight:500;letter-spacing:.07em;color:var(--text);opacity:.55;transition:opacity .2s;display:flex;align-items:center;gap:5px}
 .nav-cart-btn:hover{opacity:1}
-.cart-count{background:var(--gold);color:white;width:18px;height:18px;border-radius:50%;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;transition:transform .2s}
+.cart-count{background:var(--gold);color:white;width:17px;height:17px;border-radius:50%;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center}
 .hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:4px}
-.hamburger span{display:block;width:22px;height:1.5px;background:var(--dark);border-radius:2px}
-.mob-menu{position:fixed;inset:0;z-index:300;background:var(--dark);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;transform:translateX(100%);visibility:hidden}
-.mob-close{position:absolute;top:20px;right:var(--px);background:none;border:none;cursor:pointer;font-size:28px;color:rgba(250,246,240,.45);line-height:1}
-.mob-links{display:flex;flex-direction:column;align-items:center;gap:4px}
-.mob-links a{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:300;font-style:italic;color:var(--cream);opacity:.7;transition:opacity .2s,color .2s;cursor:pointer}
-.mob-links a:hover{opacity:1;color:var(--gold)}
+.hamburger span{display:block;width:21px;height:1.5px;background:var(--dark);border-radius:2px;transition:transform .25s,opacity .25s}
+.mob-menu{position:fixed;inset:0;z-index:300;background:var(--dark);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;transform:translateX(100%);visibility:hidden}
+.mob-close{position:absolute;top:18px;right:var(--px);background:none;border:none;cursor:pointer;font-size:26px;color:rgba(250,246,240,.4);line-height:1}
+.mob-links{display:flex;flex-direction:column;align-items:center;gap:2px}
+.mob-links a{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;font-style:italic;color:rgba(250,246,240,.7);transition:color .2s;cursor:pointer;padding:6px 0}
+.mob-links a:hover{color:var(--gold)}
 .mob-cta{margin-top:24px}
-@media(max-width:767px){.nav-links,.cart-label,.btn-nav{display:none}.hamburger{display:flex}}
+@media(max-width:767px){.nav-links,.cart-label{display:none}.hamburger{display:flex}}
+/* Removed: .btn-nav from nav — replaced with plain link */
+.nav-login-link{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text);opacity:.55;transition:opacity .2s,color .2s;cursor:pointer;background:none;border:none;padding:0}
+.nav-login-link:hover{opacity:1;color:var(--gold)}
 
-/* HERO */
+/* ── HERO ── */
 .hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;
-  padding:calc(var(--nav-h) + 48px) var(--px) 72px;position:relative;overflow:hidden;gap:40px}
-.hero-orb{position:absolute;right:-60px;top:50%;transform:translateY(-50%);
-  width:640px;height:640px;
-  background:radial-gradient(ellipse,var(--blush-light) 0%,transparent 68%);
-  border-radius:50%;pointer-events:none}
-.hero-left{position:relative;z-index:2;max-width:540px}
-.hero-eyebrow{display:flex;align-items:center;gap:12px;font-size:10px;font-weight:600;
-  letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:24px}
-.hero-eyebrow::before{content:'';width:34px;height:1px;background:var(--gold)}
-.line{overflow:hidden;display:block}
-.line-inner{display:block}
-.hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(52px,5.6vw,80px);
-  font-weight:300;line-height:1.06;color:var(--dark);margin-bottom:24px}
+  padding:calc(var(--nav-h) + 40px) var(--px) 64px;position:relative;overflow:hidden;gap:40px}
+/* Removed: .hero-orb decorative blob — replaced with restrained bg */
+.hero-left{position:relative;z-index:2;max-width:520px}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:10px;font-weight:600;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:20px}
+.hero-eyebrow::before{content:'';width:28px;height:1px;background:var(--gold)}
+/* Removed: .line / .line-inner clip animation wrappers */
+.hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(42px,4.8vw,68px);
+  font-weight:300;line-height:1.08;color:var(--dark);margin-bottom:20px}
 .hero-title em{font-style:italic;color:var(--gold)}
-.hero-desc{font-size:14.5px;font-weight:300;color:var(--muted);line-height:1.85;max-width:360px;margin-bottom:38px}
+.hero-desc{font-size:14px;font-weight:300;color:var(--muted);line-height:1.8;max-width:380px;margin-bottom:32px}
 .hero-cta{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-.hero-stats{display:flex;gap:32px;margin-top:48px;padding-top:32px;border-top:1px solid var(--border)}
-.stat-num{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:400;color:var(--dark);line-height:1}
-.stat-lbl{font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-top:4px}
+.hero-stats{display:flex;gap:28px;margin-top:40px;padding-top:28px;border-top:1px solid var(--border)}
+.stat-num{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;color:var(--dark);line-height:1}
+.stat-lbl{font-size:10px;color:var(--muted);letter-spacing:.09em;text-transform:uppercase;margin-top:3px}
 .hero-right{position:relative;z-index:2;display:flex;align-items:center;justify-content:center}
-.hero-img-frame{width:420px;height:520px;border-radius:200px 200px 160px 160px;overflow:hidden;position:relative;z-index:2;flex-shrink:0}
+.hero-img-wrap{position:relative}
+.hero-img-frame{width:400px;height:500px;border-radius:var(--r-lg);overflow:hidden;position:relative;flex-shrink:0}
 .hero-img-frame img{width:100%;height:100%;object-fit:cover;object-position:center top}
-.hero-badge{position:absolute;top:40px;left:-20px;background:white;border-radius:var(--r-sm);
-  padding:14px 18px;box-shadow:var(--sh-lg);z-index:4}
-.hero-badge-label{font-size:10px;font-weight:600;letter-spacing:.12em;color:var(--gold);text-transform:uppercase}
-.hero-badge-sub{font-size:12px;color:var(--text);margin-top:3px}
-.hero-float-pill{position:absolute;bottom:48px;right:-16px;background:var(--dark);color:var(--cream);
-  border-radius:var(--pill);padding:10px 18px;z-index:4;box-shadow:var(--sh-lg);
-  font-size:12px;font-weight:500;letter-spacing:.06em;white-space:nowrap}
+/* Kept: small floating info badges — but removed petal emojis */
+.hero-badge{position:absolute;top:24px;left:-16px;background:white;border-radius:var(--r-sm);
+  padding:12px 16px;box-shadow:var(--sh-md);z-index:4}
+.hero-badge-label{font-size:9px;font-weight:700;letter-spacing:.14em;color:var(--gold);text-transform:uppercase}
+.hero-badge-sub{font-size:11.5px;color:var(--text);margin-top:2px}
+.hero-float-pill{position:absolute;bottom:36px;right:-12px;background:var(--dark);color:var(--cream);
+  border-radius:var(--pill);padding:9px 16px;z-index:4;box-shadow:var(--sh-md);
+  font-size:11px;font-weight:500;letter-spacing:.04em;white-space:nowrap}
 .hero-float-pill span{color:var(--gold)}
-.hero-petal{position:absolute;font-size:28px;pointer-events:none;opacity:.45}
-@media(max-width:1024px){.hero-img-frame{width:350px;height:440px}}
+/* Removed: .hero-petal floating emoji elements */
+@media(max-width:1024px){.hero-img-frame{width:320px;height:420px}}
 @media(max-width:767px){
-  .hero{grid-template-columns:1fr;min-height:auto;padding-bottom:56px}
-  .hero-right{margin-top:36px}
-  .hero-img-frame{width:100%;max-width:300px;height:360px;margin:0 auto}
-  .hero-badge{top:16px;left:0}
-  .hero-float-pill{bottom:16px;right:0}
-  .hero-stats{gap:20px}
+  .hero{grid-template-columns:1fr;min-height:auto;padding-bottom:48px}
+  .hero-right{margin-top:32px}
+  .hero-img-frame{width:100%;max-width:280px;height:340px;margin:0 auto}
+  .hero-badge{top:12px;left:0}
+  .hero-float-pill{bottom:12px;right:0}
+  .hero-stats{gap:18px}
 }
 
-/* RIBBON */
-.ribbon{background:var(--dark);padding:16px 0;overflow:hidden;border-top:1px solid rgba(196,151,58,.15);border-bottom:1px solid rgba(196,151,58,.15)}
-.ribbon-track{display:flex;white-space:nowrap}
-.ribbon-item{display:flex;align-items:center;gap:16px;padding:0 26px;
-  font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:400;font-style:italic;
-  color:var(--gold-light);letter-spacing:.05em}
-.ribbon-dot{width:4px;height:4px;background:var(--gold);border-radius:50%;flex-shrink:0}
+/* ── TRUST BAR (replaces animated marquee/ribbon) ── */
+.trust-bar{background:var(--dark);padding:14px var(--px);display:flex;align-items:center;justify-content:center;
+  gap:32px;flex-wrap:wrap;border-top:1px solid rgba(196,151,58,.12);border-bottom:1px solid rgba(196,151,58,.12)}
+.trust-item{display:flex;align-items:center;gap:8px;font-size:11.5px;font-weight:400;
+  font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--gold-light);letter-spacing:.04em}
+.trust-icon{font-size:14px;line-height:1}
+@media(max-width:600px){.trust-bar{gap:16px;padding:12px var(--px)}.trust-item{font-size:11px}}
 
-/* FEATURES */
+/* ── FEATURES STRIP ── */
 .features{background:var(--cream2);display:grid;grid-template-columns:repeat(3,1fr);
   border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
-.feat-item{padding:40px var(--px);display:flex;align-items:flex-start;gap:16px;border-right:1px solid var(--border)}
+.feat-item{padding:32px var(--px);display:flex;align-items:flex-start;gap:14px;border-right:1px solid var(--border)}
 .feat-item:last-child{border-right:none}
-.feat-icon{font-size:22px;width:48px;height:48px;background:white;border-radius:var(--r-sm);
+.feat-icon{font-size:18px;width:40px;height:40px;background:white;border-radius:var(--r-sm);
   display:flex;align-items:center;justify-content:center;box-shadow:var(--sh-sm);flex-shrink:0}
-.feat-title{font-size:13.5px;font-weight:600;color:var(--dark);margin-bottom:5px}
-.feat-desc{font-size:12.5px;font-weight:300;color:var(--muted);line-height:1.7}
+.feat-title{font-size:13px;font-weight:600;color:var(--dark);margin-bottom:4px}
+.feat-desc{font-size:12px;font-weight:300;color:var(--muted);line-height:1.65}
 @media(max-width:1024px){
   .features{grid-template-columns:1fr}
-  .feat-item{border-right:none;border-bottom:1px solid var(--border);padding:28px var(--px)}
+  .feat-item{border-right:none;border-bottom:1px solid var(--border);padding:24px var(--px)}
   .feat-item:last-child{border-bottom:none}
 }
 
-/* SHARED */
+/* ── SHARED SECTION ── */
 .section{padding:var(--py) var(--px)}
-.eyebrow{display:flex;align-items:center;gap:11px;font-size:10px;font-weight:600;
-  letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:13px}
-.eyebrow::before{content:'';width:26px;height:1px;background:var(--gold)}
+.eyebrow{display:flex;align-items:center;gap:10px;font-size:10px;font-weight:600;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+.eyebrow::before{content:'';width:22px;height:1px;background:var(--gold)}
 .eyebrow.light{color:var(--gold-light)}
 .eyebrow.light::before{background:var(--gold-light)}
 .eyebrow.center{justify-content:center}
 .eyebrow.center::before{display:none}
-.sec-title{font-family:'Cormorant Garamond',serif;font-size:clamp(34px,3.8vw,52px);
-  font-weight:300;line-height:1.1;color:var(--dark)}
+/* Reduced heading sizes — less cinematic */
+.sec-title{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,3.2vw,44px);
+  font-weight:300;line-height:1.12;color:var(--dark)}
 .sec-title em{font-style:italic;color:var(--gold)}
 .sec-title.light{color:var(--cream)}
 
-/* COLLECTION */
-.coll-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:48px}
-.coll-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+/* ── PRODUCT CARD COMPONENT (reusable) ── */
+.coll-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:40px}
+.coll-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+
+/* ProductCard */
 .card{background:white;border-radius:var(--r-lg);overflow:hidden;position:relative;
-  box-shadow:var(--sh-sm);transition:box-shadow .4s,transform .4s;cursor:pointer}
-.card:hover{box-shadow:var(--sh-xl);transform:translateY(-4px)}
-.card-shell{overflow:hidden}
-.card-img{width:100%;height:260px;object-fit:cover;transition:transform .55s cubic-bezier(.25,.46,.45,.94)}
-.card:hover .card-img{transform:scale(1.05)}
-.card-body{padding:18px 20px 22px}
-.card-tag{font-size:9.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:5px}
-.card-name{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:400;color:var(--dark);margin-bottom:7px}
-.card-desc{font-size:12px;color:var(--muted);line-height:1.65;margin-bottom:14px}
+  box-shadow:var(--sh-sm);transition:box-shadow .25s,transform .25s;cursor:pointer}
+.card:hover{box-shadow:var(--sh-md);transform:translateY(-3px)}
+.card-shell{overflow:hidden;position:relative}
+.card-img{width:100%;height:248px;object-fit:cover;transition:transform .4s ease}
+.card:hover .card-img{transform:scale(1.04)}
+/* Wishlist button on card — real ecommerce UX */
+.card-wish{position:absolute;top:10px;right:10px;width:30px;height:30px;border-radius:50%;
+  background:white;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:13px;box-shadow:var(--sh-sm);transition:background .2s,transform .15s;z-index:2;opacity:0}
+.card:hover .card-wish{opacity:1}
+.card-wish:hover{background:var(--blush-light);transform:scale(1.12)}
+.card-wish.active{opacity:1;background:var(--blush-light)}
+.card-body{padding:16px 18px 20px}
+.card-tag{font-size:9px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+.card-name{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:400;color:var(--dark);margin-bottom:5px}
+.card-desc{font-size:11.5px;color:var(--muted);line-height:1.6;margin-bottom:12px}
 .card-foot{display:flex;justify-content:space-between;align-items:center}
-.card-price{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:var(--dark)}
-.card-bdg{position:absolute;top:13px;left:13px;background:var(--dark);color:var(--cream);
-  font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
-  padding:4px 10px;border-radius:var(--pill)}
-.card-bdg.gold{background:var(--gold)}
+.card-price{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:600;color:var(--dark)}
+.card-bdg{position:absolute;top:10px;left:10px;background:var(--dark);color:var(--cream);
+  font-size:8.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  padding:3px 9px;border-radius:var(--pill)}
+.card-bdg.gold{background:var(--gold);color:var(--dark)}
 @media(max-width:1024px){.coll-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:767px){.coll-grid{grid-template-columns:1fr}.coll-head{flex-direction:column;align-items:flex-start;gap:16px}}
+@media(max-width:767px){.coll-grid{grid-template-columns:1fr}.coll-head{flex-direction:column;align-items:flex-start;gap:14px}}
 
-/* BESPOKE */
-.bespoke{background:var(--dark);display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:64px;padding:104px var(--px)}
-.bespoke-desc{font-size:14px;font-weight:300;color:rgba(250,246,240,.6);line-height:1.85;margin:20px 0 34px;max-width:390px}
-.bespoke-steps{display:flex;flex-direction:column;gap:18px;margin-bottom:36px}
-.bespoke-step{display:flex;align-items:center;gap:14px}
-.step-n{width:32px;height:32px;border-radius:50%;border:1px solid var(--gold);color:var(--gold);
-  font-family:'Cormorant Garamond',serif;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.step-t{font-size:13px;color:rgba(250,246,240,.72);font-weight:300}
+/* ── QUICK VIEW MODAL ── */
+.qv-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:6000;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s}
+.qv-bg.open{opacity:1;visibility:visible}
+.qv-box{background:var(--cream);border-radius:var(--r-lg);width:90%;max-width:680px;
+  display:grid;grid-template-columns:1fr 1fr;overflow:hidden;
+  transform:translateY(12px);transition:transform .3s var(--ease-expo);box-shadow:var(--sh-lg)}
+.qv-bg.open .qv-box{transform:translateY(0)}
+.qv-img{width:100%;height:360px;object-fit:cover}
+.qv-info{padding:28px;display:flex;flex-direction:column;justify-content:center;gap:10px;position:relative}
+.qv-close{position:absolute;top:14px;right:14px;background:none;border:none;cursor:pointer;font-size:20px;color:var(--muted);line-height:1}
+.qv-tag{font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--gold)}
+.qv-name{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;color:var(--dark)}
+.qv-desc{font-size:12.5px;color:var(--muted);line-height:1.7}
+.qv-price{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:var(--dark)}
+.qv-qty{display:flex;align-items:center;gap:10px}
+.qv-qty-label{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-right:4px}
+@media(max-width:600px){.qv-box{grid-template-columns:1fr}.qv-img{height:220px}}
+
+/* ── BESPOKE SECTION ── */
+.bespoke{background:var(--dark);display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:56px;padding:88px var(--px)}
+.bespoke-desc{font-size:13.5px;font-weight:300;color:rgba(250,246,240,.58);line-height:1.8;margin:16px 0 28px;max-width:400px}
+.bespoke-steps{display:flex;flex-direction:column;gap:14px;margin-bottom:30px}
+.bespoke-step{display:flex;align-items:center;gap:12px}
+.step-n{width:28px;height:28px;border-radius:50%;border:1px solid var(--gold);color:var(--gold);
+  font-family:'Cormorant Garamond',serif;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:12.5px;color:rgba(250,246,240,.68);font-weight:300}
 .bespoke-img-wrap{position:relative}
-.bespoke-img{width:100%;height:500px;object-fit:cover;border-radius:var(--r-lg)}
-.bespoke-float{position:absolute;bottom:-16px;left:-20px;background:var(--gold);
-  border-radius:var(--r-md);padding:16px 22px;width:200px;box-shadow:var(--sh-lg)}
-.bespoke-float-t{font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--dark);font-weight:600}
-.bespoke-float-s{font-size:11px;color:rgba(26,43,28,.65);margin-top:2px}
-@media(max-width:767px){.bespoke{grid-template-columns:1fr;gap:40px;padding:64px var(--px)}.bespoke-float{bottom:14px;left:14px}}
+.bespoke-img{width:100%;height:460px;object-fit:cover;border-radius:var(--r-lg)}
+/* Kept: one tasteful floating card */
+.bespoke-float{position:absolute;bottom:-12px;left:-16px;background:var(--gold);
+  border-radius:var(--r-md);padding:14px 20px;width:190px;box-shadow:var(--sh-md)}
+.bespoke-float-t{font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--dark);font-weight:600}
+.bespoke-float-s{font-size:10.5px;color:rgba(26,43,28,.62);margin-top:2px}
+@media(max-width:767px){.bespoke{grid-template-columns:1fr;gap:36px;padding:56px var(--px)}.bespoke-float{bottom:12px;left:12px}}
 
-/* PROCESS */
-.proc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:56px;position:relative}
-.proc-grid::before{content:'';position:absolute;top:36px;left:10%;right:10%;height:1px;background:var(--border);z-index:0}
-.proc-item{text-align:center;padding:0 18px;position:relative;z-index:1}
-.proc-n{width:72px;height:72px;border-radius:50%;background:white;border:1px solid var(--border);
-  font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:400;color:var(--gold);
-  display:flex;align-items:center;justify-content:center;margin:0 auto 20px;
-  transition:background .3s,border-color .3s,color .3s}
+/* ── PROCESS ── */
+.proc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:48px;position:relative}
+.proc-grid::before{content:'';position:absolute;top:32px;left:10%;right:10%;height:1px;background:var(--border);z-index:0}
+.proc-item{text-align:center;padding:0 16px;position:relative;z-index:1}
+.proc-n{width:64px;height:64px;border-radius:50%;background:white;border:1px solid var(--border);
+  font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:var(--gold);
+  display:flex;align-items:center;justify-content:center;margin:0 auto 16px;
+  transition:background .25s,border-color .25s}
 .proc-item:hover .proc-n{background:var(--gold);color:white;border-color:var(--gold)}
-.proc-title{font-size:14px;font-weight:600;color:var(--dark);margin-bottom:7px}
-.proc-desc{font-size:12px;color:var(--muted);line-height:1.7}
-@media(max-width:1024px){.proc-grid{grid-template-columns:repeat(2,1fr);row-gap:36px}.proc-grid::before{display:none}}
+.proc-title{font-size:13px;font-weight:600;color:var(--dark);margin-bottom:6px}
+.proc-desc{font-size:11.5px;color:var(--muted);line-height:1.65}
+@media(max-width:1024px){.proc-grid{grid-template-columns:repeat(2,1fr);row-gap:32px}.proc-grid::before{display:none}}
 @media(max-width:767px){.proc-grid{grid-template-columns:1fr}}
 
-/* REVIEWS */
-.rev-track{display:flex;gap:18px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+/* ── REVIEWS ── */
+.rev-track{display:flex;gap:16px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
 .rev-track::-webkit-scrollbar{display:none}
-.rev-card{background:white;border-radius:var(--r-lg);padding:28px;min-width:340px;flex-shrink:0;
+.rev-card{background:white;border-radius:var(--r-lg);padding:24px;min-width:320px;flex-shrink:0;
   border:1px solid var(--border);box-shadow:var(--sh-sm)}
-.rev-stars{color:var(--gold);font-size:12px;margin-bottom:14px;letter-spacing:2px}
-.rev-q{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:400;font-style:italic;
-  color:var(--dark);line-height:1.55;margin-bottom:20px}
+.rev-stars{color:var(--gold);font-size:11px;margin-bottom:12px;letter-spacing:2px}
+.rev-q{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:400;font-style:italic;
+  color:var(--dark);line-height:1.5;margin-bottom:18px}
 .rev-author{display:flex;align-items:center;gap:10px}
-.rev-avatar{width:38px;height:38px;border-radius:50%;object-fit:cover}
-.rev-name{font-size:13px;font-weight:600;color:var(--dark)}
-.rev-loc{font-size:11px;color:var(--muted);margin-top:1px}
-@media(max-width:767px){.rev-card{min-width:82vw}}
+.rev-avatar{width:34px;height:34px;border-radius:50%;object-fit:cover}
+.rev-name{font-size:12.5px;font-weight:600;color:var(--dark)}
+.rev-loc{font-size:10.5px;color:var(--muted);margin-top:1px}
+@media(max-width:767px){.rev-card{min-width:80vw}}
 
-/* NEWSLETTER */
-.newsletter{background:var(--cream2);padding:72px var(--px);display:flex;align-items:center;justify-content:space-between;gap:40px;border-top:1px solid var(--border)}
-.nl-left .sec-title{font-size:clamp(28px,3vw,40px)}
-.nl-left p{font-size:14px;color:var(--muted);margin-top:10px}
+/* ── NEWSLETTER ── */
+.newsletter{background:var(--cream2);padding:64px var(--px);display:flex;align-items:center;justify-content:space-between;gap:40px;border-top:1px solid var(--border)}
+.nl-left .sec-title{font-size:clamp(24px,2.8vw,36px)}
+.nl-left p{font-size:13px;color:var(--muted);margin-top:8px}
 .nl-form{display:flex;gap:10px;flex-wrap:wrap}
-.nl-input{flex:1;min-width:220px;border:1px solid var(--border);background:white;
-  border-radius:var(--pill);padding:13px 22px;font-size:13px;font-family:'Outfit',sans-serif;
+.nl-input{flex:1;min-width:200px;border:1.5px solid var(--border);background:white;
+  border-radius:var(--pill);padding:12px 20px;font-size:13px;font-family:'Outfit',sans-serif;
   color:var(--text);outline:none;transition:border-color .2s}
 .nl-input:focus{border-color:var(--gold)}
 .nl-input::placeholder{color:var(--muted)}
 @media(max-width:767px){.newsletter{flex-direction:column;text-align:center}.nl-form{width:100%}.eyebrow.nl-ey{justify-content:center}.eyebrow.nl-ey::before{display:none}}
 
-/* OFFER */
-.offer{background:linear-gradient(140deg,#1a2b1c 0%,#243d26 55%,#1a2b1c 100%);
-  text-align:center;padding:104px var(--px);position:relative;overflow:hidden}
-.offer-orb{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-  width:520px;height:520px;background:radial-gradient(ellipse,rgba(196,151,58,.12) 0%,transparent 68%);
-  border-radius:50%;pointer-events:none}
-.offer-title{font-family:'Cormorant Garamond',serif;font-size:clamp(38px,4.8vw,60px);
-  font-weight:300;color:var(--cream);line-height:1.08;margin-bottom:16px;position:relative}
+/* ── OFFER BANNER ── */
+.offer{background:linear-gradient(135deg,#1a2b1c 0%,#243d26 55%,#1a2b1c 100%);
+  text-align:center;padding:80px var(--px);position:relative;overflow:hidden}
+.offer-title{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,4vw,50px);
+  font-weight:300;color:var(--cream);line-height:1.1;margin-bottom:12px}
 .offer-title em{color:var(--gold);font-style:italic}
-.offer-desc{font-size:14px;color:rgba(250,246,240,.52);margin-bottom:36px;position:relative}
-.offer-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative}
-.offer-code{display:inline-block;margin:0 auto 20px;background:rgba(196,151,58,.12);
-  border:1px solid rgba(196,151,58,.3);border-radius:var(--pill);
-  padding:6px 18px;font-size:12px;letter-spacing:.12em;color:var(--gold-light);
-  font-weight:500;position:relative}
+.offer-desc{font-size:13px;color:rgba(250,246,240,.5);margin-bottom:28px}
+.offer-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.offer-code{display:inline-block;margin:0 auto 18px;background:rgba(196,151,58,.1);
+  border:1px solid rgba(196,151,58,.28);border-radius:var(--pill);
+  padding:5px 16px;font-size:11px;letter-spacing:.12em;color:var(--gold-light);font-weight:600}
 
-/* FOOTER */
-.footer{background:var(--dark2);padding:64px var(--px) 32px}
-.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;
-  padding-bottom:48px;border-bottom:1px solid rgba(255,255,255,.07)}
-.footer-brand p{font-size:12px;color:rgba(250,246,240,.38);line-height:1.85;max-width:230px;margin-top:13px}
-.footer-col h4{font-size:10.5px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;
-  color:var(--gold-light);margin-bottom:16px}
-.footer-col ul{display:flex;flex-direction:column;gap:8px}
-.footer-col a{font-size:12px;color:rgba(250,246,240,.36);transition:color .2s;cursor:pointer}
+/* ── FOOTER ── */
+.footer{background:var(--dark2);padding:56px var(--px) 28px}
+.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;
+  padding-bottom:40px;border-bottom:1px solid rgba(255,255,255,.06)}
+.footer-brand p{font-size:11.5px;color:rgba(250,246,240,.35);line-height:1.8;max-width:220px;margin-top:12px}
+.footer-col h4{font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--gold-light);margin-bottom:14px}
+.footer-col ul{display:flex;flex-direction:column;gap:7px}
+.footer-col a{font-size:11.5px;color:rgba(250,246,240,.34);transition:color .2s;cursor:pointer}
 .footer-col a:hover{color:var(--gold-light)}
-.footer-bottom{padding-top:24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
-.footer-copy{font-size:11px;color:rgba(250,246,240,.22)}
-.footer-legal{display:flex;gap:16px}
-.footer-legal a{font-size:11px;color:rgba(250,246,240,.25);transition:color .2s;cursor:pointer}
+.footer-bottom{padding-top:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.footer-copy{font-size:10.5px;color:rgba(250,246,240,.2)}
+.footer-legal{display:flex;gap:14px}
+.footer-legal a{font-size:10.5px;color:rgba(250,246,240,.23);transition:color .2s;cursor:pointer}
 .footer-legal a:hover{color:var(--gold)}
-.footer-socials{display:flex;gap:16px}
-.footer-socials a{font-size:11px;color:rgba(250,246,240,.28);letter-spacing:.08em;transition:color .2s;cursor:pointer}
+.footer-socials{display:flex;gap:14px}
+.footer-socials a{font-size:10.5px;color:rgba(250,246,240,.26);letter-spacing:.07em;transition:color .2s;cursor:pointer}
 .footer-socials a:hover{color:var(--gold)}
 @media(max-width:1024px){.footer-top{grid-template-columns:1fr 1fr 1fr}}
-@media(max-width:767px){.footer-top{grid-template-columns:1fr 1fr;gap:28px}.footer-bottom{flex-direction:column;text-align:center}}
+@media(max-width:767px){.footer-top{grid-template-columns:1fr 1fr;gap:24px}.footer-bottom{flex-direction:column;text-align:center}}
 
-/* MODAL */
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:6000;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s;backdrop-filter:blur(4px)}
+/* ── MODAL (policy/terms) ── */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:6000;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s;backdrop-filter:blur(4px)}
 .modal-bg.open{opacity:1;visibility:visible}
-.modal-box{background:var(--cream);border-radius:var(--r-lg);width:90%;max-width:560px;max-height:80vh;display:flex;flex-direction:column;overflow:hidden;transform:scale(.95);transition:transform .35s var(--ease-expo)}
-.modal-bg.open .modal-box{transform:scale(1)}
-.modal-head{display:flex;justify-content:space-between;align-items:center;padding:20px 24px;border-bottom:1px solid var(--border)}
-.modal-head h3{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:var(--dark)}
-.modal-close{background:none;border:none;cursor:pointer;font-size:22px;color:var(--muted)}
-.modal-body{padding:20px 24px;overflow-y:auto;font-size:13px;color:var(--muted);line-height:1.85}
-.modal-body h4{font-size:13px;font-weight:600;color:var(--dark);margin:16px 0 6px}
+.modal-box{background:var(--cream);border-radius:var(--r-lg);width:90%;max-width:540px;max-height:80vh;display:flex;flex-direction:column;overflow:hidden;transform:translateY(10px);transition:transform .3s var(--ease-expo)}
+.modal-bg.open .modal-box{transform:translateY(0)}
+.modal-head{display:flex;justify-content:space-between;align-items:center;padding:18px 22px;border-bottom:1px solid var(--border)}
+.modal-head h3{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;color:var(--dark)}
+.modal-close{background:none;border:none;cursor:pointer;font-size:20px;color:var(--muted)}
+.modal-body{padding:18px 22px;overflow-y:auto;font-size:13px;color:var(--muted);line-height:1.8}
+.modal-body h4{font-size:12.5px;font-weight:600;color:var(--dark);margin:14px 0 5px}
 .modal-body h4:first-child{margin-top:0}
 
-/* BUTTONS */
+/* ── BUTTONS ── */
 .btn-primary{background:var(--dark);color:var(--cream);border:none;border-radius:var(--pill);
-  padding:14px 34px;font-size:12px;font-weight:600;letter-spacing:.11em;text-transform:uppercase;
-  cursor:pointer;position:relative;overflow:hidden;transition:transform .2s}
-.btn-primary::after{content:'';position:absolute;inset:0;background:var(--gold);
-  transform:translateX(-101%);transition:transform .38s cubic-bezier(.76,0,.24,1);border-radius:var(--pill)}
-.btn-primary:hover::after{transform:translateX(0)}
-.btn-primary:hover{transform:scale(1.02)}
-.btn-primary span{position:relative;z-index:1}
-.btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--text);
-  border-radius:var(--pill);padding:13px 30px;font-size:12px;font-weight:500;letter-spacing:.09em;
-  cursor:pointer;transition:border-color .25s,color .25s}
+  padding:13px 30px;font-size:11.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  cursor:pointer;transition:background .2s}
+.btn-primary:hover{background:#2c3f2e}
+/* Removed: btn-primary pseudo-element gold fill slide — too "demo" */
+.btn-outline{background:transparent;border:1.5px solid var(--border-neutral);color:var(--text);
+  border-radius:var(--pill);padding:12px 26px;font-size:11.5px;font-weight:500;letter-spacing:.08em;
+  cursor:pointer;transition:border-color .2s,color .2s}
 .btn-outline:hover{border-color:var(--gold);color:var(--gold)}
 .btn-gold{background:var(--gold);color:var(--dark);border:none;border-radius:var(--pill);
-  padding:14px 40px;font-size:12px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;
-  cursor:pointer;transition:opacity .25s,transform .2s}
-.btn-gold:hover{opacity:.88;transform:scale(1.02)}
-.btn-ghost{background:transparent;border:1.5px solid rgba(250,246,240,.2);color:var(--cream);
-  border-radius:var(--pill);padding:13px 36px;font-size:12px;font-weight:500;letter-spacing:.09em;
-  cursor:pointer;transition:border-color .25s}
+  padding:13px 36px;font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  cursor:pointer;transition:opacity .2s}
+.btn-gold:hover{opacity:.85}
+/* Removed: btn-gold transform:scale(1.02) — overdone */
+.btn-ghost{background:transparent;border:1.5px solid rgba(250,246,240,.18);color:var(--cream);
+  border-radius:var(--pill);padding:12px 32px;font-size:11.5px;font-weight:500;letter-spacing:.08em;
+  cursor:pointer;transition:border-color .2s}
 .btn-ghost:hover{border-color:var(--gold)}
 .btn-card{background:var(--dark);color:var(--cream);border:none;border-radius:var(--pill);
-  padding:8px 16px;font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
-  cursor:pointer;transition:background .25s}
-.btn-card:hover{background:var(--gold)}
-.btn-nav{background:var(--dark);color:var(--cream);border:none;border-radius:var(--pill);
-  padding:9px 20px;font-size:11px;font-weight:600;letter-spacing:.11em;text-transform:uppercase;
-  cursor:pointer;transition:background .25s}
-.btn-nav:hover{background:var(--gold)}
-.btn-full{width:100%;padding:15px;font-size:13px}
+  padding:7px 14px;font-size:10px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;
+  cursor:pointer;transition:background .2s}
+.btn-card:hover{background:var(--gold);color:var(--dark)}
+.btn-full{width:100%;padding:14px;font-size:12.5px}
+/* Quantity button (shared) */
+.qty-btn{width:26px;height:26px;border-radius:50%;border:1px solid var(--border-neutral);background:none;cursor:pointer;font-size:13px;color:var(--text);display:flex;align-items:center;justify-content:center;transition:border-color .2s,background .2s}
+.qty-btn:hover{border-color:var(--gold);background:var(--gold);color:white}
 
-/* PAGE TRANSITIONS */
-.page-enter{animation:fadeUp .45s var(--ease-expo) both}
-@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+/* ── PAGE TRANSITIONS ── */
+.page-enter{animation:fadeUp .35s var(--ease-expo) both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
 /* ── CART PAGE ── */
-.cart-page{padding:calc(var(--nav-h) + 48px) var(--px) var(--py);min-height:100vh}
-.cart-page-head{margin-bottom:40px}
-.cart-page-title{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,4vw,56px);font-weight:300;color:var(--dark)}
+.cart-page{padding:calc(var(--nav-h) + 40px) var(--px) var(--py);min-height:100vh}
+.cart-page-head{margin-bottom:36px}
+.cart-page-title{font-family:'Cormorant Garamond',serif;font-size:clamp(30px,3.5vw,46px);font-weight:300;color:var(--dark)}
 .cart-page-title em{font-style:italic;color:var(--gold)}
-.cart-layout{display:grid;grid-template-columns:1fr 360px;gap:32px;align-items:start}
-.cart-items-list{display:flex;flex-direction:column;gap:0}
-.cart-line{display:flex;gap:18px;padding:22px 0;border-bottom:1px solid var(--border);align-items:center}
-.cart-line-img{width:88px;height:88px;border-radius:var(--r-sm);object-fit:cover;flex-shrink:0}
+.cart-layout{display:grid;grid-template-columns:1fr 340px;gap:28px;align-items:start}
+.cart-items-list{display:flex;flex-direction:column}
+.cart-line{display:flex;gap:16px;padding:20px 0;border-bottom:1px solid var(--border);align-items:center}
+.cart-line-img{width:80px;height:80px;border-radius:var(--r-sm);object-fit:cover;flex-shrink:0}
 .cart-line-info{flex:1}
-.cart-line-tag{font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
-.cart-line-name{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;color:var(--dark);margin-bottom:4px}
-.cart-line-price{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--muted)}
-.cart-line-qty{display:flex;align-items:center;gap:12px;margin-top:10px}
-.qty-btn{width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:none;cursor:pointer;font-size:14px;color:var(--text);display:flex;align-items:center;justify-content:center;transition:border-color .2s,background .2s}
-.qty-btn:hover{border-color:var(--gold);background:var(--gold);color:white}
-.qty-val{font-size:14px;font-weight:600;color:var(--dark);min-width:20px;text-align:center}
-.cart-line-remove{background:none;border:none;cursor:pointer;color:var(--muted);font-size:20px;transition:color .2s;line-height:1;margin-left:8px}
+.cart-line-tag{font-size:9px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--gold);margin-bottom:3px}
+.cart-line-name{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:400;color:var(--dark);margin-bottom:4px}
+.cart-line-price{font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--muted)}
+.cart-line-qty{display:flex;align-items:center;gap:10px;margin-top:8px}
+.qty-val{font-size:13px;font-weight:600;color:var(--dark);min-width:18px;text-align:center}
+.cart-line-remove{background:none;border:none;cursor:pointer;color:var(--muted);font-size:18px;transition:color .2s;line-height:1;margin-left:6px}
 .cart-line-remove:hover{color:var(--dark)}
-.cart-summary{background:white;border-radius:var(--r-lg);padding:28px;border:1px solid var(--border);box-shadow:var(--sh-sm);position:sticky;top:calc(var(--nav-h) + 20px)}
-.cart-summary-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:var(--dark);margin-bottom:20px}
-.summary-row{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-bottom:10px}
-.summary-row.total{font-size:16px;font-weight:600;color:var(--dark);padding-top:14px;border-top:1px solid var(--border);margin-top:6px}
-.summary-row.total .val{font-family:'Cormorant Garamond',serif;font-size:22px}
-.summary-note{font-size:11px;color:var(--muted);margin:12px 0 20px;line-height:1.6}
+.cart-summary{background:white;border-radius:var(--r-lg);padding:24px;border:1px solid var(--border);box-shadow:var(--sh-sm);position:sticky;top:calc(var(--nav-h) + 16px)}
+.cart-summary-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;color:var(--dark);margin-bottom:18px}
+.summary-row{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);margin-bottom:9px}
+.summary-row.total{font-size:15px;font-weight:600;color:var(--dark);padding-top:12px;border-top:1px solid var(--border);margin-top:4px}
+.summary-row.total .val{font-family:'Cormorant Garamond',serif;font-size:20px}
+.summary-note{font-size:10.5px;color:var(--muted);margin:10px 0 18px;line-height:1.55}
 .cart-empty-page{text-align:center;padding:80px var(--px);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.cart-empty-icon{font-size:64px;margin-bottom:20px}
-.cart-empty-title{font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:300;color:var(--dark);margin-bottom:12px}
-.cart-empty-sub{font-size:14px;color:var(--muted);margin-bottom:32px}
+.cart-empty-icon{font-size:48px;margin-bottom:16px}
+.cart-empty-title{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;color:var(--dark);margin-bottom:10px}
+.cart-empty-sub{font-size:13px;color:var(--muted);margin-bottom:28px}
 @media(max-width:900px){.cart-layout{grid-template-columns:1fr}}
 
 /* ── BROWSE PAGE ── */
-.browse-page{padding:calc(var(--nav-h) + 48px) var(--px) var(--py);min-height:100vh}
-.browse-filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:40px}
-.filter-pill{background:none;border:1.5px solid var(--border);border-radius:var(--pill);
-  padding:8px 20px;font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;
-  cursor:pointer;color:var(--muted);transition:all .2s}
+.browse-page{padding:calc(var(--nav-h) + 40px) var(--px) var(--py);min-height:100vh}
+/* Search bar */
+.browse-toolbar{display:flex;gap:12px;align-items:center;margin-bottom:20px;flex-wrap:wrap}
+.browse-search{flex:1;min-width:200px;border:1.5px solid var(--border-neutral);background:white;
+  border-radius:var(--pill);padding:10px 18px;font-size:12.5px;font-family:'Outfit',sans-serif;
+  color:var(--text);outline:none;transition:border-color .2s}
+.browse-search:focus{border-color:var(--gold)}
+.browse-search::placeholder{color:var(--muted)}
+.browse-sort{border:1.5px solid var(--border-neutral);background:white;border-radius:var(--pill);
+  padding:10px 16px;font-size:11.5px;font-family:'Outfit',sans-serif;color:var(--text);
+  outline:none;cursor:pointer;transition:border-color .2s;appearance:none}
+.browse-sort:focus{border-color:var(--gold)}
+.browse-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:32px}
+.filter-pill{background:none;border:1.5px solid var(--border-neutral);border-radius:var(--pill);
+  padding:7px 18px;font-size:10.5px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;
+  cursor:pointer;color:var(--muted);transition:all .18s}
 .filter-pill:hover,.filter-pill.active{background:var(--dark);border-color:var(--dark);color:var(--cream)}
-.browse-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.browse-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.browse-count{font-size:12px;color:var(--muted);margin-bottom:20px}
 @media(max-width:1024px){.browse-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:600px){.browse-grid{grid-template-columns:1fr}}
 
 /* ── CUSTOM PAGE ── */
-.custom-page{padding:calc(var(--nav-h) + 48px) var(--px) var(--py);min-height:100vh}
-.custom-layout{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start}
-.custom-preview{background:white;border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--sh-lg);position:sticky;top:calc(var(--nav-h) + 20px)}
-.custom-preview-img{width:100%;height:380px;object-fit:cover}
-.custom-preview-info{padding:24px}
-.custom-form-section{margin-bottom:32px}
-.custom-form-label{font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;display:block}
-.custom-options{display:flex;gap:10px;flex-wrap:wrap}
-.custom-opt{border:1.5px solid var(--border);border-radius:var(--pill);padding:8px 18px;
-  font-size:12px;font-weight:500;cursor:pointer;color:var(--text);background:none;transition:all .2s}
+.custom-page{padding:calc(var(--nav-h) + 40px) var(--px) var(--py);min-height:100vh}
+.custom-layout{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start}
+.custom-preview{background:white;border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--sh-md);position:sticky;top:calc(var(--nav-h) + 16px)}
+.custom-preview-img{width:100%;height:340px;object-fit:cover}
+.custom-preview-info{padding:20px}
+.custom-form-section{margin-bottom:28px}
+.custom-form-label{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;display:block}
+.custom-options{display:flex;gap:8px;flex-wrap:wrap}
+.custom-opt{border:1.5px solid var(--border-neutral);border-radius:var(--pill);padding:7px 16px;
+  font-size:11.5px;font-weight:500;cursor:pointer;color:var(--text);background:none;transition:all .18s}
 .custom-opt:hover,.custom-opt.sel{background:var(--dark);border-color:var(--dark);color:var(--cream)}
-.custom-opt.color-opt{width:34px;height:34px;border-radius:50%;padding:0;border-width:2.5px}
+.custom-opt.color-opt{width:30px;height:30px;border-radius:50%;padding:0;border-width:2px}
 .custom-opt.color-opt.sel{box-shadow:0 0 0 3px white,0 0 0 5px var(--gold)}
-.custom-qty-row{display:flex;align-items:center;gap:16px}
-.custom-qty-btn{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--border);background:none;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.custom-qty-row{display:flex;align-items:center;gap:14px}
+.custom-qty-btn{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--border-neutral);background:none;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .18s}
 .custom-qty-btn:hover{border-color:var(--gold);color:var(--gold)}
-.custom-qty-num{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;color:var(--dark);min-width:40px;text-align:center}
-.custom-note{border:1.5px solid var(--border);border-radius:var(--r-md);padding:14px 18px;width:100%;font-size:13px;font-family:'Outfit',sans-serif;color:var(--text);outline:none;resize:none;transition:border-color .2s}
+.custom-qty-num{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:400;color:var(--dark);min-width:36px;text-align:center}
+.custom-note{border:1.5px solid var(--border-neutral);border-radius:var(--r-md);padding:12px 16px;width:100%;font-size:12.5px;font-family:'Outfit',sans-serif;color:var(--text);outline:none;resize:none;transition:border-color .2s;background:white}
 .custom-note:focus{border-color:var(--gold)}
+.form-input{width:100%;border:1.5px solid var(--border-neutral);border-radius:var(--r-sm);padding:11px 14px;font-size:12.5px;font-family:'Outfit',sans-serif;color:var(--text);outline:none;transition:border-color .2s;background:var(--cream)}
+.form-input:focus{border-color:var(--gold)}
 @media(max-width:900px){.custom-layout{grid-template-columns:1fr}.custom-preview{position:static}}
 
 /* ── ABOUT PAGE ── */
-.about-hero{min-height:60vh;background:linear-gradient(140deg,var(--dark) 0%,#243d26 100%);
-  display:flex;align-items:center;padding:calc(var(--nav-h) + 48px) var(--px) 72px}
-.about-hero-content{max-width:600px}
+.about-hero{min-height:55vh;background:linear-gradient(135deg,var(--dark) 0%,#243d26 100%);
+  display:flex;align-items:center;padding:calc(var(--nav-h) + 40px) var(--px) 64px}
+.about-hero-content{max-width:560px}
 .about-section{padding:var(--py) var(--px)}
-.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
-.about-img{width:100%;height:480px;object-fit:cover;border-radius:var(--r-lg)}
-.about-values{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:64px}
-.about-val-card{background:white;border-radius:var(--r-lg);padding:28px;border:1px solid var(--border);box-shadow:var(--sh-sm)}
-.about-val-icon{font-size:28px;margin-bottom:14px}
-.about-val-title{font-size:14px;font-weight:600;color:var(--dark);margin-bottom:8px}
-.about-val-desc{font-size:12.5px;color:var(--muted);line-height:1.7}
-.team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:48px}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+.about-img{width:100%;height:440px;object-fit:cover;border-radius:var(--r-lg)}
+.about-values{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:56px}
+.about-val-card{background:white;border-radius:var(--r-lg);padding:24px;border:1px solid var(--border);box-shadow:var(--sh-sm)}
+.about-val-icon{font-size:24px;margin-bottom:12px}
+.about-val-title{font-size:13px;font-weight:600;color:var(--dark);margin-bottom:6px}
+.about-val-desc{font-size:12px;color:var(--muted);line-height:1.65}
+.team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:44px}
 .team-card{text-align:center}
-.team-img{width:100%;height:280px;object-fit:cover;border-radius:var(--r-lg);margin-bottom:16px}
-.team-name{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;color:var(--dark)}
-.team-role{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-top:4px}
+.team-img{width:100%;height:260px;object-fit:cover;border-radius:var(--r-lg);margin-bottom:14px}
+.team-name{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:400;color:var(--dark)}
+.team-role{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-top:3px}
 @media(max-width:900px){.about-grid{grid-template-columns:1fr}.about-values{grid-template-columns:1fr}.team-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:600px){.team-grid{grid-template-columns:1fr}}
 
 /* ── CONTACT PAGE ── */
-.contact-page{padding:calc(var(--nav-h) + 48px) var(--px) var(--py);min-height:100vh}
-.contact-layout{display:grid;grid-template-columns:1fr 1.2fr;gap:64px;margin-top:48px}
-.contact-info-item{display:flex;gap:16px;margin-bottom:32px;align-items:flex-start}
-.contact-info-icon{width:44px;height:44px;background:var(--cream2);border-radius:var(--r-sm);
-  display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-.contact-info-label{font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
-.contact-info-val{font-size:13.5px;color:var(--text);line-height:1.6}
-.contact-form{background:white;border-radius:var(--r-lg);padding:36px;border:1px solid var(--border);box-shadow:var(--sh-sm)}
-.form-row{margin-bottom:18px}
-.form-row.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.form-label{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:7px}
-.form-input{width:100%;border:1.5px solid var(--border);border-radius:var(--r-sm);padding:12px 16px;font-size:13px;font-family:'Outfit',sans-serif;color:var(--text);outline:none;transition:border-color .2s;background:var(--cream)}
-.form-input:focus{border-color:var(--gold)}
+.contact-page{padding:calc(var(--nav-h) + 40px) var(--px) var(--py);min-height:100vh}
+.contact-layout{display:grid;grid-template-columns:1fr 1.2fr;gap:56px;margin-top:44px}
+.contact-info-item{display:flex;gap:14px;margin-bottom:28px;align-items:flex-start}
+.contact-info-icon{width:40px;height:40px;background:var(--cream2);border-radius:var(--r-sm);
+  display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.contact-info-label{font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:3px}
+.contact-info-val{font-size:13px;color:var(--text);line-height:1.55}
+.contact-form{background:white;border-radius:var(--r-lg);padding:32px;border:1px solid var(--border);box-shadow:var(--sh-sm)}
+.form-row{margin-bottom:16px}
+.form-row.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-label{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px}
 .form-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a7060' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
-.form-textarea{resize:vertical;min-height:120px}
+.form-textarea{resize:vertical;min-height:110px}
 @media(max-width:900px){.contact-layout{grid-template-columns:1fr}}
 
 /* ── LOGIN PAGE ── */
-.auth-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:var(--nav-h) var(--px) 48px;background:var(--cream2)}
-.auth-box{background:white;border-radius:var(--r-lg);padding:44px;width:100%;max-width:420px;box-shadow:var(--sh-lg);border:1px solid var(--border)}
-.auth-logo{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;letter-spacing:.08em;color:var(--dark);text-align:center;margin-bottom:8px}
+.auth-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:var(--nav-h) var(--px) 40px;background:var(--cream2)}
+.auth-box{background:white;border-radius:var(--r-lg);padding:40px;width:100%;max-width:400px;box-shadow:var(--sh-lg);border:1px solid var(--border)}
+.auth-logo{font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:600;letter-spacing:.07em;color:var(--dark);text-align:center;margin-bottom:6px}
 .auth-logo span{color:var(--gold)}
-.auth-sub{font-size:13px;color:var(--muted);text-align:center;margin-bottom:32px}
-.auth-tabs{display:flex;background:var(--cream2);border-radius:var(--pill);padding:4px;margin-bottom:28px}
-.auth-tab{flex:1;padding:9px;border-radius:var(--pill);border:none;background:none;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;color:var(--muted);transition:all .25s}
+.auth-sub{font-size:12.5px;color:var(--muted);text-align:center;margin-bottom:28px}
+.auth-tabs{display:flex;background:var(--cream2);border-radius:var(--pill);padding:4px;margin-bottom:24px}
+.auth-tab{flex:1;padding:8px;border-radius:var(--pill);border:none;background:none;font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;cursor:pointer;color:var(--muted);transition:all .2s}
 .auth-tab.active{background:var(--dark);color:var(--cream)}
-.auth-divider{display:flex;align-items:center;gap:12px;margin:20px 0;font-size:11px;color:var(--muted)}
+.auth-divider{display:flex;align-items:center;gap:10px;margin:18px 0;font-size:10.5px;color:var(--muted)}
 .auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border)}
-.auth-social{width:100%;border:1.5px solid var(--border);border-radius:var(--r-sm);padding:12px;
-  background:none;font-size:13px;font-family:'Outfit',sans-serif;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;gap:10px;color:var(--text);transition:border-color .2s;margin-bottom:10px}
+.auth-social{width:100%;border:1.5px solid var(--border-neutral);border-radius:var(--r-sm);padding:11px;
+  background:none;font-size:12.5px;font-family:'Outfit',sans-serif;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:9px;color:var(--text);transition:border-color .2s;margin-bottom:8px}
 .auth-social:hover{border-color:var(--gold)}
-.auth-forgot{font-size:12px;color:var(--gold);cursor:pointer;text-align:right;margin-top:-10px;margin-bottom:16px}
+.auth-forgot{font-size:11.5px;color:var(--gold);cursor:pointer;text-align:right;margin-top:-8px;margin-bottom:14px}
 
 /* PAGE HERO SHARED */
 .page-hero{background:linear-gradient(135deg,var(--dark) 0%,#243d26 100%);
-  padding:calc(var(--nav-h) + 56px) var(--px) 64px;position:relative;overflow:hidden}
-.page-hero-orb{position:absolute;right:-80px;bottom:-80px;width:400px;height:400px;
-  background:radial-gradient(ellipse,rgba(196,151,58,.1) 0%,transparent 70%);border-radius:50%;pointer-events:none}
+  padding:calc(var(--nav-h) + 48px) var(--px) 56px;position:relative;overflow:hidden}
 
-@media(prefers-reduced-motion:reduce){.hero-petal{display:none}.ribbon-track{animation:none!important}}
+/* LOADING STATE */
+.skeleton{background:linear-gradient(90deg,var(--cream2) 25%,var(--cream) 50%,var(--cream2) 75%);
+  background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:var(--r-sm)}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+@media(prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
 </style>
 </head>
 <body>
 <div id="root"></div>
 <div id="toast-root"></div>
-<div id="cur"></div>
-<div id="cur-r"></div>
+<!-- Removed: #cur, #cur-r custom cursor elements -->
 
 <script>
-
 const PAGE_TITLES = {
   '/': 'Bouquet Studio — Handcrafted Ribbon Flowers, Sydney',
   '/bouquets': 'Browse Collection — Bouquet Studio',
@@ -479,14 +513,9 @@ const PAGE_TITLES = {
   '/cart': 'Your Cart — Bouquet Studio',
   '/login': 'Login — Bouquet Studio',
 };
-
 const DARK_NAV_PAGES = new Set(['/about']);
-function updateTitle(p) {
-  document.title = PAGE_TITLES[p] || 'Bouquet Studio';
-}
+function updateTitle(p) { document.title = PAGE_TITLES[p] || 'Bouquet Studio'; }
 
-
-// ── localStorage cart persistence ──
 function getStoredCart() {
   try { return JSON.parse(localStorage.getItem('bs_cart') || '[]'); } catch(e){ return []; }
 }
@@ -495,102 +524,67 @@ function saveCart(items) {
 }
 
 function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
-const {
-  useState,
-  useLayoutEffect,
-  useEffect,
-  useRef,
-  useCallback,
-  createContext,
-  useContext
-} = React;
+const { useState, useLayoutEffect, useEffect, useRef, useCallback, createContext, useContext } = React;
 gsap.registerPlugin(ScrollTrigger);
+
+/* ── Streamlined motion constants — faster, more functional ── */
 const M = {
-  ease: {
-    out: 'power2.out',
-    expo: 'expo.out',
-    expoIO: 'expo.inOut',
-    el: 'elastic.out(1,.45)'
-  },
-  dur: {
-    fast: .36,
-    base: .65,
-    slow: .9,
-    film: 1.2
-  }
+  ease: { out: 'power2.out', expo: 'expo.out' },
+  dur:  { fast: .22, base: .42, slow: .62 }
 };
 
 /* ─── ROUTER ─── */
 const RouterCtx = createContext(null);
-function RouterProvider({
-  children
-}) {
+function RouterProvider({ children }) {
   const [path, setPath] = useState(window.location.hash.slice(1) || '/');
   const navigate = useCallback(to => {
     window.location.hash = to;
     setPath(to);
     updateTitle(to);
-    window.scrollTo({
-      top: 0,
-      behavior: 'instant'
-    });
+    window.scrollTo({ top: 0, behavior: 'instant' });
   }, []);
   useEffect(() => {
     const fn = () => { const p = window.location.hash.slice(1) || '/'; setPath(p); updateTitle(p); };
     window.addEventListener('hashchange', fn);
     return () => window.removeEventListener('hashchange', fn);
   }, []);
-  return /*#__PURE__*/React.createElement(RouterCtx.Provider, {
-    value: {
-      path,
-      navigate
-    }
-  }, children);
+  return React.createElement(RouterCtx.Provider, { value: { path, navigate } }, children);
 }
 const useRouter = () => useContext(RouterCtx);
 
 /* ─── CART CONTEXT ─── */
 const CartCtx = createContext(null);
-function CartProvider({
-  children
-}) {
+function CartProvider({ children }) {
   const [items, setItems] = useState(getStoredCart);
-  useEffect(()=>{ saveCart(items); },[items]);
+  useEffect(() => { saveCart(items); }, [items]);
   const add = useCallback(product => {
     setItems(prev => {
       const ex = prev.find(i => i.name === product.name);
-      if (ex) return prev.map(i => i.name === product.name ? {
-        ...i,
-        qty: i.qty + 1
-      } : i);
-      return [...prev, {
-        ...product,
-        qty: 1
-      }];
+      if (ex) return prev.map(i => i.name === product.name ? { ...i, qty: i.qty + 1 } : i);
+      return [...prev, { ...product, qty: 1 }];
     });
     toast(`${product.name} added to cart`);
   }, []);
   const remove = useCallback(name => setItems(prev => prev.filter(i => i.name !== name)), []);
   const updateQty = useCallback((name, delta) => {
-    setItems(prev => prev.map(i => i.name === name ? {
-      ...i,
-      qty: Math.max(1, i.qty + delta)
-    } : i));
+    setItems(prev => prev.map(i => i.name === name ? { ...i, qty: Math.max(1, i.qty + delta) } : i));
   }, []);
   const total = items.reduce((s, i) => s + parseFloat(i.price.replace('$', '')) * i.qty, 0);
   const count = items.reduce((s, i) => s + i.qty, 0);
-  return /*#__PURE__*/React.createElement(CartCtx.Provider, {
-    value: {
-      items,
-      add,
-      remove,
-      updateQty,
-      total,
-      count
-    }
-  }, children);
+  return React.createElement(CartCtx.Provider, { value: { items, add, remove, updateQty, total, count } }, children);
 }
 const useCart = () => useContext(CartCtx);
+
+/* ─── WISHLIST CONTEXT ─── */
+const WishCtx = createContext(null);
+function WishlistProvider({ children }) {
+  const [wished, setWished] = useState([]);
+  const toggle = useCallback(name => {
+    setWished(prev => prev.includes(name) ? prev.filter(n => n !== name) : [...prev, name]);
+  }, []);
+  return React.createElement(WishCtx.Provider, { value: { wished, toggle } }, children);
+}
+const useWishlist = () => useContext(WishCtx);
 
 /* ─── TOAST ─── */
 function toast(msg) {
@@ -599,2024 +593,788 @@ function toast(msg) {
   el.className = 'toast';
   el.innerHTML = `<span class="toast-dot"></span>${msg}`;
   root.appendChild(el);
-  gsap.to(el, {
-    opacity: 1,
-    y: 0,
-    duration: M.dur.fast,
-    ease: M.ease.expo
-  });
+  gsap.to(el, { opacity: 1, y: 0, duration: M.dur.fast, ease: M.ease.expo });
   setTimeout(() => {
-    gsap.to(el, {
-      opacity: 0,
-      y: 8,
-      duration: M.dur.fast,
-      ease: M.ease.out,
-      onComplete: () => el.remove()
-    });
-  }, 2800);
+    gsap.to(el, { opacity: 0, y: 6, duration: M.dur.fast, ease: M.ease.out, onComplete: () => el.remove() });
+  }, 2600);
 }
 
-/* ─── HOOKS ─── */
+/* ─── SCROLL REVEAL HOOK ─── Only animate section titles + card groups ─── */
 function useReveal(scopeRef, fn) {
   useLayoutEffect(() => {
     const ctx = gsap.context(fn, scopeRef);
     return () => ctx.revert();
   }, []);
 }
-function useMag(ref, str = .22) {
-  const onMove = e => {
-    const r = ref.current.getBoundingClientRect();
-    gsap.to(ref.current, {
-      x: (e.clientX - (r.left + r.width / 2)) * str,
-      y: (e.clientY - (r.top + r.height / 2)) * str,
-      duration: .4,
-      ease: M.ease.out
-    });
-  };
-  const onLeave = () => gsap.to(ref.current, {
-    x: 0,
-    y: 0,
-    duration: .55,
-    ease: M.ease.el
-  });
-  return {
-    onMouseMove: onMove,
-    onMouseLeave: onLeave
-  };
-}
-
-/* ─── COMPONENTS ─── */
-function MagBtn({
-  className,
-  children,
-  onClick
-}) {
-  const ref = useRef(null);
-  const mag = useMag(ref);
-  return /*#__PURE__*/React.createElement("button", _extends({
-    ref: ref,
-    className: className,
-    onClick: onClick
-  }, mag), children);
-}
-function Cursor() {
-  const dotRef = useRef(document.getElementById('cur'));
-  const ringRef = useRef(document.getElementById('cur-r'));
-  useLayoutEffect(() => {
-    let mx = 0,
-      my = 0,
-      rx = 0,
-      ry = 0,
-      init = false;
-    const onMove = ({
-      clientX: x,
-      clientY: y
-    }) => {
-      mx = x;
-      my = y;
-      if (!init) {
-        init = true;
-        gsap.to([dotRef.current, ringRef.current], {
-          opacity: 1,
-          duration: .3
-        });
-      }
-      gsap.to(dotRef.current, {
-        x,
-        y,
-        duration: .08
-      });
-    };
-    document.addEventListener('mousemove', onMove);
-    const tick = () => {
-      rx += (mx - rx) * .1;
-      ry += (my - ry) * .1;
-      gsap.set(ringRef.current, {
-        x: rx,
-        y: ry
-      });
-    };
-    gsap.ticker.add(tick);
-    return () => {
-      document.removeEventListener('mousemove', onMove);
-      gsap.ticker.remove(tick);
-    };
-  }, []);
-  return null;
-}
 
 /* ─── MODAL ─── */
-function Modal({
-  open,
-  onClose,
-  title,
-  children
-}) {
+function Modal({ open, onClose, title, children }) {
   useEffect(() => {
     const fn = e => e.key === 'Escape' && onClose();
     document.addEventListener('keydown', fn);
     return () => document.removeEventListener('keydown', fn);
   }, [onClose]);
-  return /*#__PURE__*/React.createElement("div", {
-    className: `modal-bg${open ? ' open' : ''}`,
-    onClick: e => e.currentTarget === e.target && onClose()
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "modal-box"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "modal-head"
-  }, /*#__PURE__*/React.createElement("h3", null, title), /*#__PURE__*/React.createElement("button", {
-    className: "modal-close",
-    onClick: onClose
-  }, "\xD7")), /*#__PURE__*/React.createElement("div", {
-    className: "modal-body"
-  }, children)));
+  return React.createElement("div", { className: `modal-bg${open ? ' open' : ''}`, onClick: e => e.currentTarget === e.target && onClose() },
+    React.createElement("div", { className: "modal-box" },
+      React.createElement("div", { className: "modal-head" },
+        React.createElement("h3", null, title),
+        React.createElement("button", { className: "modal-close", onClick: onClose }, "×")),
+      React.createElement("div", { className: "modal-body" }, children)));
 }
 
-/* ─── NAV ─── */
-function Nav({
-  onPolicy,
-  onTerms
-}) {
-  const {
-    count
-  } = useCart();
-  const {
-    path,
-    navigate
-  } = useRouter();
+/* ─── NAV ─── Removed MagBtn from nav, plain button instead ─── */
+function Nav({ onPolicy, onTerms }) {
+  const { count } = useCart();
+  const { path, navigate } = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const navRef = useRef(null);
   const menuRef = useRef(null);
+
   useLayoutEffect(() => {
-    gsap.from(navRef.current, {
-      y: -14,
-      opacity: 0,
-      duration: M.dur.base,
-      ease: M.ease.out,
-      delay: .1
-    });
+    // Kept: one simple nav fade in — purposeful, not decorative
+    gsap.from(navRef.current, { y: -10, opacity: 0, duration: M.dur.base, ease: M.ease.out, delay: .1 });
     const st = ScrollTrigger.create({
-      start: 80,
+      start: 72,
       onEnter: () => setScrolled(true),
       onLeaveBack: () => setScrolled(false)
     });
     return () => st.kill();
   }, []);
+
   const openMenu = () => {
     setMenuOpen(true);
-    gsap.set(menuRef.current, {
-      visibility: 'visible'
-    });
-    gsap.fromTo(menuRef.current, {
-      x: '100%'
-    }, {
-      x: '0%',
-      duration: .46,
-      ease: M.ease.expo
-    });
+    gsap.set(menuRef.current, { visibility: 'visible' });
+    gsap.fromTo(menuRef.current, { x: '100%' }, { x: '0%', duration: .38, ease: M.ease.expo });
   };
   const closeMenu = () => {
-    gsap.to(menuRef.current, {
-      x: '100%',
-      duration: .36,
-      ease: 'power3.in',
-      onComplete: () => {
-        gsap.set(menuRef.current, {
-          visibility: 'hidden'
-        });
-        setMenuOpen(false);
-      }
-    });
+    gsap.to(menuRef.current, { x: '100%', duration: .28, ease: 'power3.in', onComplete: () => {
+      gsap.set(menuRef.current, { visibility: 'hidden' }); setMenuOpen(false);
+    }});
   };
-  const LINKS = [{
-    label: 'Home',
-    path: '/'
-  }, {
-    label: 'Browse',
-    path: '/bouquets'
-  }, {
-    label: 'Custom',
-    path: '/custom'
-  }, {
-    label: 'About',
-    path: '/about'
-  }, {
-    label: 'Contact',
-    path: '/contact'
-  }];
-  return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("nav", {
-    ref: navRef,
-    className: `nav${scrolled ? ' scrolled' : ''}${(!scrolled && DARK_NAV_PAGES.has(path)) ? ' nav-light' : ''}`
-  }, /*#__PURE__*/React.createElement("a", {
-    className: "nav-logo",
-    onClick: () => navigate('/')
-  }, "Bouquet", /*#__PURE__*/React.createElement("span", null, "Studio")), /*#__PURE__*/React.createElement("ul", {
-    className: "nav-links"
-  }, LINKS.map(l => /*#__PURE__*/React.createElement("li", {
-    key: l.label
-  }, /*#__PURE__*/React.createElement("a", {
-    className: path === l.path ? 'active' : '',
-    onClick: () => navigate(l.path)
-  }, l.label)))), /*#__PURE__*/React.createElement("div", {
-    className: "nav-actions"
-  }, /*#__PURE__*/React.createElement("button", {
-    className: "nav-cart-btn",
-    onClick: () => navigate('/cart')
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "cart-label"
-  }, "Cart"), /*#__PURE__*/React.createElement("span", {
-    className: "cart-count"
-  }, count)), /*#__PURE__*/React.createElement(MagBtn, {
-    className: "btn-nav",
-    onClick: () => navigate('/login')
-  }, "Login"), /*#__PURE__*/React.createElement("button", {
-    className: "hamburger",
-    onClick: openMenu,
-    "aria-label": "Open menu"
-  }, /*#__PURE__*/React.createElement("span", null), /*#__PURE__*/React.createElement("span", null), /*#__PURE__*/React.createElement("span", null)))), /*#__PURE__*/React.createElement("div", {
-    ref: menuRef,
-    className: "mob-menu"
-  }, /*#__PURE__*/React.createElement("button", {
-    className: "mob-close",
-    onClick: closeMenu
-  }, "\xD7"), /*#__PURE__*/React.createElement("ul", {
-    className: "mob-links"
-  }, LINKS.map(l => /*#__PURE__*/React.createElement("li", {
-    key: l.label
-  }, /*#__PURE__*/React.createElement("a", {
-    onClick: () => {
-      closeMenu();
-      navigate(l.path);
-    }
-  }, l.label))), /*#__PURE__*/React.createElement("li", null, /*#__PURE__*/React.createElement("a", {
-    onClick: () => {
-      closeMenu();
-      navigate('/login');
-    }
-  }, "Login"))), /*#__PURE__*/React.createElement("div", {
-    className: "mob-cta"
-  }, /*#__PURE__*/React.createElement(MagBtn, {
-    className: "btn-gold",
-    onClick: () => {
-      closeMenu();
-      navigate('/cart');
-    }
-  }, "View Cart (", count, ")"))));
+
+  const LINKS = [
+    { label: 'Home', path: '/' },
+    { label: 'Browse', path: '/bouquets' },
+    { label: 'Custom', path: '/custom' },
+    { label: 'About', path: '/about' },
+    { label: 'Contact', path: '/contact' },
+  ];
+
+  return React.createElement(React.Fragment, null,
+    React.createElement("nav", { ref: navRef, className: `nav${scrolled ? ' scrolled' : ''}${(!scrolled && DARK_NAV_PAGES.has(path)) ? ' nav-light' : ''}` },
+      React.createElement("a", { className: "nav-logo", onClick: () => navigate('/') }, "Bouquet", React.createElement("span", null, "Studio")),
+      React.createElement("ul", { className: "nav-links" }, LINKS.map(l =>
+        React.createElement("li", { key: l.label },
+          React.createElement("a", { className: path === l.path ? 'active' : '', onClick: () => navigate(l.path) }, l.label)))),
+      React.createElement("div", { className: "nav-actions" },
+        React.createElement("button", { className: "nav-cart-btn", onClick: () => navigate('/cart') },
+          React.createElement("span", { className: "cart-label" }, "Cart"),
+          React.createElement("span", { className: "cart-count" }, count)),
+        React.createElement("button", { className: "nav-login-link", onClick: () => navigate('/login') }, "Login"),
+        React.createElement("button", { className: "hamburger", onClick: openMenu, "aria-label": "Open menu" },
+          React.createElement("span"), React.createElement("span"), React.createElement("span")))),
+    React.createElement("div", { ref: menuRef, className: "mob-menu" },
+      React.createElement("button", { className: "mob-close", onClick: closeMenu }, "×"),
+      React.createElement("ul", { className: "mob-links" },
+        LINKS.map(l => React.createElement("li", { key: l.label },
+          React.createElement("a", { onClick: () => { closeMenu(); navigate(l.path); } }, l.label))),
+        React.createElement("li", null, React.createElement("a", { onClick: () => { closeMenu(); navigate('/login'); } }, "Login"))),
+      React.createElement("div", { className: "mob-cta" },
+        React.createElement("button", { className: "btn-gold", onClick: () => { closeMenu(); navigate('/cart'); } }, `View Cart (${count})`))));
 }
 
 /* ─── FOOTER ─── */
-function Footer({
-  onPolicy,
-  onTerms
-}) {
-  const {
-    navigate
-  } = useRouter();
-  const Col = ({
-    title,
-    links
-  }) => /*#__PURE__*/React.createElement("div", {
-    className: "footer-col"
-  }, /*#__PURE__*/React.createElement("h4", null, title), /*#__PURE__*/React.createElement("ul", null, links.map(([l, fn]) => /*#__PURE__*/React.createElement("li", {
-    key: l
-  }, /*#__PURE__*/React.createElement("a", {
-    onClick: fn || (e => {})
-  }, l)))));
-  return /*#__PURE__*/React.createElement("footer", {
-    className: "footer"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "footer-top"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "footer-brand"
-  }, /*#__PURE__*/React.createElement("a", {
-    className: "nav-logo",
-    onClick: () => navigate('/')
-  }, "Bouquet", /*#__PURE__*/React.createElement("span", null, "Studio")), /*#__PURE__*/React.createElement("p", null, "Timeless ribbon elegance, handcrafted with love in Sydney. Delivering beauty across Australia since 2020."), /*#__PURE__*/React.createElement("div", {
-    style: {
-      marginTop: 16,
-      fontSize: 11,
-      color: 'rgba(250,246,240,.28)'
-    }
-  }, "ABN: 12 345 678 901 \xB7 Sydney NSW 2000")), /*#__PURE__*/React.createElement(Col, {
-    title: "Shop",
-    links: [['All Bouquets', () => navigate('/bouquets')], ['Custom', () => navigate('/custom')], ['Gift Cards']]
-  }), /*#__PURE__*/React.createElement(Col, {
-    title: "Studio",
-    links: [['Our Story', () => navigate('/about')], ['Craftsmanship'], ['Sustainability'], ['Press']]
-  }), /*#__PURE__*/React.createElement(Col, {
-    title: "Help",
-    links: [['Contact Us', () => navigate('/contact')], ['Delivery Info'], ['Returns'], ['FAQ']]
-  })), /*#__PURE__*/React.createElement("div", {
-    className: "footer-bottom"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "footer-copy"
-  }, "\xA9 2026 Bouquet Studio Pty Ltd. All rights reserved."), /*#__PURE__*/React.createElement("div", {
-    className: "footer-legal"
-  }, /*#__PURE__*/React.createElement("a", {
-    onClick: onPolicy
-  }, "Privacy Policy"), /*#__PURE__*/React.createElement("a", {
-    onClick: onTerms
-  }, "Terms & Conditions"), /*#__PURE__*/React.createElement("a", null, "Refund Policy")), /*#__PURE__*/React.createElement("div", {
-    className: "footer-socials"
-  }, ['Instagram', 'TikTok', 'Pinterest'].map(s => /*#__PURE__*/React.createElement("a", {
-    key: s
-  }, s)))));
+function Footer({ onPolicy, onTerms }) {
+  const { navigate } = useRouter();
+  const Col = ({ title, links }) => React.createElement("div", { className: "footer-col" },
+    React.createElement("h4", null, title),
+    React.createElement("ul", null, links.map(([l, fn]) =>
+      React.createElement("li", { key: l }, React.createElement("a", { onClick: fn || (() => {}) }, l)))));
+  return React.createElement("footer", { className: "footer" },
+    React.createElement("div", { className: "footer-top" },
+      React.createElement("div", { className: "footer-brand" },
+        React.createElement("a", { className: "nav-logo", onClick: () => navigate('/') }, "Bouquet", React.createElement("span", null, "Studio")),
+        React.createElement("p", null, "Timeless ribbon elegance, handcrafted in Sydney. Delivering beauty across Australia since 2020."),
+        React.createElement("div", { style: { marginTop: 12, fontSize: 10.5, color: 'rgba(250,246,240,.24)' } }, "ABN: 12 345 678 901 · Sydney NSW 2000")),
+      React.createElement(Col, { title: "Shop", links: [['All Bouquets', () => navigate('/bouquets')], ['Custom', () => navigate('/custom')], ['Gift Cards', null]] }),
+      React.createElement(Col, { title: "Studio", links: [['Our Story', () => navigate('/about')], ['Craftsmanship', null], ['Sustainability', null], ['Press', null]] }),
+      React.createElement(Col, { title: "Help", links: [['Contact Us', () => navigate('/contact')], ['Delivery Info', null], ['Returns', null], ['FAQ', null]] })),
+    React.createElement("div", { className: "footer-bottom" },
+      React.createElement("div", { className: "footer-copy" }, "© 2026 Bouquet Studio Pty Ltd. All rights reserved."),
+      React.createElement("div", { className: "footer-legal" },
+        React.createElement("a", { onClick: onPolicy }, "Privacy Policy"),
+        React.createElement("a", { onClick: onTerms }, "Terms & Conditions"),
+        React.createElement("a", null, "Refund Policy")),
+      React.createElement("div", { className: "footer-socials" }, ['Instagram', 'TikTok', 'Pinterest'].map(s =>
+        React.createElement("a", { key: s }, s)))));
 }
 
 /* ═══════════════════════════
-   BOUQUETS DATA
+   PRODUCT DATA
 ═══════════════════════════ */
-const BOUQS = [{
-  name: 'The Classic Romantic',
-  tag: 'Bestseller',
-  price: '$89',
-  photo: 'photo-1526047932273-341f2a7631f9',
-  desc: 'Soft blush pinks and ivory ribbons, artfully arranged for timeless elegance.',
-  badge: 'Best Seller',
-  badgeGold: true
-}, {
-  name: 'Midnight Garden',
-  tag: 'Limited Edition',
-  price: '$114',
-  photo: 'photo-1558618666-fcd25c85cd64',
-  desc: 'Deep burgundy and forest green ribbons for a dramatic, moody statement.',
-  badge: 'New',
-  badgeGold: false
-}, {
-  name: 'Golden Hour',
-  tag: 'Bridal',
-  price: '$139',
-  photo: 'photo-1545048702-79362596cdc9',
-  desc: 'Warm amber, champagne and ivory — perfect for bridal and anniversary gifts.',
-  badge: null
-}, {
-  name: 'Spring Awakening',
-  tag: 'Seasonal',
-  price: '$79',
-  photo: 'photo-1490750967868-88df5691cc1e',
-  desc: 'Fresh lilac, mint and pale yellow ribbons celebrating the joy of spring.',
-  badge: 'New',
-  badgeGold: false
-}, {
-  name: 'Eternal White',
-  tag: 'Sympathy',
-  price: '$99',
-  photo: 'photo-1487530811176-3780de880c2d',
-  desc: 'Pure white and silver ribbons in a serene, minimalist composition.',
-  badge: null
-}, {
-  name: 'Crimson Kiss',
-  tag: 'Romance',
-  price: '$109',
-  photo: 'photo-1455659817273-f96807779a8a',
-  desc: 'Passionate red and deep rose ribbons with gold accents for grand gestures.',
-  badge: 'Popular',
-  badgeGold: false
-}, {
-  name: 'Lavender Dreams',
-  tag: 'Birthday',
-  price: '$84',
-  photo: 'photo-1508610048659-a06b669e3321',
-  desc: 'Soft lavender, lilac and pearl ribbons — a dreamy gift for any occasion.',
-  badge: null
-}, {
-  name: 'Bespoke Masterpiece',
-  tag: 'Custom',
-  price: '$159+',
-  photo: 'photo-1520271348891-049f9432f40c',
-  desc: 'Fully customised to your palette, size and wrapping preferences.',
-  badge: 'Custom',
-  badgeGold: true
-}, {
-  name: 'Sunrise Blush',
-  tag: 'Gift',
-  price: '$94',
-  photo: 'photo-1439539698758-ba2680ecadb9',
-  desc: 'Peachy coral and cream ribbons with a warm, sunrise glow.',
-  badge: null
-}];
+const BOUQS = [
+  { name: 'The Classic Romantic', tag: 'Bestseller', price: '$89', photo: 'photo-1526047932273-341f2a7631f9', desc: 'Soft blush pinks and ivory ribbons, artfully arranged for timeless elegance.', badge: 'Best Seller', badgeGold: true },
+  { name: 'Midnight Garden', tag: 'Limited Edition', price: '$114', photo: 'photo-1558618666-fcd25c85cd64', desc: 'Deep burgundy and forest green ribbons for a dramatic, moody statement.', badge: 'New', badgeGold: false },
+  { name: 'Golden Hour', tag: 'Bridal', price: '$139', photo: 'photo-1545048702-79362596cdc9', desc: 'Warm amber, champagne and ivory — perfect for bridal and anniversary gifts.', badge: null },
+  { name: 'Spring Awakening', tag: 'Seasonal', price: '$79', photo: 'photo-1490750967868-88df5691cc1e', desc: 'Fresh lilac, mint and pale yellow ribbons celebrating the joy of spring.', badge: 'New', badgeGold: false },
+  { name: 'Eternal White', tag: 'Sympathy', price: '$99', photo: 'photo-1487530811176-3780de880c2d', desc: 'Pure white and silver ribbons in a serene, minimalist composition.', badge: null },
+  { name: 'Crimson Kiss', tag: 'Romance', price: '$109', photo: 'photo-1455659817273-f96807779a8a', desc: 'Passionate red and deep rose ribbons with gold accents for grand gestures.', badge: 'Popular', badgeGold: false },
+  { name: 'Lavender Dreams', tag: 'Birthday', price: '$84', photo: 'photo-1508610048659-a06b669e3321', desc: 'Soft lavender, lilac and pearl ribbons — a dreamy gift for any occasion.', badge: null },
+  { name: 'Bespoke Masterpiece', tag: 'Custom', price: '$159+', photo: 'photo-1520271348891-049f9432f40c', desc: 'Fully customised to your palette, size and wrapping preferences.', badge: 'Custom', badgeGold: true },
+  { name: 'Sunrise Blush', tag: 'Gift', price: '$94', photo: 'photo-1439539698758-ba2680ecadb9', desc: 'Peachy coral and cream ribbons with a warm, sunrise glow.', badge: null },
+];
 const FILTER_CATS = ['All', 'Bestseller', 'Bridal', 'Birthday', 'Romance', 'Custom', 'Seasonal', 'Limited Edition'];
+
+/* ═══════════════════════════
+   REUSABLE PRODUCT CARD COMPONENT
+═══════════════════════════ */
+function ProductCard({ b, onAdd, onQuickView }) {
+  const { wished, toggle } = useWishlist();
+  const isWished = wished.includes(b.name);
+  return React.createElement("div", { className: "card" },
+    b.badge && React.createElement("div", { className: `card-bdg${b.badgeGold ? ' gold' : ''}` }, b.badge),
+    React.createElement("div", { className: "card-shell" },
+      React.createElement("img", { className: "card-img", src: `https://images.unsplash.com/${b.photo}?auto=format&fit=crop&q=80&w=600`, alt: b.name, loading: "lazy" }),
+      React.createElement("button", {
+        className: `card-wish${isWished ? ' active' : ''}`,
+        onClick: e => { e.stopPropagation(); toggle(b.name); toast(isWished ? 'Removed from wishlist' : 'Added to wishlist'); },
+        "aria-label": "Add to wishlist"
+      }, isWished ? '♥' : '♡')),
+    React.createElement("div", { className: "card-body" },
+      React.createElement("div", { className: "card-tag" }, b.tag),
+      React.createElement("div", { className: "card-name" }, b.name),
+      React.createElement("div", { className: "card-desc" }, b.desc),
+      React.createElement("div", { className: "card-foot" },
+        React.createElement("div", { className: "card-price" }, b.price),
+        React.createElement("div", { style: { display: 'flex', gap: 6 } },
+          React.createElement("button", { className: "btn-card", style: { background: 'none', border: '1.5px solid var(--border-neutral)', color: 'var(--muted)', padding: '6px 10px', fontSize: 10 }, onClick: () => onQuickView && onQuickView(b) }, "View"),
+          React.createElement("button", { className: "btn-card", onClick: () => onAdd(b) }, "Add")))));
+}
+
+/* ─── QUICK VIEW MODAL COMPONENT ─── */
+function QuickViewModal({ item, onClose, onAdd }) {
+  const [qty, setQty] = useState(1);
+  if (!item) return null;
+  return React.createElement("div", { className: `qv-bg open`, onClick: e => e.currentTarget === e.target && onClose() },
+    React.createElement("div", { className: "qv-box" },
+      React.createElement("img", { className: "qv-img", src: `https://images.unsplash.com/${item.photo}?auto=format&fit=crop&q=80&w=700`, alt: item.name }),
+      React.createElement("div", { className: "qv-info" },
+        React.createElement("button", { className: "qv-close", onClick: onClose }, "×"),
+        React.createElement("div", { className: "qv-tag" }, item.tag),
+        React.createElement("div", { className: "qv-name" }, item.name),
+        React.createElement("div", { className: "qv-desc" }, item.desc),
+        React.createElement("div", { className: "qv-price" }, item.price),
+        React.createElement("div", { className: "qv-qty" },
+          React.createElement("span", { className: "qv-qty-label" }, "Qty"),
+          React.createElement("button", { className: "qty-btn", onClick: () => setQty(q => Math.max(1, q - 1)) }, "−"),
+          React.createElement("span", { style: { fontFamily: "'Cormorant Garamond',serif", fontSize: 18, minWidth: 24, textAlign: 'center' } }, qty),
+          React.createElement("button", { className: "qty-btn", onClick: () => setQty(q => q + 1) }, "+")),
+        React.createElement("button", { className: "btn-gold btn-full", style: { marginTop: 4 }, onClick: () => {
+          for(let i=0;i<qty;i++) onAdd(item); onClose();
+        }}, "Add to Cart →"),
+        React.createElement("p", { style: { fontSize: 11, color: 'var(--muted)', marginTop: 10, lineHeight: 1.6 } }, "🔒 Secure checkout · Free delivery on orders $100+"))));
+}
 
 /* ═══════════════════════════
    HOME PAGE
 ═══════════════════════════ */
 function Hero() {
-  const {
-    navigate
-  } = useRouter();
-  const {
-    add
-  } = useCart();
+  const { navigate } = useRouter();
   const secRef = useRef(null);
+
   useLayoutEffect(() => {
-    const mm = gsap.matchMedia();
-    mm.add({
-      isDesktop: '(min-width:768px)',
-      isMobile: '(max-width:767px)'
-    }, ctx => {
-      const {
-        isDesktop
-      } = ctx.conditions;
-      const scope = gsap.context(() => {
-        const tl = gsap.timeline({
-          delay: .3
-        });
-        tl.from('.line-inner', {
-          yPercent: 108,
-          duration: M.dur.film,
-          ease: M.ease.expo,
-          stagger: .09
-        });
-        tl.from(['.hero-eyebrow', '.hero-desc', '.hero-cta', '.hero-stats'], {
-          opacity: 0,
-          y: 10,
-          duration: M.dur.slow,
-          ease: M.ease.out,
-          stagger: .1
-        }, '-=.9');
-        if (isDesktop) {
-          gsap.from('.hero-img-frame', {
-            clipPath: 'inset(0 100% 0 0 round 200px 200px 160px 160px)',
-            duration: M.dur.film,
-            ease: M.ease.expoIO,
-            delay: .55
-          });
-          gsap.from('.hero-img-frame img', {
-            scale: 1.07,
-            duration: 1.7,
-            ease: M.ease.out,
-            delay: .55
-          });
-          gsap.from(['.hero-badge', '.hero-float-pill'], {
-            opacity: 0,
-            duration: M.dur.slow,
-            ease: M.ease.out,
-            stagger: .12,
-            delay: 1.1
-          });
-          gsap.to('.hero-img-frame img', {
-            y: -38,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: secRef.current,
-              start: 'top top',
-              end: 'bottom top',
-              scrub: 1.4
-            }
-          });
-        } else {
-          gsap.from('.hero-img-frame', {
-            opacity: 0,
-            y: 16,
-            duration: M.dur.base,
-            ease: M.ease.out,
-            delay: .7
-          });
-        }
-        document.querySelectorAll('[data-target]').forEach(el => {
-          const target = +el.dataset.target;
-          ScrollTrigger.create({
-            trigger: el,
-            start: 'top 88%',
-            once: true,
-            onEnter: () => gsap.to({
-              v: 0
-            }, {
-              v: target,
-              duration: 1.8,
-              ease: 'power2.out',
-              onUpdate() {
-                el.textContent = Math.round(this.targets()[0].v).toLocaleString() + (target === 98 ? '%' : '+');
-              }
-            })
-          });
-        });
-      }, secRef);
-      return () => scope.revert();
-    });
-    document.querySelectorAll('.hero-petal').forEach((el, i) => {
-      gsap.to(el, {
-        y: -6 - i * 3,
-        rotation: 4 - i * 3,
-        duration: 3 + i,
-        repeat: -1,
-        yoyo: true,
-        ease: 'sine.inOut',
-        delay: i * .7
-      });
-    });
-    return () => mm.revert();
-  }, []);
-  return /*#__PURE__*/React.createElement("section", {
-    ref: secRef,
-    className: "hero",
-    id: "hero"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "hero-orb"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "hero-left"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "hero-eyebrow"
-  }, "Handcrafted in Sydney, Australia"), /*#__PURE__*/React.createElement("h1", {
-    className: "hero-title"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "line"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "line-inner"
-  }, "Elegance")), /*#__PURE__*/React.createElement("span", {
-    className: "line"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "line-inner"
-  }, "in ", /*#__PURE__*/React.createElement("em", null, "Every"))), /*#__PURE__*/React.createElement("span", {
-    className: "line"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "line-inner"
-  }, "Bloom"))), /*#__PURE__*/React.createElement("p", {
-    className: "hero-desc"
-  }, "Curated ribbon flower bouquets, hand\u2011crafted with artistic precision and delivered fresh to your doorstep across Australia."), /*#__PURE__*/React.createElement("div", {
-    className: "hero-cta"
-  }, /*#__PURE__*/React.createElement(MagBtn, {
-    className: "btn-primary",
-    onClick: () => navigate('/bouquets')
-  }, /*#__PURE__*/React.createElement("span", null, "Explore Collection")), /*#__PURE__*/React.createElement("button", {
-    className: "btn-outline",
-    onClick: () => navigate('/about')
-  }, "Our Story")), /*#__PURE__*/React.createElement("div", {
-    className: "hero-stats"
-  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
-    className: "stat-num",
-    "data-target": "2400"
-  }, "0"), /*#__PURE__*/React.createElement("div", {
-    className: "stat-lbl"
-  }, "Bouquets Delivered")), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
-    className: "stat-num",
-    "data-target": "98"
-  }, "0"), /*#__PURE__*/React.createElement("div", {
-    className: "stat-lbl"
-  }, "% Happy Customers")), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
-    className: "stat-num",
-    "data-target": "5"
-  }, "0"), /*#__PURE__*/React.createElement("div", {
-    className: "stat-lbl"
-  }, "Years of Craft")))), /*#__PURE__*/React.createElement("div", {
-    className: "hero-right"
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      position: 'relative'
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "hero-img-frame"
-  }, /*#__PURE__*/React.createElement("img", {
-    src: "https://images.unsplash.com/photo-1526047932273-341f2a7631f9?auto=format&fit=crop&q=80&w=700",
-    alt: "Premium handcrafted ribbon bouquet"
-  })), /*#__PURE__*/React.createElement("div", {
-    className: "hero-badge"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "hero-badge-label"
-  }, "\u2B50 Top Rated"), /*#__PURE__*/React.createElement("div", {
-    className: "hero-badge-sub"
-  }, "Same\u2011day delivery")), /*#__PURE__*/React.createElement("div", {
-    className: "hero-float-pill"
-  }, "\uD83C\uDF38 ", /*#__PURE__*/React.createElement("span", null, "100%"), " Handmade in Sydney"), /*#__PURE__*/React.createElement("div", {
-    className: "hero-petal",
-    style: {
-      top: '8%',
-      left: '-8%'
-    }
-  }, "\uD83C\uDF38"), /*#__PURE__*/React.createElement("div", {
-    className: "hero-petal",
-    style: {
-      bottom: '18%',
-      right: '-6%'
-    }
-  }, "\uD83C\uDF3A"))));
-}
-const RI = ['Handcrafted Bouquets', 'Same‑Day Delivery', 'Ribbon Florals', 'Everlasting Beauty', 'Custom Orders', 'Across Australia'];
-function Ribbon() {
-  const ref = useRef(null);
-  useLayoutEffect(() => {
-    requestAnimationFrame(() => {
-      const w = ref.current.scrollWidth / 2;
-      gsap.to(ref.current, {
-        x: -w,
-        duration: 25,
-        repeat: -1,
-        ease: 'linear'
+    // Kept: hero intro — but simplified. No line-clip, no floating petals, no parallax
+    const tl = gsap.timeline({ delay: .2 });
+    tl.from('.hero-title', { opacity: 0, y: 16, duration: M.dur.base, ease: M.ease.out });
+    tl.from(['.hero-eyebrow', '.hero-desc', '.hero-cta', '.hero-stats'], {
+      opacity: 0, y: 10, duration: M.dur.slow, ease: M.ease.out, stagger: .08
+    }, '-=.3');
+    tl.from('.hero-img-frame', { opacity: 0, y: 10, duration: M.dur.base, ease: M.ease.out }, '-=.5');
+    tl.from(['.hero-badge', '.hero-float-pill'], {
+      opacity: 0, duration: M.dur.base, ease: M.ease.out, stagger: .1
+    }, '-=.3');
+
+    // Counter animation — kept, useful UI pattern
+    document.querySelectorAll('[data-target]').forEach(el => {
+      const target = +el.dataset.target;
+      ScrollTrigger.create({
+        trigger: el, start: 'top 90%', once: true,
+        onEnter: () => gsap.to({ v: 0 }, {
+          v: target, duration: 1.4, ease: 'power2.out',
+          onUpdate() { el.textContent = Math.round(this.targets()[0].v).toLocaleString() + (target === 98 ? '%' : '+'); }
+        })
       });
     });
   }, []);
-  return /*#__PURE__*/React.createElement("div", {
-    className: "ribbon"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "ribbon-track",
-    ref: ref
-  }, [...RI, ...RI].map((t, i) => /*#__PURE__*/React.createElement("div", {
-    key: i,
-    className: "ribbon-item"
-  }, t, /*#__PURE__*/React.createElement("span", {
-    className: "ribbon-dot"
-  })))));
+
+  return React.createElement("section", { ref: secRef, className: "hero", id: "hero" },
+    React.createElement("div", { className: "hero-left" },
+      React.createElement("div", { className: "hero-eyebrow" }, "Handcrafted in Sydney, Australia"),
+      React.createElement("h1", { className: "hero-title" },
+        "Elegance in", React.createElement("br"), React.createElement("em", null, "Every"), " Bloom"),
+      React.createElement("p", { className: "hero-desc" }, "Curated ribbon flower bouquets, handcrafted with artistic precision and delivered across Australia."),
+      React.createElement("div", { className: "hero-cta" },
+        React.createElement("button", { className: "btn-primary", onClick: () => navigate('/bouquets') },
+          React.createElement("span", null, "Explore Collection")),
+        React.createElement("button", { className: "btn-outline", onClick: () => navigate('/about') }, "Our Story")),
+      React.createElement("div", { className: "hero-stats" },
+        React.createElement("div", null,
+          React.createElement("div", { className: "stat-num", "data-target": "2400" }, "0"),
+          React.createElement("div", { className: "stat-lbl" }, "Bouquets Delivered")),
+        React.createElement("div", null,
+          React.createElement("div", { className: "stat-num", "data-target": "98" }, "0"),
+          React.createElement("div", { className: "stat-lbl" }, "% Happy Customers")),
+        React.createElement("div", null,
+          React.createElement("div", { className: "stat-num", "data-target": "5" }, "0"),
+          React.createElement("div", { className: "stat-lbl" }, "Years of Craft")))),
+    React.createElement("div", { className: "hero-right" },
+      React.createElement("div", { className: "hero-img-wrap" },
+        React.createElement("div", { className: "hero-img-frame" },
+          React.createElement("img", { src: "https://images.unsplash.com/photo-1526047932273-341f2a7631f9?auto=format&fit=crop&q=80&w=700", alt: "Premium handcrafted ribbon bouquet" })),
+        React.createElement("div", { className: "hero-badge" },
+          React.createElement("div", { className: "hero-badge-label" }, "⭐ Top Rated"),
+          React.createElement("div", { className: "hero-badge-sub" }, "Same-day delivery")),
+        React.createElement("div", { className: "hero-float-pill" }, "100% ", React.createElement("span", null, "Handmade"), " in Sydney"))));
 }
-const FEATS = [{
-  icon: '🌸',
-  title: 'Everlasting Blooms',
-  desc: 'Ribbon flowers that never wilt — a timeless keepsake for every occasion.'
-}, {
-  icon: '🚀',
-  title: 'Same‑Day Delivery',
-  desc: 'Order before noon for same‑day delivery in Sydney, Melbourne & Brisbane.'
-}, {
-  icon: '✨',
-  title: 'Fully Customisable',
-  desc: 'Choose your ribbon palette, flower count, and luxury wrapping — made for you.'
-}];
+
+/* Replaced autoplay marquee with static trust bar */
+function TrustBar() {
+  const items = [
+    { icon: '🌸', text: 'Handcrafted Bouquets' },
+    { icon: '🚚', text: 'Same-Day Delivery' },
+    { icon: '✨', text: 'Everlasting Ribbon Florals' },
+    { icon: '📦', text: 'Custom Orders Welcome' },
+  ];
+  return React.createElement("div", { className: "trust-bar" },
+    items.map(i => React.createElement("div", { key: i.text, className: "trust-item" },
+      React.createElement("span", { className: "trust-icon" }, i.icon), i.text)));
+}
+
+const FEATS = [
+  { icon: '🌸', title: 'Everlasting Blooms', desc: 'Ribbon flowers that never wilt — a timeless keepsake for every occasion.' },
+  { icon: '🚀', title: 'Same-Day Delivery', desc: 'Order before noon for same-day delivery in Sydney, Melbourne & Brisbane.' },
+  { icon: '✨', title: 'Fully Customisable', desc: 'Choose your ribbon palette, flower count, and luxury wrapping.' },
+];
 function Features() {
-  const ref = useRef(null);
-  useReveal(ref, () => {
-    gsap.from('.feat-item', {
-      opacity: 0,
-      x: -16,
-      duration: M.dur.slow,
-      ease: M.ease.out,
-      stagger: .13,
-      scrollTrigger: {
-        trigger: ref.current,
-        start: 'top 86%'
-      }
-    });
-  });
-  return /*#__PURE__*/React.createElement("div", {
-    ref: ref,
-    className: "features"
-  }, FEATS.map(f => /*#__PURE__*/React.createElement("div", {
-    key: f.title,
-    className: "feat-item"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "feat-icon"
-  }, f.icon), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
-    className: "feat-title"
-  }, f.title), /*#__PURE__*/React.createElement("div", {
-    className: "feat-desc"
-  }, f.desc)))));
+  return React.createElement("div", { className: "features" },
+    FEATS.map(f => React.createElement("div", { key: f.title, className: "feat-item" },
+      React.createElement("div", { className: "feat-icon" }, f.icon),
+      React.createElement("div", null,
+        React.createElement("div", { className: "feat-title" }, f.title),
+        React.createElement("div", { className: "feat-desc" }, f.desc)))));
 }
+
 function Collection() {
-  const {
-    add
-  } = useCart();
-  const {
-    navigate
-  } = useRouter();
+  const { add } = useCart();
+  const { navigate } = useRouter();
+  const [qvItem, setQvItem] = useState(null);
   const ref = useRef(null);
+
   useReveal(ref, () => {
-    gsap.from('.card', {
-      opacity: 0,
-      y: 22,
-      duration: M.dur.slow,
-      ease: M.ease.out,
-      stagger: .08,
-      scrollTrigger: {
-        trigger: ref.current,
-        start: 'top 82%'
-      }
-    });
+    // Only title + card group — restrained, not every element
+    gsap.from('.coll-head', { opacity: 0, y: 12, duration: M.dur.base, ease: M.ease.out,
+      scrollTrigger: { trigger: ref.current, start: 'top 84%' } });
+    gsap.from(ref.current.querySelectorAll('.card'), { opacity: 0, y: 16, duration: M.dur.slow,
+      ease: M.ease.out, stagger: .06, scrollTrigger: { trigger: ref.current, start: 'top 80%' } });
   });
-  return /*#__PURE__*/React.createElement("section", {
-    ref: ref,
-    className: "section",
-    style: {
-      background: 'var(--cream)'
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "coll-head"
-  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
-    className: "eyebrow"
-  }, "Our Collections"), /*#__PURE__*/React.createElement("h2", {
-    className: "sec-title"
-  }, "Curated ", /*#__PURE__*/React.createElement("em", null, "Florals"), /*#__PURE__*/React.createElement("br", null), "For Every Moment")), /*#__PURE__*/React.createElement("button", {
-    className: "btn-outline",
-    style: {
-      whiteSpace: 'nowrap',
-      flexShrink: 0
-    },
-    onClick: () => navigate('/bouquets')
-  }, "View All Bouquets")), /*#__PURE__*/React.createElement("div", {
-    className: "coll-grid"
-  }, BOUQS.slice(0, 6).map(b => /*#__PURE__*/React.createElement("div", {
-    key: b.name,
-    className: "card"
-  }, b.badge && /*#__PURE__*/React.createElement("div", {
-    className: `card-bdg${b.badgeGold ? ' gold' : ''}`
-  }, b.badge), /*#__PURE__*/React.createElement("div", {
-    className: "card-shell"
-  }, /*#__PURE__*/React.createElement("img", {
-    className: "card-img",
-    src: `https://images.unsplash.com/${b.photo}?auto=format&fit=crop&q=80&w=600`,
-    alt: b.name
-  })), /*#__PURE__*/React.createElement("div", {
-    className: "card-body"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "card-tag"
-  }, b.tag), /*#__PURE__*/React.createElement("div", {
-    className: "card-name"
-  }, b.name), /*#__PURE__*/React.createElement("div", {
-    className: "card-desc"
-  }, b.desc), /*#__PURE__*/React.createElement("div", {
-    className: "card-foot"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "card-price"
-  }, b.price), /*#__PURE__*/React.createElement("button", {
-    className: "btn-card",
-    onClick: () => add(b)
-  }, "Add to Cart")))))));
+
+  return React.createElement("section", { ref, className: "section", style: { background: 'var(--cream)' } },
+    React.createElement("div", { className: "coll-head" },
+      React.createElement("div", null,
+        React.createElement("div", { className: "eyebrow" }, "Our Collections"),
+        React.createElement("h2", { className: "sec-title" }, "Curated Florals", React.createElement("br"), "For Every Moment")),
+      React.createElement("button", { className: "btn-outline", style: { whiteSpace: 'nowrap', flexShrink: 0 }, onClick: () => navigate('/bouquets') }, "View All")),
+    React.createElement("div", { className: "coll-grid" },
+      BOUQS.slice(0, 6).map(b => React.createElement(ProductCard, { key: b.name, b, onAdd: add, onQuickView: setQvItem }))),
+    qvItem && React.createElement(QuickViewModal, { item: qvItem, onClose: () => setQvItem(null), onAdd: add }));
 }
-const STEPS = ['Choose your flower count — from 12 to 100 stems', 'Pick your ribbon palette from 40+ premium colours', 'Select luxury wrapping — silk, satin, or kraft paper', 'Add a personalised message card'];
+
+const STEPS = ['Choose your ribbon palette', 'Set the flower count & size', 'Pick your luxury wrapping', 'Add a personal message'];
 function Bespoke() {
-  const {
-    navigate
-  } = useRouter();
+  const { navigate } = useRouter();
   const secRef = useRef(null);
-  const imgRef = useRef(null);
-  useLayoutEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.to(imgRef.current, {
-        y: -32,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: secRef.current,
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: 1.5
-        }
-      });
-      gsap.from('.bespoke-content', {
-        opacity: 0,
-        x: -18,
-        duration: M.dur.slow,
-        ease: M.ease.out,
-        scrollTrigger: {
-          trigger: '.bespoke-content',
-          start: 'top 80%'
-        }
-      });
-      gsap.from('.bespoke-img-wrap', {
-        clipPath: 'inset(0 100% 0 0 round 28px)',
-        duration: M.dur.film,
-        ease: M.ease.expoIO,
-        scrollTrigger: {
-          trigger: '.bespoke-img-wrap',
-          start: 'top 78%'
-        }
-      });
-      gsap.from('.bespoke-float', {
-        opacity: 0,
-        scale: .82,
-        x: -10,
-        y: 10,
-        duration: M.dur.slow,
-        ease: M.ease.el,
-        scrollTrigger: {
-          trigger: '.bespoke-img-wrap',
-          start: 'top 65%'
-        }
-      });
-    }, secRef);
-    return () => ctx.revert();
-  }, []);
-  return /*#__PURE__*/React.createElement("section", {
-    ref: secRef,
-    className: "bespoke"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "bespoke-content"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "eyebrow light"
-  }, "Design Yours"), /*#__PURE__*/React.createElement("h2", {
-    className: "sec-title light"
-  }, "Create a", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("em", null, "Masterpiece"), /*#__PURE__*/React.createElement("br", null), "Unique to You"), /*#__PURE__*/React.createElement("p", {
-    className: "bespoke-desc"
-  }, "Select your perfect flower count, choose from our premium ribbon palette, and finish with luxury wrapping. Every detail, handcrafted just for you."), /*#__PURE__*/React.createElement("div", {
-    className: "bespoke-steps"
-  }, STEPS.map((s, i) => /*#__PURE__*/React.createElement("div", {
-    key: i,
-    className: "bespoke-step"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "step-n"
-  }, i + 1), /*#__PURE__*/React.createElement("div", {
-    className: "step-t"
-  }, s)))), /*#__PURE__*/React.createElement(MagBtn, {
-    className: "btn-gold",
-    onClick: () => navigate('/custom')
-  }, "Start Customising \u2192")), /*#__PURE__*/React.createElement("div", {
-    className: "bespoke-img-wrap"
-  }, /*#__PURE__*/React.createElement("img", {
-    ref: imgRef,
-    className: "bespoke-img",
-    src: "https://images.unsplash.com/photo-1520271348891-049f9432f40c?auto=format&fit=crop&q=80&w=800",
-    alt: "Custom bouquet creation"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "bespoke-float"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "bespoke-float-t"
-  }, "100% Handmade"), /*#__PURE__*/React.createElement("div", {
-    className: "bespoke-float-s"
-  }, "Crafted in our Sydney studio"))));
+
+  useReveal(secRef, () => {
+    // Only animate the content block once — no scale/elastic on float card
+    gsap.from('.bespoke-content', { opacity: 0, x: -16, duration: M.dur.slow, ease: M.ease.out,
+      scrollTrigger: { trigger: secRef.current, start: 'top 72%' } });
+    gsap.from('.bespoke-img', { opacity: 0, x: 16, duration: M.dur.slow, ease: M.ease.out,
+      scrollTrigger: { trigger: secRef.current, start: 'top 72%' } });
+  });
+
+  return React.createElement("section", { ref: secRef, className: "bespoke" },
+    React.createElement("div", { className: "bespoke-content" },
+      React.createElement("div", { className: "eyebrow light" }, "Design Yours"),
+      React.createElement("h2", { className: "sec-title light" }, "Create a", React.createElement("br"), React.createElement("em", null, "Masterpiece"), React.createElement("br"), "Unique to You"),
+      React.createElement("p", { className: "bespoke-desc" }, "Select your perfect flower count, choose from our premium ribbon palette, and finish with luxury wrapping."),
+      React.createElement("div", { className: "bespoke-steps" }, STEPS.map((s, i) =>
+        React.createElement("div", { key: i, className: "bespoke-step" },
+          React.createElement("div", { className: "step-n" }, i + 1),
+          React.createElement("div", { className: "step-t" }, s)))),
+      React.createElement("button", { className: "btn-gold", onClick: () => navigate('/custom') }, "Start Customising →")),
+    React.createElement("div", { className: "bespoke-img-wrap" },
+      React.createElement("img", { className: "bespoke-img", src: "https://images.unsplash.com/photo-1520271348891-049f9432f40c?auto=format&fit=crop&q=80&w=800", alt: "Custom bouquet creation" }),
+      React.createElement("div", { className: "bespoke-float" },
+        React.createElement("div", { className: "bespoke-float-t" }, "100% Handmade"),
+        React.createElement("div", { className: "bespoke-float-s" }, "Crafted in our Sydney studio"))));
 }
-const PROC = [{
-  n: '01',
-  title: 'Browse & Select',
-  desc: 'Explore curated collections or start a custom design from scratch.'
-}, {
-  n: '02',
-  title: 'We Handcraft',
-  desc: 'Our Sydney artisans create your bouquet with premium materials.'
-}, {
-  n: '03',
-  title: 'Packed with Love',
-  desc: 'Wrapped in signature luxury packaging with your personal note.'
-}, {
-  n: '04',
-  title: 'Delivered Fresh',
-  desc: 'Same‑day or next‑day delivery across all major Australian cities.'
-}];
+
+const PROC = [
+  { n: '01', title: 'Browse & Select', desc: 'Explore curated collections or start a custom design.' },
+  { n: '02', title: 'We Handcraft', desc: 'Our Sydney artisans create your bouquet with premium materials.' },
+  { n: '03', title: 'Packed with Love', desc: 'Wrapped in signature packaging with your personal note.' },
+  { n: '04', title: 'Delivered Fresh', desc: 'Same-day or next-day delivery across major Australian cities.' },
+];
 function Process() {
   const ref = useRef(null);
   useReveal(ref, () => {
-    gsap.from('.proc-head', {
-      opacity: 0,
-      y: 14,
-      duration: M.dur.slow,
-      ease: M.ease.out,
-      scrollTrigger: {
-        trigger: '.proc-head',
-        start: 'top 84%'
-      }
-    });
-    gsap.from('.proc-item', {
-      opacity: 0,
-      y: 18,
-      duration: M.dur.base,
-      ease: M.ease.out,
-      stagger: .13,
-      scrollTrigger: {
-        trigger: '.proc-grid',
-        start: 'top 82%'
-      }
-    });
+    gsap.from('.proc-head', { opacity: 0, y: 10, duration: M.dur.base, ease: M.ease.out,
+      scrollTrigger: { trigger: '.proc-head', start: 'top 86%' } });
+    gsap.from(ref.current.querySelectorAll('.proc-item'), { opacity: 0, y: 12, duration: M.dur.base, ease: M.ease.out, stagger: .1,
+      scrollTrigger: { trigger: '.proc-grid', start: 'top 84%' } });
   });
-  return /*#__PURE__*/React.createElement("section", {
-    ref: ref,
-    className: "section",
-    style: {
-      background: 'var(--cream2)'
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "proc-head"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "eyebrow"
-  }, "Process"), /*#__PURE__*/React.createElement("h2", {
-    className: "sec-title"
-  }, "From Studio", /*#__PURE__*/React.createElement("br", null), "to ", /*#__PURE__*/React.createElement("em", null, "Your Door"))), /*#__PURE__*/React.createElement("div", {
-    className: "proc-grid"
-  }, PROC.map(p => /*#__PURE__*/React.createElement("div", {
-    key: p.n,
-    className: "proc-item"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "proc-n"
-  }, p.n), /*#__PURE__*/React.createElement("div", {
-    className: "proc-title"
-  }, p.title), /*#__PURE__*/React.createElement("div", {
-    className: "proc-desc"
-  }, p.desc)))));
+  return React.createElement("section", { ref, className: "section", style: { background: 'var(--cream2)' } },
+    React.createElement("div", { className: "proc-head" },
+      React.createElement("div", { className: "eyebrow" }, "Process"),
+      React.createElement("h2", { className: "sec-title" }, "From Studio to ", React.createElement("em", null, "Your Door"))),
+    React.createElement("div", { className: "proc-grid" }, PROC.map(p =>
+      React.createElement("div", { key: p.n, className: "proc-item" },
+        React.createElement("div", { className: "proc-n" }, p.n),
+        React.createElement("div", { className: "proc-title" }, p.title),
+        React.createElement("div", { className: "proc-desc" }, p.desc)))));
 }
-const REVS = [{
-  q: "Absolutely breathtaking. The ribbon details are exquisite — it looked better than any real flower arrangement I've ever received.",
-  name: 'Sophie R.',
-  loc: 'Sydney, NSW',
-  img: '5'
-}, {
-  q: "Ordered a custom bouquet for my wedding and it was PERFECT. The team nailed every detail and delivered on time.",
-  name: 'Mia L.',
-  loc: 'Melbourne, VIC',
-  img: '9'
-}, {
-  q: "I've gifted Bouquet Studio to three friends now. The everlasting flowers mean the gift lasts forever. Worth every cent.",
-  name: 'Jasmine T.',
-  loc: 'Brisbane, QLD',
-  img: '16'
-}, {
-  q: "The packaging alone made me cry. Premium quality, speedy delivery, and the bouquet is a work of art. Highly recommend!",
-  name: 'Emma K.',
-  loc: 'Perth, WA',
-  img: '20'
-}];
+
+const REVS = [
+  { q: "Absolutely breathtaking. The ribbon details are exquisite — it looked better than any real flower arrangement.", name: 'Sophie R.', loc: 'Sydney, NSW', img: '5' },
+  { q: "Ordered a custom bouquet for my wedding and it was PERFECT. The team nailed every detail and delivered on time.", name: 'Mia L.', loc: 'Melbourne, VIC', img: '9' },
+  { q: "I've gifted Bouquet Studio to three friends now. The everlasting flowers mean the gift lasts forever.", name: 'Jasmine T.', loc: 'Brisbane, QLD', img: '16' },
+  { q: "The packaging alone made me cry. Premium quality, speedy delivery, and the bouquet is a work of art.", name: 'Emma K.', loc: 'Perth, WA', img: '20' },
+];
 function Reviews() {
   const ref = useRef(null);
   useReveal(ref, () => {
-    gsap.from('.rev-head', {
-      opacity: 0,
-      y: 14,
-      duration: M.dur.slow,
-      ease: M.ease.out,
-      scrollTrigger: {
-        trigger: '.rev-head',
-        start: 'top 85%'
-      }
-    });
-    gsap.from('.rev-card', {
-      opacity: 0,
-      x: 20,
-      duration: M.dur.base,
-      ease: M.ease.out,
-      stagger: .1,
-      scrollTrigger: {
-        trigger: '.rev-track',
-        start: 'top 84%'
-      }
-    });
+    gsap.from('.rev-head', { opacity: 0, y: 10, duration: M.dur.base, ease: M.ease.out,
+      scrollTrigger: { trigger: '.rev-head', start: 'top 87%' } });
+    gsap.from(ref.current.querySelectorAll('.rev-card'), { opacity: 0, x: 14, duration: M.dur.base, ease: M.ease.out, stagger: .08,
+      scrollTrigger: { trigger: '.rev-track', start: 'top 86%' } });
   });
-  return /*#__PURE__*/React.createElement("section", {
-    ref: ref,
-    className: "section",
-    style: {
-      background: 'var(--cream)',
-      overflow: 'hidden'
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "rev-head",
-    style: {
-      marginBottom: 44
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "eyebrow"
-  }, "Reviews"), /*#__PURE__*/React.createElement("h2", {
-    className: "sec-title"
-  }, "Loved by ", /*#__PURE__*/React.createElement("em", null, "Thousands"))), /*#__PURE__*/React.createElement("div", {
-    className: "rev-track"
-  }, REVS.map(r => /*#__PURE__*/React.createElement("div", {
-    key: r.name,
-    className: "rev-card"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "rev-stars"
-  }, "\u2605\u2605\u2605\u2605\u2605"), /*#__PURE__*/React.createElement("div", {
-    className: "rev-q"
-  }, "\"", r.q, "\""), /*#__PURE__*/React.createElement("div", {
-    className: "rev-author"
-  }, /*#__PURE__*/React.createElement("img", {
-    className: "rev-avatar",
-    src: `https://i.pravatar.cc/100?img=${r.img}`,
-    alt: r.name
-  }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
-    className: "rev-name"
-  }, r.name), /*#__PURE__*/React.createElement("div", {
-    className: "rev-loc"
-  }, r.loc)))))));
+  return React.createElement("section", { ref, className: "section", style: { background: 'var(--cream)', overflow: 'hidden' } },
+    React.createElement("div", { className: "rev-head", style: { marginBottom: 36 } },
+      React.createElement("div", { className: "eyebrow" }, "Reviews"),
+      React.createElement("h2", { className: "sec-title" }, "Loved by ", React.createElement("em", null, "Thousands"))),
+    React.createElement("div", { className: "rev-track" }, REVS.map(r =>
+      React.createElement("div", { key: r.name, className: "rev-card" },
+        React.createElement("div", { className: "rev-stars" }, "★★★★★"),
+        React.createElement("div", { className: "rev-q" }, `"${r.q}"`),
+        React.createElement("div", { className: "rev-author" },
+          React.createElement("img", { className: "rev-avatar", src: `https://i.pravatar.cc/100?img=${r.img}`, alt: r.name }),
+          React.createElement("div", null,
+            React.createElement("div", { className: "rev-name" }, r.name),
+            React.createElement("div", { className: "rev-loc" }, r.loc)))))));
 }
+
 function Newsletter() {
   const [email, setEmail] = useState('');
   const [sent, setSent] = useState(false);
   const submit = () => {
-    if (!email.includes('@')) {
-      toast('Please enter a valid email');
-      return;
-    }
-    setSent(true);
-    toast('You\'re subscribed! 🌸');
+    if (!email.includes('@')) { toast('Please enter a valid email'); return; }
+    setSent(true); toast("You're subscribed! 🌸");
   };
-  return /*#__PURE__*/React.createElement("div", {
-    className: "newsletter"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "nl-left"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "eyebrow nl-ey"
-  }, "Stay in Bloom"), /*#__PURE__*/React.createElement("h3", {
-    className: "sec-title",
-    style: {
-      fontSize: 'clamp(26px,2.8vw,38px)'
-    }
-  }, "Get 10% off", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("em", null, "your first order")), /*#__PURE__*/React.createElement("p", null, "Join 8,000+ subscribers for seasonal collections, styling tips and exclusive offers.")), /*#__PURE__*/React.createElement("div", {
-    style: {
-      flexShrink: 0,
-      width: '100%',
-      maxWidth: 440
-    }
-  }, !sent ? /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
-    className: "nl-form"
-  }, /*#__PURE__*/React.createElement("input", {
-    className: "nl-input",
-    type: "email",
-    placeholder: "your@email.com",
-    value: email,
-    onChange: e => setEmail(e.target.value),
-    onKeyDown: e => e.key === 'Enter' && submit()
-  }), /*#__PURE__*/React.createElement(MagBtn, {
-    className: "btn-gold",
-    onClick: submit
-  }, "Subscribe")), /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 11,
-      color: 'var(--muted)',
-      marginTop: 10
-    }
-  }, "No spam, unsubscribe any time.")) : /*#__PURE__*/React.createElement("div", {
-    style: {
-      padding: '20px 0',
-      textAlign: 'center'
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 32,
-      marginBottom: 10
-    }
-  }, "\uD83C\uDF38"), /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontFamily: "'Cormorant Garamond',serif",
-      fontSize: 22,
-      color: 'var(--dark)',
-      marginBottom: 6
-    }
-  }, "You're in the garden!"), /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 13,
-      color: 'var(--muted)'
-    }
-  }, "Check your inbox for your 10% discount code."))));
+  return React.createElement("div", { className: "newsletter" },
+    React.createElement("div", { className: "nl-left" },
+      React.createElement("div", { className: "eyebrow nl-ey" }, "Stay in Bloom"),
+      React.createElement("h3", { className: "sec-title", style: { fontSize: 'clamp(22px,2.6vw,34px)' } }, "Get 10% off", React.createElement("br"), React.createElement("em", null, "your first order")),
+      React.createElement("p", null, "Join 8,000+ subscribers for seasonal collections and exclusive offers.")),
+    React.createElement("div", { style: { flexShrink: 0, width: '100%', maxWidth: 420 } },
+      !sent
+        ? React.createElement("div", null,
+            React.createElement("div", { className: "nl-form" },
+              React.createElement("input", { className: "nl-input", type: "email", placeholder: "your@email.com", value: email, onChange: e => setEmail(e.target.value), onKeyDown: e => e.key === 'Enter' && submit() }),
+              React.createElement("button", { className: "btn-gold", onClick: submit }, "Subscribe")),
+            React.createElement("div", { style: { fontSize: 10.5, color: 'var(--muted)', marginTop: 8 } }, "No spam, unsubscribe any time."))
+        : React.createElement("div", { style: { padding: '18px 0', textAlign: 'center' } },
+            React.createElement("div", { style: { fontFamily: "'Cormorant Garamond',serif", fontSize: 20, color: 'var(--dark)', marginBottom: 5 } }, "You're in the garden!"),
+            React.createElement("div", { style: { fontSize: 12.5, color: 'var(--muted)' } }, "Check your inbox for your 10% discount code."))));
 }
+
 function Offer() {
-  const {
-    navigate
-  } = useRouter();
-  const ref = useRef(null);
-  useReveal(ref, () => {
-    gsap.from('.offer-title', {
-      opacity: 0,
-      scale: .94,
-      duration: M.dur.slow,
-      ease: M.ease.out,
-      scrollTrigger: {
-        trigger: ref.current,
-        start: 'top 72%'
-      }
-    });
-    gsap.from(['.offer-code', '.offer-desc', '.offer-btns'], {
-      opacity: 0,
-      y: 10,
-      duration: M.dur.base,
-      ease: M.ease.out,
-      stagger: .1,
-      scrollTrigger: {
-        trigger: ref.current,
-        start: 'top 72%'
-      }
-    });
-  });
-  return /*#__PURE__*/React.createElement("section", {
-    ref: ref,
-    className: "offer"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "offer-orb"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "eyebrow light center",
-    style: {
-      justifyContent: 'center',
-      marginBottom: 16
-    }
-  }, /*#__PURE__*/React.createElement("span", null, "Limited Time Offer")), /*#__PURE__*/React.createElement("div", {
-    className: "offer-code"
-  }, "USE CODE: BLOOM10"), /*#__PURE__*/React.createElement("h2", {
-    className: "offer-title"
-  }, "10% Off Your", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("em", null, "First Order")), /*#__PURE__*/React.createElement("p", {
-    className: "offer-desc"
-  }, "Free delivery on orders over $100 \xB7 Ships across Australia"), /*#__PURE__*/React.createElement("div", {
-    className: "offer-btns"
-  }, /*#__PURE__*/React.createElement(MagBtn, {
-    className: "btn-gold",
-    onClick: () => navigate('/bouquets')
-  }, "Shop Now"), /*#__PURE__*/React.createElement("button", {
-    className: "btn-ghost",
-    onClick: () => navigate('/custom')
-  }, "Design Custom")));
+  const { navigate } = useRouter();
+  return React.createElement("section", { className: "offer" },
+    React.createElement("div", { className: "eyebrow light center", style: { justifyContent: 'center', marginBottom: 14 } },
+      React.createElement("span", null, "Limited Time Offer")),
+    React.createElement("div", { className: "offer-code" }, "USE CODE: BLOOM10"),
+    React.createElement("h2", { className: "offer-title" }, "10% Off Your", React.createElement("br"), React.createElement("em", null, "First Order")),
+    React.createElement("p", { className: "offer-desc" }, "Free delivery on orders over $100 · Ships across Australia"),
+    React.createElement("div", { className: "offer-btns" },
+      React.createElement("button", { className: "btn-gold", onClick: () => navigate('/bouquets') }, "Shop Now"),
+      React.createElement("button", { className: "btn-ghost", onClick: () => navigate('/custom') }, "Design Custom")));
 }
-function HomePage({
-  onPolicy,
-  onTerms
-}) {
-  return /*#__PURE__*/React.createElement("div", {
-    className: "page-enter"
-  }, /*#__PURE__*/React.createElement(Hero, null), /*#__PURE__*/React.createElement(Ribbon, null), /*#__PURE__*/React.createElement(Features, null), /*#__PURE__*/React.createElement(Collection, null), /*#__PURE__*/React.createElement(Bespoke, null), /*#__PURE__*/React.createElement(Process, null), /*#__PURE__*/React.createElement(Reviews, null), /*#__PURE__*/React.createElement(Newsletter, null), /*#__PURE__*/React.createElement(Offer, null), /*#__PURE__*/React.createElement(Footer, {
-    onPolicy: onPolicy,
-    onTerms: onTerms
-  }));
+
+function HomePage({ onPolicy, onTerms }) {
+  return React.createElement("div", { className: "page-enter" },
+    React.createElement(Hero),
+    React.createElement(TrustBar),
+    React.createElement(Features),
+    React.createElement(Collection),
+    React.createElement(Bespoke),
+    React.createElement(Process),
+    React.createElement(Reviews),
+    React.createElement(Newsletter),
+    React.createElement(Offer),
+    React.createElement(Footer, { onPolicy, onTerms }));
 }
 
 /* ═══════════════════════════
-   BROWSE PAGE
+   BROWSE PAGE — search + filter + sort
 ═══════════════════════════ */
-function BrowsePage({
-  onPolicy,
-  onTerms
-}) {
-  const {
-    add
-  } = useCart();
-  const {
-    navigate
-  } = useRouter();
+function BrowsePage({ onPolicy, onTerms }) {
+  const { add } = useCart();
   const [filter, setFilter] = useState('All');
-  const filtered = filter === 'All' ? BOUQS : BOUQS.filter(b => b.tag === filter);
-  return /*#__PURE__*/React.createElement("div", {
-    className: "page-enter"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "browse-page"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "eyebrow"
-  }, "Collection"), /*#__PURE__*/React.createElement("h1", {
-    className: "sec-title",
-    style: {
-      marginBottom: 12
-    }
-  }, "All ", /*#__PURE__*/React.createElement("em", null, "Bouquets")), /*#__PURE__*/React.createElement("p", {
-    style: {
-      fontSize: 14,
-      color: 'var(--muted)',
-      marginBottom: 32,
-      maxWidth: 480
-    }
-  }, "Every arrangement is handcrafted in our Sydney studio using premium ribbon and finishing materials."), /*#__PURE__*/React.createElement("div", {
-    className: "browse-filters"
-  }, FILTER_CATS.map(c => /*#__PURE__*/React.createElement("button", {
-    key: c,
-    className: `filter-pill${filter === c ? ' active' : ''}`,
-    onClick: () => setFilter(c)
-  }, c))), /*#__PURE__*/React.createElement("div", {
-    className: "browse-grid"
-  }, filtered.map(b => /*#__PURE__*/React.createElement("div", {
-    key: b.name,
-    className: "card"
-  }, b.badge && /*#__PURE__*/React.createElement("div", {
-    className: `card-bdg${b.badgeGold ? ' gold' : ''}`
-  }, b.badge), /*#__PURE__*/React.createElement("div", {
-    className: "card-shell"
-  }, /*#__PURE__*/React.createElement("img", {
-    className: "card-img",
-    src: `https://images.unsplash.com/${b.photo}?auto=format&fit=crop&q=80&w=600`,
-    alt: b.name
-  })), /*#__PURE__*/React.createElement("div", {
-    className: "card-body"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "card-tag"
-  }, b.tag), /*#__PURE__*/React.createElement("div", {
-    className: "card-name"
-  }, b.name), /*#__PURE__*/React.createElement("div", {
-    className: "card-desc"
-  }, b.desc), /*#__PURE__*/React.createElement("div", {
-    className: "card-foot"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "card-price"
-  }, b.price), /*#__PURE__*/React.createElement("button", {
-    className: "btn-card",
-    onClick: () => add(b)
-  }, "Add to Cart"))))))), /*#__PURE__*/React.createElement(Footer, {
-    onPolicy: onPolicy,
-    onTerms: onTerms
-  }));
+  const [search, setSearch] = useState('');
+  const [sort, setSort] = useState('default');
+  const [qvItem, setQvItem] = useState(null);
+
+  let results = BOUQS.filter(b =>
+    (filter === 'All' || b.tag === filter) &&
+    (!search || b.name.toLowerCase().includes(search.toLowerCase()) || b.desc.toLowerCase().includes(search.toLowerCase()))
+  );
+  if (sort === 'price-asc') results = [...results].sort((a,b) => parseFloat(a.price.replace('$','')) - parseFloat(b.price.replace('$','')));
+  if (sort === 'price-desc') results = [...results].sort((a,b) => parseFloat(b.price.replace('$','')) - parseFloat(a.price.replace('$','')));
+  if (sort === 'name') results = [...results].sort((a,b) => a.name.localeCompare(b.name));
+
+  return React.createElement("div", { className: "page-enter" },
+    React.createElement("div", { className: "browse-page" },
+      React.createElement("div", { className: "eyebrow" }, "Collection"),
+      React.createElement("h1", { className: "sec-title", style: { marginBottom: 10 } }, "All ", React.createElement("em", null, "Bouquets")),
+      React.createElement("p", { style: { fontSize: 13, color: 'var(--muted)', marginBottom: 28, maxWidth: 460 } }, "Every arrangement is handcrafted in our Sydney studio using premium ribbon and finishing materials."),
+      React.createElement("div", { className: "browse-toolbar" },
+        React.createElement("input", { className: "browse-search", placeholder: "Search bouquets...", value: search, onChange: e => setSearch(e.target.value) }),
+        React.createElement("select", { className: "browse-sort form-input", style: { width: 'auto', minWidth: 160 }, value: sort, onChange: e => setSort(e.target.value) },
+          React.createElement("option", { value: "default" }, "Sort: Featured"),
+          React.createElement("option", { value: "price-asc" }, "Price: Low to High"),
+          React.createElement("option", { value: "price-desc" }, "Price: High to Low"),
+          React.createElement("option", { value: "name" }, "Name A-Z"))),
+      React.createElement("div", { className: "browse-filters" },
+        FILTER_CATS.map(c => React.createElement("button", { key: c, className: `filter-pill${filter === c ? ' active' : ''}`, onClick: () => setFilter(c) }, c))),
+      React.createElement("div", { className: "browse-count" }, `${results.length} product${results.length !== 1 ? 's' : ''}`),
+      results.length > 0
+        ? React.createElement("div", { className: "browse-grid" },
+            results.map(b => React.createElement(ProductCard, { key: b.name, b, onAdd: add, onQuickView: setQvItem })))
+        : React.createElement("div", { style: { padding: '48px 0', textAlign: 'center', color: 'var(--muted)', fontSize: 14 } },
+            "No bouquets match your search. Try a different term or filter."),
+      qvItem && React.createElement(QuickViewModal, { item: qvItem, onClose: () => setQvItem(null), onAdd: add })),
+    React.createElement(Footer, { onPolicy, onTerms }));
 }
 
 /* ═══════════════════════════
    CART PAGE
 ═══════════════════════════ */
-function CartPage({
-  onPolicy,
-  onTerms
-}) {
-  const {
-    items,
-    remove,
-    updateQty,
-    total,
-    count
-  } = useCart();
-  const {
-    navigate
-  } = useRouter();
+function CartPage({ onPolicy, onTerms }) {
+  const { items, remove, updateQty, total, count } = useCart();
+  const { navigate } = useRouter();
+
   if (items.length === 0) {
-    return /*#__PURE__*/React.createElement("div", {
-      className: "page-enter"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "cart-empty-page"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "cart-empty-icon"
-    }, "\uD83C\uDF38"), /*#__PURE__*/React.createElement("h1", {
-      className: "cart-empty-title"
-    }, "Your Cart is Empty"), /*#__PURE__*/React.createElement("p", {
-      className: "cart-empty-sub"
-    }, "Start adding some beautiful bouquets!"), /*#__PURE__*/React.createElement(MagBtn, {
-      className: "btn-gold",
-      onClick: () => navigate('/bouquets')
-    }, "Continue Shopping")), /*#__PURE__*/React.createElement(Footer, {
-      onPolicy: onPolicy,
-      onTerms: onTerms
-    }));
+    return React.createElement("div", { className: "page-enter" },
+      React.createElement("div", { className: "cart-empty-page" },
+        React.createElement("div", { className: "cart-empty-icon" }, "🛒"),
+        React.createElement("h1", { className: "cart-empty-title" }, "Your Cart is Empty"),
+        React.createElement("p", { className: "cart-empty-sub" }, "Add some beautiful bouquets to get started."),
+        React.createElement("button", { className: "btn-gold", onClick: () => navigate('/bouquets') }, "Browse Bouquets")),
+      React.createElement(Footer, { onPolicy, onTerms }));
   }
+
   const delivery = total >= 100 ? 0 : 12;
-  return /*#__PURE__*/React.createElement("div", {
-    className: "page-enter"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "cart-page"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "cart-page-head"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "eyebrow"
-  }, "Your Order"), /*#__PURE__*/React.createElement("h1", {
-    className: "cart-page-title"
-  }, "Your ", /*#__PURE__*/React.createElement("em", null, "Cart")), /*#__PURE__*/React.createElement("p", {
-    style: {
-      fontSize: 13,
-      color: 'var(--muted)',
-      marginTop: 8
-    }
-  }, count, " item", count !== 1 ? 's' : '', " in your basket")), /*#__PURE__*/React.createElement("div", {
-    className: "cart-layout"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "cart-items-list"
-  }, items.map(item => /*#__PURE__*/React.createElement("div", {
-    key: item.name,
-    className: "cart-line"
-  }, /*#__PURE__*/React.createElement("img", {
-    className: "cart-line-img",
-    src: `https://images.unsplash.com/${item.photo}?auto=format&fit=crop&q=80&w=200`,
-    alt: item.name
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "cart-line-info"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "cart-line-tag"
-  }, item.tag), /*#__PURE__*/React.createElement("div", {
-    className: "cart-line-name"
-  }, item.name), /*#__PURE__*/React.createElement("div", {
-    className: "cart-line-price"
-  }, item.price), /*#__PURE__*/React.createElement("div", {
-    className: "cart-line-qty"
-  }, /*#__PURE__*/React.createElement("button", {
-    className: "qty-btn",
-    onClick: () => updateQty(item.name, -1)
-  }, "\u2212"), /*#__PURE__*/React.createElement("span", {
-    className: "qty-val"
-  }, item.qty), /*#__PURE__*/React.createElement("button", {
-    className: "qty-btn",
-    onClick: () => updateQty(item.name, 1)
-  }, "+"))), /*#__PURE__*/React.createElement("button", {
-    className: "cart-line-remove",
-    onClick: () => remove(item.name)
-  }, "\xD7"))), /*#__PURE__*/React.createElement("div", {
-    style: {
-      paddingTop: 20
-    }
-  }, /*#__PURE__*/React.createElement("button", {
-    className: "btn-outline",
-    onClick: () => navigate('/bouquets')
-  }, "\u2190 Continue Shopping"))), /*#__PURE__*/React.createElement("div", {
-    className: "cart-summary"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "cart-summary-title"
-  }, "Order Summary"), /*#__PURE__*/React.createElement("div", {
-    className: "summary-row"
-  }, /*#__PURE__*/React.createElement("span", null, "Subtotal"), /*#__PURE__*/React.createElement("span", null, "$", total.toFixed(2))), /*#__PURE__*/React.createElement("div", {
-    className: "summary-row"
-  }, /*#__PURE__*/React.createElement("span", null, "Delivery"), /*#__PURE__*/React.createElement("span", null, delivery === 0 ? 'Free' : '$' + delivery + '.00')), total < 100 && /*#__PURE__*/React.createElement("div", {
-    className: "summary-note"
-  }, "Add $", (100 - total).toFixed(2), " more for free delivery"), /*#__PURE__*/React.createElement("div", {
-    className: "summary-row total"
-  }, /*#__PURE__*/React.createElement("span", null, "Total"), /*#__PURE__*/React.createElement("span", {
-    className: "val"
-  }, "$", (total + delivery).toFixed(2))), /*#__PURE__*/React.createElement("div", {
-    className: "summary-note"
-  }, "Use code ", /*#__PURE__*/React.createElement("strong", null, "BLOOM10"), " for 10% off your first order"), /*#__PURE__*/React.createElement(MagBtn, {
-    className: "btn-gold btn-full",
-    onClick: () => toast('Checkout coming soon — this is a demo!')
-  }, "Proceed to Checkout \u2192"), /*#__PURE__*/React.createElement("div", {
-    style: {
-      marginTop: 14,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: 8,
-      fontSize: 11,
-      color: 'var(--muted)'
-    }
-  }, "\uD83D\uDD12 Secure checkout \xB7 SSL encrypted")))), /*#__PURE__*/React.createElement(Footer, {
-    onPolicy: onPolicy,
-    onTerms: onTerms
-  }));
+  return React.createElement("div", { className: "page-enter" },
+    React.createElement("div", { className: "cart-page" },
+      React.createElement("div", { className: "cart-page-head" },
+        React.createElement("div", { className: "eyebrow" }, "Checkout"),
+        React.createElement("h1", { className: "cart-page-title" }, "Your ", React.createElement("em", null, "Cart"))),
+      React.createElement("div", { className: "cart-layout" },
+        React.createElement("div", { className: "cart-items-list" },
+          items.map(item => React.createElement("div", { key: item.name, className: "cart-line" },
+            React.createElement("img", { className: "cart-line-img", src: `https://images.unsplash.com/${item.photo}?auto=format&fit=crop&q=80&w=200`, alt: item.name }),
+            React.createElement("div", { className: "cart-line-info" },
+              React.createElement("div", { className: "cart-line-tag" }, item.tag),
+              React.createElement("div", { className: "cart-line-name" }, item.name),
+              React.createElement("div", { className: "cart-line-price" }, item.price),
+              React.createElement("div", { className: "cart-line-qty" },
+                React.createElement("button", { className: "qty-btn", onClick: () => updateQty(item.name, -1) }, "−"),
+                React.createElement("span", { className: "qty-val" }, item.qty),
+                React.createElement("button", { className: "qty-btn", onClick: () => updateQty(item.name, 1) }, "+"))),
+            React.createElement("button", { className: "cart-line-remove", onClick: () => remove(item.name), "aria-label": "Remove" }, "×")))),
+        React.createElement("div", { className: "cart-summary" },
+          React.createElement("div", { className: "cart-summary-title" }, "Order Summary"),
+          React.createElement("div", { className: "summary-row" }, React.createElement("span", null, "Subtotal"), React.createElement("span", null, `$${total.toFixed(2)}`)),
+          React.createElement("div", { className: "summary-row" }, React.createElement("span", null, "Delivery"), React.createElement("span", null, delivery === 0 ? 'Free' : `$${delivery}.00`)),
+          total < 100 && React.createElement("div", { className: "summary-note" }, `Add $${(100 - total).toFixed(2)} more for free delivery`),
+          React.createElement("div", { className: "summary-row total" },
+            React.createElement("span", null, "Total"),
+            React.createElement("span", { className: "val" }, `$${(total + delivery).toFixed(2)}`)),
+          React.createElement("div", { className: "summary-note" }, "Use code ", React.createElement("strong", null, "BLOOM10"), " for 10% off your first order"),
+          React.createElement("button", { className: "btn-gold btn-full", onClick: () => toast('Checkout coming soon — this is a demo!') }, "Proceed to Checkout →"),
+          React.createElement("div", { style: { marginTop: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, fontSize: 10.5, color: 'var(--muted)' } }, "🔒 Secure checkout · SSL encrypted")))),
+    React.createElement(Footer, { onPolicy, onTerms }));
 }
 
 /* ═══════════════════════════
    CUSTOM PAGE
 ═══════════════════════════ */
-const RIBBON_COLORS = [{
-  name: 'Blush',
-  hex: '#f5b8b0'
-}, {
-  name: 'Ivory',
-  hex: '#f5f0e8'
-}, {
-  name: 'Gold',
-  hex: '#c4973a'
-}, {
-  name: 'Forest',
-  hex: '#2d5a3d'
-}, {
-  name: 'Burgundy',
-  hex: '#6b1f2e'
-}, {
-  name: 'Midnight',
-  hex: '#1a2b4c'
-}, {
-  name: 'Lilac',
-  hex: '#c8b0d0'
-}, {
-  name: 'Sage',
-  hex: '#8faa8a'
-}];
-function CustomPage({
-  onPolicy,
-  onTerms
-}) {
-  const {
-    add
-  } = useCart();
-  const {
-    navigate
-  } = useRouter();
+const RIBBON_COLORS = [
+  { name: 'Blush', hex: '#f5b8b0' }, { name: 'Ivory', hex: '#f5f0e8' }, { name: 'Gold', hex: '#c4973a' },
+  { name: 'Forest', hex: '#2d5a3d' }, { name: 'Burgundy', hex: '#6b1f2e' }, { name: 'Midnight', hex: '#1a2b4c' },
+  { name: 'Lilac', hex: '#c8b0d0' }, { name: 'Sage', hex: '#8faa8a' },
+];
+function CustomPage({ onPolicy, onTerms }) {
+  const { add } = useCart();
+  const { navigate } = useRouter();
   const [stemCount, setStemCount] = useState(24);
   const [selectedColors, setSelectedColors] = useState(['Blush', 'Ivory']);
   const [wrapping, setWrapping] = useState('Silk');
   const [note, setNote] = useState('');
-  const [submitted, setSubmitted] = useState(false);
-  const toggleColor = c => {
-    setSelectedColors(prev => prev.includes(c) ? prev.filter(x => x !== c) : [...prev, c]);
-  };
+  const toggleColor = c => setSelectedColors(prev => prev.includes(c) ? prev.filter(x => x !== c) : [...prev, c]);
   const price = 60 + stemCount * 1.5 + (wrapping === 'Kraft' ? 0 : wrapping === 'Satin' ? 10 : 20);
   const handleAdd = () => {
-    add({
-      name: `Custom ${stemCount}-Stem Bouquet`,
-      tag: 'Custom',
-      price: `$${price.toFixed(0)}`,
-      photo: 'photo-1520271348891-049f9432f40c'
-    });
+    add({ name: `Custom ${stemCount}-Stem Bouquet`, tag: 'Custom', price: `$${price.toFixed(0)}`, photo: 'photo-1520271348891-049f9432f40c' });
     navigate('/cart');
   };
-  return /*#__PURE__*/React.createElement("div", {
-    className: "page-enter"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "custom-page"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "eyebrow"
-  }, "Design Yours"), /*#__PURE__*/React.createElement("h1", {
-    className: "sec-title",
-    style: {
-      marginBottom: 8
-    }
-  }, "Create a ", /*#__PURE__*/React.createElement("em", null, "Masterpiece")), /*#__PURE__*/React.createElement("p", {
-    style: {
-      fontSize: 14,
-      color: 'var(--muted)',
-      marginBottom: 48,
-      maxWidth: 480
-    }
-  }, "Every detail, handcrafted just for you. Configure your perfect bouquet below."), /*#__PURE__*/React.createElement("div", {
-    className: "custom-layout"
-  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
-    className: "custom-form-section"
-  }, /*#__PURE__*/React.createElement("label", {
-    className: "custom-form-label"
-  }, "Number of Stems"), /*#__PURE__*/React.createElement("div", {
-    className: "custom-qty-row"
-  }, /*#__PURE__*/React.createElement("button", {
-    className: "custom-qty-btn",
-    onClick: () => setStemCount(c => Math.max(12, c - 6))
-  }, "\u2212"), /*#__PURE__*/React.createElement("div", {
-    className: "custom-qty-num"
-  }, stemCount), /*#__PURE__*/React.createElement("button", {
-    className: "custom-qty-btn",
-    onClick: () => setStemCount(c => Math.min(100, c + 6))
-  }, "+"), /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontSize: 12,
-      color: 'var(--muted)',
-      marginLeft: 8
-    }
-  }, "stems (12\u2013100)"))), /*#__PURE__*/React.createElement("div", {
-    className: "custom-form-section"
-  }, /*#__PURE__*/React.createElement("label", {
-    className: "custom-form-label"
-  }, "Ribbon Palette ", selectedColors.length > 0 && /*#__PURE__*/React.createElement("span", {
-    style: {
-      color: 'var(--gold)',
-      fontStyle: 'italic',
-      letterSpacing: 0,
-      textTransform: 'none',
-      marginLeft: 4
-    }
-  }, selectedColors.join(', '))), /*#__PURE__*/React.createElement("div", {
-    className: "custom-options"
-  }, RIBBON_COLORS.map(c => /*#__PURE__*/React.createElement("button", {
-    key: c.name,
-    className: `custom-opt color-opt${selectedColors.includes(c.name) ? ' sel' : ''}`,
-    style: {
-      background: c.hex,
-      borderColor: c.hex
-    },
-    title: c.name,
-    onClick: () => toggleColor(c.name)
-  })))), /*#__PURE__*/React.createElement("div", {
-    className: "custom-form-section"
-  }, /*#__PURE__*/React.createElement("label", {
-    className: "custom-form-label"
-  }, "Luxury Wrapping"), /*#__PURE__*/React.createElement("div", {
-    className: "custom-options"
-  }, [['Kraft', 'Kraft Paper — Classic & eco-friendly'], ['Satin', 'Satin Ribbon — Elegant & smooth (+$10)'], ['Silk', 'Silk Wrap — Premium & luxurious (+$20)']].map(([k, desc]) => /*#__PURE__*/React.createElement("button", {
-    key: k,
-    className: `custom-opt${wrapping === k ? ' sel' : ''}`,
-    title: desc,
-    onClick: () => setWrapping(k)
-  }, k)))), /*#__PURE__*/React.createElement("div", {
-    className: "custom-form-section"
-  }, /*#__PURE__*/React.createElement("label", {
-    className: "custom-form-label"
-  }, "Personal Message Card (optional)"), /*#__PURE__*/React.createElement("textarea", {
-    className: "custom-note form-input form-textarea",
-    placeholder: "Write a personal message for your gift card...",
-    value: note,
-    onChange: e => setNote(e.target.value),
-    rows: 4
-  }))), /*#__PURE__*/React.createElement("div", {
-    className: "custom-preview"
-  }, /*#__PURE__*/React.createElement("img", {
-    className: "custom-preview-img",
-    src: "https://images.unsplash.com/photo-1520271348891-049f9432f40c?auto=format&fit=crop&q=80&w=700",
-    alt: "Custom bouquet preview"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "custom-preview-info"
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontFamily: "'Cormorant Garamond',serif",
-      fontSize: 22,
-      color: 'var(--dark)',
-      marginBottom: 8
-    }
-  }, "Your Custom Bouquet"), /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 13,
-      color: 'var(--muted)',
-      lineHeight: 1.8
-    }
-  }, /*#__PURE__*/React.createElement("div", null, "\uD83C\uDF38 ", /*#__PURE__*/React.createElement("strong", null, stemCount, " stems")), selectedColors.length > 0 && /*#__PURE__*/React.createElement("div", null, "\uD83C\uDF80 ", /*#__PURE__*/React.createElement("strong", null, selectedColors.join(' + '), " ribbons")), /*#__PURE__*/React.createElement("div", null, "\uD83D\uDCE6 ", /*#__PURE__*/React.createElement("strong", null, wrapping, " wrapping")), note && /*#__PURE__*/React.createElement("div", null, "\uD83D\uDC8C Personal card included")), /*#__PURE__*/React.createElement("div", {
-    style: {
-      marginTop: 20,
-      paddingTop: 16,
-      borderTop: '1px solid var(--border)',
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center'
-    }
-  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 11,
-      color: 'var(--muted)',
-      letterSpacing: '.1em',
-      textTransform: 'uppercase'
-    }
-  }, "Total"), /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontFamily: "'Cormorant Garamond',serif",
-      fontSize: 32,
-      color: 'var(--dark)',
-      fontWeight: 600
-    }
-  }, "$", price.toFixed(0))), /*#__PURE__*/React.createElement(MagBtn, {
-    className: "btn-gold",
-    onClick: handleAdd
-  }, "Add to Cart \u2192")))))), /*#__PURE__*/React.createElement(Footer, {
-    onPolicy: onPolicy,
-    onTerms: onTerms
-  }));
+  return React.createElement("div", { className: "page-enter" },
+    React.createElement("div", { className: "custom-page" },
+      React.createElement("div", { className: "eyebrow" }, "Design Yours"),
+      React.createElement("h1", { className: "sec-title", style: { marginBottom: 6 } }, "Create a ", React.createElement("em", null, "Masterpiece")),
+      React.createElement("p", { style: { fontSize: 13, color: 'var(--muted)', marginBottom: 40, maxWidth: 460 } }, "Configure your perfect bouquet below. Every detail, handcrafted just for you."),
+      React.createElement("div", { className: "custom-layout" },
+        React.createElement("div", null,
+          React.createElement("div", { className: "custom-form-section" },
+            React.createElement("label", { className: "custom-form-label" }, "Number of Stems"),
+            React.createElement("div", { className: "custom-qty-row" },
+              React.createElement("button", { className: "custom-qty-btn", onClick: () => setStemCount(c => Math.max(12, c - 6)) }, "−"),
+              React.createElement("div", { className: "custom-qty-num" }, stemCount),
+              React.createElement("button", { className: "custom-qty-btn", onClick: () => setStemCount(c => Math.min(100, c + 6)) }, "+"),
+              React.createElement("span", { style: { fontSize: 11.5, color: 'var(--muted)', marginLeft: 8 } }, "stems (12–100)"))),
+          React.createElement("div", { className: "custom-form-section" },
+            React.createElement("label", { className: "custom-form-label" },
+              "Ribbon Palette",
+              selectedColors.length > 0 && React.createElement("span", { style: { color: 'var(--gold)', fontStyle: 'italic', letterSpacing: 0, textTransform: 'none', marginLeft: 4 } }, selectedColors.join(', '))),
+            React.createElement("div", { className: "custom-options" },
+              RIBBON_COLORS.map(c => React.createElement("button", { key: c.name, className: `custom-opt color-opt${selectedColors.includes(c.name) ? ' sel' : ''}`, style: { background: c.hex, borderColor: c.hex }, title: c.name, onClick: () => toggleColor(c.name) })))),
+          React.createElement("div", { className: "custom-form-section" },
+            React.createElement("label", { className: "custom-form-label" }, "Luxury Wrapping"),
+            React.createElement("div", { className: "custom-options" },
+              [['Kraft', 'Classic & eco-friendly'], ['Satin', 'Elegant & smooth (+$10)'], ['Silk', 'Premium & luxurious (+$20)']].map(([k, desc]) =>
+                React.createElement("button", { key: k, className: `custom-opt${wrapping === k ? ' sel' : ''}`, title: desc, onClick: () => setWrapping(k) }, k)))),
+          React.createElement("div", { className: "custom-form-section" },
+            React.createElement("label", { className: "custom-form-label" }, "Personal Message Card (optional)"),
+            React.createElement("textarea", { className: "custom-note", placeholder: "Write a personal message...", value: note, onChange: e => setNote(e.target.value), rows: 4 }))),
+        React.createElement("div", { className: "custom-preview" },
+          React.createElement("img", { className: "custom-preview-img", src: "https://images.unsplash.com/photo-1520271348891-049f9432f40c?auto=format&fit=crop&q=80&w=700", alt: "Custom bouquet preview" }),
+          React.createElement("div", { className: "custom-preview-info" },
+            React.createElement("div", { style: { fontFamily: "'Cormorant Garamond',serif", fontSize: 20, color: 'var(--dark)', marginBottom: 6 } }, "Your Custom Bouquet"),
+            React.createElement("div", { style: { fontSize: 12.5, color: 'var(--muted)', lineHeight: 1.75 } },
+              React.createElement("div", null, `🌸 ${stemCount} stems`),
+              selectedColors.length > 0 && React.createElement("div", null, `🎀 ${selectedColors.join(' + ')} ribbons`),
+              React.createElement("div", null, `📦 ${wrapping} wrapping`),
+              note && React.createElement("div", null, "💌 Personal card included")),
+            React.createElement("div", { style: { marginTop: 18, paddingTop: 14, borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' } },
+              React.createElement("div", null,
+                React.createElement("div", { style: { fontSize: 10, color: 'var(--muted)', letterSpacing: '.1em', textTransform: 'uppercase' } }, "Total"),
+                React.createElement("div", { style: { fontFamily: "'Cormorant Garamond',serif", fontSize: 28, color: 'var(--dark)', fontWeight: 600 } }, `$${price.toFixed(0)}`)),
+              React.createElement("button", { className: "btn-gold", onClick: handleAdd }, "Add to Cart →")))))),
+    React.createElement(Footer, { onPolicy, onTerms }));
 }
 
 /* ═══════════════════════════
    ABOUT PAGE
 ═══════════════════════════ */
-function AboutPage({
-  onPolicy,
-  onTerms
-}) {
-  const {
-    navigate
-  } = useRouter();
-  const VALUES = [{
-    icon: '🌱',
-    title: 'Sustainability',
-    desc: 'We source eco-friendly ribbons and use recyclable packaging across every order.'
-  }, {
-    icon: '🎨',
-    title: 'Artisanship',
-    desc: 'Every bloom is shaped by hand, with no two bouquets ever exactly alike.'
-  }, {
-    icon: '💛',
-    title: 'Community',
-    desc: 'We partner with local Sydney charities, donating a bouquet for every 20 sold.'
-  }];
-  const TEAM = [{
-    name: 'Amelia Chen',
-    role: 'Founder & Head Florist',
-    img: 'photo-1508214751196-bcfd4ca60f91'
-  }, {
-    name: 'Isabelle Park',
-    role: 'Creative Director',
-    img: 'photo-1438761681033-6461ffad8d80'
-  }, {
-    name: 'Marcus Webb',
-    role: 'Head of Delivery & Ops',
-    img: 'photo-1472099645785-5658abf4ff4e'
-  }];
-  return /*#__PURE__*/React.createElement("div", {
-    className: "page-enter"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "about-hero"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "about-hero-content"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "eyebrow light"
-  }, "Our Story"), /*#__PURE__*/React.createElement("h1", {
-    className: "sec-title light",
-    style: {
-      marginBottom: 20
-    }
-  }, "Crafting ", /*#__PURE__*/React.createElement("em", null, "Timeless"), /*#__PURE__*/React.createElement("br", null), "Beauty Since 2020"), /*#__PURE__*/React.createElement("p", {
-    style: {
-      fontSize: 14.5,
-      color: 'rgba(250,246,240,.65)',
-      lineHeight: 1.85,
-      maxWidth: 440
-    }
-  }, "Born in a Sydney kitchen with a spool of ribbon and a dream, Bouquet Studio has grown into Australia's most-loved ribbon floral brand \u2014 delivering joy to thousands of homes."), /*#__PURE__*/React.createElement("div", {
-    style: {
-      marginTop: 32,
-      display: 'flex',
-      gap: 12
-    }
-  }, /*#__PURE__*/React.createElement(MagBtn, {
-    className: "btn-gold",
-    onClick: () => navigate('/bouquets')
-  }, "Shop Collection"), /*#__PURE__*/React.createElement("button", {
-    className: "btn-ghost",
-    onClick: () => navigate('/contact')
-  }, "Get in Touch")))), /*#__PURE__*/React.createElement("div", {
-    className: "about-section"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "about-grid"
-  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
-    className: "eyebrow"
-  }, "Our Origins"), /*#__PURE__*/React.createElement("h2", {
-    className: "sec-title",
-    style: {
-      marginBottom: 20
-    }
-  }, "From Kitchen Table", /*#__PURE__*/React.createElement("br", null), "to ", /*#__PURE__*/React.createElement("em", null, "National Brand")), /*#__PURE__*/React.createElement("p", {
-    style: {
-      fontSize: 14,
-      color: 'var(--muted)',
-      lineHeight: 1.9,
-      marginBottom: 16
-    }
-  }, "Founder Amelia Chen began crafting ribbon bouquets as gifts for friends in 2020. When the pandemic closed florists, she launched a small Instagram page \u2014 and within weeks, orders flooded in from across Australia."), /*#__PURE__*/React.createElement("p", {
-    style: {
-      fontSize: 14,
-      color: 'var(--muted)',
-      lineHeight: 1.9,
-      marginBottom: 28
-    }
-  }, "Today, our small-but-mighty team of artisans handcrafts every bouquet from our dedicated Sydney studio, using only premium materials sourced from sustainable suppliers."), /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: 'flex',
-      gap: 40
-    }
-  }, [['2,400+', 'Bouquets delivered'], ['98%', 'Customer satisfaction'], ['5', 'Years of craft']].map(([n, l]) => /*#__PURE__*/React.createElement("div", {
-    key: l
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontFamily: "'Cormorant Garamond',serif",
-      fontSize: 36,
-      fontWeight: 300,
-      color: 'var(--dark)'
-    }
-  }, n), /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 11,
-      color: 'var(--muted)',
-      textTransform: 'uppercase',
-      letterSpacing: '.1em',
-      marginTop: 4
-    }
-  }, l))))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("img", {
-    className: "about-img",
-    src: "https://images.unsplash.com/photo-1526047932273-341f2a7631f9?auto=format&fit=crop&q=80&w=700",
-    alt: "Our Studio"
-  }))), /*#__PURE__*/React.createElement("div", {
-    className: "about-values"
-  }, VALUES.map(v => /*#__PURE__*/React.createElement("div", {
-    key: v.title,
-    className: "about-val-card"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "about-val-icon"
-  }, v.icon), /*#__PURE__*/React.createElement("div", {
-    className: "about-val-title"
-  }, v.title), /*#__PURE__*/React.createElement("div", {
-    className: "about-val-desc"
-  }, v.desc))))), /*#__PURE__*/React.createElement("div", {
-    className: "about-section",
-    style: {
-      background: 'var(--cream2)'
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "eyebrow"
-  }, "The People"), /*#__PURE__*/React.createElement("h2", {
-    className: "sec-title"
-  }, "Meet the ", /*#__PURE__*/React.createElement("em", null, "Team")), /*#__PURE__*/React.createElement("div", {
-    className: "team-grid"
-  }, TEAM.map(t => /*#__PURE__*/React.createElement("div", {
-    key: t.name,
-    className: "team-card"
-  }, /*#__PURE__*/React.createElement("img", {
-    className: "team-img",
-    src: `https://images.unsplash.com/${t.img}?auto=format&fit=crop&q=80&w=400`,
-    alt: t.name
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "team-name"
-  }, t.name), /*#__PURE__*/React.createElement("div", {
-    className: "team-role"
-  }, t.role))))), /*#__PURE__*/React.createElement(Footer, {
-    onPolicy: onPolicy,
-    onTerms: onTerms
-  }));
+function AboutPage({ onPolicy, onTerms }) {
+  const { navigate } = useRouter();
+  const VALUES = [
+    { icon: '🌸', title: 'Timeless Craft', desc: 'Each bouquet is made by hand with meticulous attention to detail.' },
+    { icon: '🌱', title: 'Sustainability', desc: 'Ribbon flowers are reusable, eco-friendly and last a lifetime.' },
+    { icon: '💛', title: 'Made With Love', desc: 'Our Sydney studio team pours heart into every single arrangement.' },
+  ];
+  const TEAM = [
+    { name: 'Clara Ashworth', role: 'Founder & Head Florist', img: 'photo-1487412720507-e7ab37603c6f' },
+    { name: 'James Liu', role: 'Lead Artisan', img: 'photo-1472099645785-5658abf4ff4e' },
+    { name: 'Priya Nair', role: 'Creative Director', img: 'photo-1438761681033-6461ffad8d80' },
+  ];
+  return React.createElement("div", { className: "page-enter" },
+    React.createElement("div", { className: "about-hero" },
+      React.createElement("div", { className: "about-hero-content" },
+        React.createElement("div", { className: "eyebrow light" }, "Our Story"),
+        React.createElement("h1", { className: "sec-title light", style: { fontSize: 'clamp(32px,4vw,52px)' } }, "Handcrafted with ", React.createElement("em", null, "Love"), React.createElement("br"), "in Sydney"),
+        React.createElement("p", { style: { fontSize: 13.5, color: 'rgba(250,246,240,.58)', lineHeight: 1.8, marginTop: 16, maxWidth: 420 } }, "Founded in 2020, Bouquet Studio was born from a love of floristry and a desire to create something that lasts forever. Ribbon flowers that never wilt, always beautiful."))),
+    React.createElement("div", { className: "about-section" },
+      React.createElement("div", { className: "about-grid" },
+        React.createElement("div", null,
+          React.createElement("div", { className: "eyebrow" }, "Who We Are"),
+          React.createElement("h2", { className: "sec-title" }, "Art Meets ", React.createElement("em", null, "Floristry")),
+          React.createElement("p", { style: { fontSize: 13.5, color: 'var(--muted)', lineHeight: 1.85, marginTop: 16, maxWidth: 440 } }, "Our Sydney studio blends traditional ribbon craft with modern floral design. Every bouquet takes hours to create by hand, ensuring a quality and character that mass-produced flowers simply cannot match."),
+          React.createElement("p", { style: { fontSize: 13.5, color: 'var(--muted)', lineHeight: 1.85, marginTop: 14, maxWidth: 440 } }, "We deliver across Australia and have fulfilled over 2,400 orders for weddings, birthdays, anniversaries, and everything in between."),
+          React.createElement("button", { className: "btn-outline", style: { marginTop: 28 }, onClick: () => navigate('/bouquets') }, "Explore the Collection")),
+        React.createElement("img", { className: "about-img", src: "https://images.unsplash.com/photo-1487530811176-3780de880c2d?auto=format&fit=crop&q=80&w=800", alt: "Our studio" })),
+      React.createElement("div", { className: "about-values" }, VALUES.map(v =>
+        React.createElement("div", { key: v.title, className: "about-val-card" },
+          React.createElement("div", { className: "about-val-icon" }, v.icon),
+          React.createElement("div", { className: "about-val-title" }, v.title),
+          React.createElement("div", { className: "about-val-desc" }, v.desc)))),
+      React.createElement("div", { style: { marginTop: 64 } },
+        React.createElement("div", { className: "eyebrow" }, "The Team"),
+        React.createElement("h2", { className: "sec-title" }, "Meet the ", React.createElement("em", null, "Artisans")),
+        React.createElement("div", { className: "team-grid" }, TEAM.map(t =>
+          React.createElement("div", { key: t.name, className: "team-card" },
+            React.createElement("img", { className: "team-img", src: `https://images.unsplash.com/${t.img}?auto=format&fit=crop&q=80&w=600`, alt: t.name }),
+            React.createElement("div", { className: "team-name" }, t.name),
+            React.createElement("div", { className: "team-role" }, t.role)))))),
+    React.createElement(Footer, { onPolicy, onTerms }));
 }
 
 /* ═══════════════════════════
    CONTACT PAGE
 ═══════════════════════════ */
-function ContactPage({
-  onPolicy,
-  onTerms
-}) {
-  const [form, setForm] = useState({
-    name: '',
-    email: '',
-    subject: 'general',
-    message: ''
-  });
+function ContactPage({ onPolicy, onTerms }) {
+  const [form, setForm] = useState({ name: '', email: '', subject: 'General', message: '' });
   const [sent, setSent] = useState(false);
-  const [sending, setSending] = useState(false);
-
-  // ─────────────────────────────────────────────────────────────
-  // 📬 FORMSPREE SETUP — takes 2 minutes:
-  //   1. Go to https://formspree.io and create a FREE account
-  //   2. Click "New Form", give it a name (e.g. "Bouquet Studio Contact")
-  //   3. Copy your form ID (looks like: xyzabcde)
-  //   4. Replace xnjrqbqj below with that ID
-  //   5. Every submission lands in your email inbox automatically
-  // ─────────────────────────────────────────────────────────────
-  const FORMSPREE_ID = 'xnjrqbqj';
-
-  const submit = async () => {
-    if (!form.name || !form.email || !form.message) {
-      toast('Please fill in all required fields');
-      return;
-    }
-    if (!form.email.includes('@')) {
-      toast('Please enter a valid email');
-      return;
-    }
-
-    // (live mode — ID is set, proceed to real fetch below)
-
-    setSending(true);
-    try {
-      const res = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({
-          name: form.name,
-          email: form.email,
-          subject: form.subject,
-          message: form.message,
-        }),
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setSent(true);
-        toast('Message sent! We\'ll be in touch soon 🌸');
-      } else {
-        toast(data.errors?.[0]?.message || 'Something went wrong. Please try again.');
-      }
-    } catch (err) {
-      toast('Network error. Please check your connection and try again.');
-    } finally {
-      setSending(false);
-    }
+  const set = k => e => setForm(f => ({ ...f, [k]: e.target.value }));
+  const submit = () => {
+    if (!form.name || !form.email || !form.message) { toast('Please fill in all required fields'); return; }
+    setSent(true); toast('Message sent! We\'ll be in touch within 24 hours.');
   };
-  const set = k => e => setForm(p => ({
-    ...p,
-    [k]: e.target.value
-  }));
-  return /*#__PURE__*/React.createElement("div", {
-    className: "page-enter"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "contact-page"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "eyebrow"
-  }, "Get in Touch"), /*#__PURE__*/React.createElement("h1", {
-    className: "sec-title",
-    style: {
-      marginBottom: 8
-    }
-  }, "We'd Love to ", /*#__PURE__*/React.createElement("em", null, "Hear"), " from You"), /*#__PURE__*/React.createElement("p", {
-    style: {
-      fontSize: 14,
-      color: 'var(--muted)',
-      maxWidth: 480
-    }
-  }, "Questions about an order, custom enquiries, or just want to say hello \u2014 we're here."), /*#__PURE__*/React.createElement("div", {
-    className: "contact-layout"
-  }, /*#__PURE__*/React.createElement("div", null, [{
-    icon: '📍',
-    label: 'Studio Address',
-    val: 'Level 2, 45 George Street\nSydney NSW 2000, Australia'
-  }, {
-    icon: '📧',
-    label: 'Email',
-    val: 'hello@bouquetstudio.com.au'
-  }, {
-    icon: '📞',
-    label: 'Phone',
-    val: '+61 2 9876 5432\nMon–Fri 9am–5pm AEST'
-  }, {
-    icon: '🚀',
-    label: 'Delivery',
-    val: 'Same-day in Sydney, Melb & Brisbane\nNational delivery in 2–3 business days'
-  }].map(info => /*#__PURE__*/React.createElement("div", {
-    key: info.label,
-    className: "contact-info-item"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "contact-info-icon"
-  }, info.icon), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
-    className: "contact-info-label"
-  }, info.label), /*#__PURE__*/React.createElement("div", {
-    className: "contact-info-val",
-    style: {
-      whiteSpace: 'pre-line'
-    }
-  }, info.val))))), /*#__PURE__*/React.createElement("div", {
-    className: "contact-form"
-  }, !sent ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("h3", {
-    style: {
-      fontFamily: "'Cormorant Garamond',serif",
-      fontSize: 24,
-      fontWeight: 400,
-      color: 'var(--dark)',
-      marginBottom: 24
-    }
-  }, "Send a Message"), /*#__PURE__*/React.createElement("div", {
-    className: "form-row two"
-  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
-    className: "form-label"
-  }, "Full Name *"), /*#__PURE__*/React.createElement("input", {
-    className: "form-input",
-    placeholder: "Amelia Chen",
-    value: form.name,
-    onChange: set('name')
-  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
-    className: "form-label"
-  }, "Email *"), /*#__PURE__*/React.createElement("input", {
-    className: "form-input",
-    type: "email",
-    placeholder: "amelia@example.com",
-    value: form.email,
-    onChange: set('email')
-  }))), /*#__PURE__*/React.createElement("div", {
-    className: "form-row"
-  }, /*#__PURE__*/React.createElement("label", {
-    className: "form-label"
-  }, "Subject"), /*#__PURE__*/React.createElement("select", {
-    className: "form-input form-select",
-    value: form.subject,
-    onChange: set('subject')
-  }, /*#__PURE__*/React.createElement("option", {
-    value: "general"
-  }, "General Enquiry"), /*#__PURE__*/React.createElement("option", {
-    value: "order"
-  }, "Order Question"), /*#__PURE__*/React.createElement("option", {
-    value: "custom"
-  }, "Custom Bouquet"), /*#__PURE__*/React.createElement("option", {
-    value: "wholesale"
-  }, "Wholesale"), /*#__PURE__*/React.createElement("option", {
-    value: "press"
-  }, "Press & Media"))), /*#__PURE__*/React.createElement("div", {
-    className: "form-row"
-  }, /*#__PURE__*/React.createElement("label", {
-    className: "form-label"
-  }, "Message *"), /*#__PURE__*/React.createElement("textarea", {
-    className: "form-input form-textarea",
-    rows: 5,
-    placeholder: "Tell us how we can help...",
-    value: form.message,
-    onChange: set('message')
-  })), /*#__PURE__*/React.createElement(MagBtn, {
-    className: "btn-gold btn-full",
-    onClick: sending ? undefined : submit,
-    style: sending ? {opacity:0.65, cursor:'not-allowed'} : {}
-  }, sending ? "Sending\u2026" : "Send Message \u2192")) : /*#__PURE__*/React.createElement("div", {
-    style: {
-      textAlign: 'center',
-      padding: '48px 0'
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 48,
-      marginBottom: 16
-    }
-  }, "\uD83C\uDF38"), /*#__PURE__*/React.createElement("h3", {
-    style: {
-      fontFamily: "'Cormorant Garamond',serif",
-      fontSize: 26,
-      fontWeight: 300,
-      color: 'var(--dark)',
-      marginBottom: 10
-    }
-  }, "Message Received!"), /*#__PURE__*/React.createElement("p", {
-    style: {
-      fontSize: 13,
-      color: 'var(--muted)',
-      lineHeight: 1.8
-    }
-  }, "Thank you for reaching out. Our team will respond within 24 hours."))))), /*#__PURE__*/React.createElement(Footer, {
-    onPolicy: onPolicy,
-    onTerms: onTerms
-  }));
+  const INFO = [
+    { icon: '📍', label: 'Studio', val: '12 Floral Lane, Surry Hills\nSydney NSW 2010' },
+    { icon: '✉️', label: 'Email', val: 'hello@bouquetstudio.com.au' },
+    { icon: '📞', label: 'Phone', val: '+61 2 9000 0000\nMon – Fri, 9am – 5pm AEST' },
+    { icon: '🚚', label: 'Delivery', val: 'Same-day · Sydney, Melbourne & Brisbane' },
+  ];
+  return React.createElement("div", { className: "page-enter" },
+    React.createElement("div", { className: "contact-page" },
+      React.createElement("div", { className: "eyebrow" }, "Get in Touch"),
+      React.createElement("h1", { className: "sec-title", style: { marginBottom: 8 } }, "Contact ", React.createElement("em", null, "Us")),
+      React.createElement("p", { style: { fontSize: 13, color: 'var(--muted)', maxWidth: 440 } }, "Have a question or want to place a custom order? We'd love to hear from you."),
+      React.createElement("div", { className: "contact-layout" },
+        React.createElement("div", null, INFO.map(i =>
+          React.createElement("div", { key: i.label, className: "contact-info-item" },
+            React.createElement("div", { className: "contact-info-icon" }, i.icon),
+            React.createElement("div", null,
+              React.createElement("div", { className: "contact-info-label" }, i.label),
+              React.createElement("div", { className: "contact-info-val" }, i.val))))),
+        !sent
+          ? React.createElement("div", { className: "contact-form" },
+              React.createElement("h3", { style: { fontFamily: "'Cormorant Garamond',serif", fontSize: 20, fontWeight: 400, color: 'var(--dark)', marginBottom: 20 } }, "Send a Message"),
+              React.createElement("div", { className: "form-row two" },
+                React.createElement("div", null,
+                  React.createElement("label", { className: "form-label" }, "Full Name *"),
+                  React.createElement("input", { className: "form-input", placeholder: "Your name", value: form.name, onChange: set('name') })),
+                React.createElement("div", null,
+                  React.createElement("label", { className: "form-label" }, "Email *"),
+                  React.createElement("input", { className: "form-input", type: "email", placeholder: "you@example.com", value: form.email, onChange: set('email') }))),
+              React.createElement("div", { className: "form-row" },
+                React.createElement("label", { className: "form-label" }, "Subject"),
+                React.createElement("select", { className: "form-input form-select", value: form.subject, onChange: set('subject') },
+                  ['General', 'Custom Order', 'Delivery', 'Wedding', 'Corporate', 'Other'].map(s => React.createElement("option", { key: s }, s)))),
+              React.createElement("div", { className: "form-row" },
+                React.createElement("label", { className: "form-label" }, "Message *"),
+                React.createElement("textarea", { className: "form-input form-textarea", placeholder: "How can we help?", value: form.message, onChange: set('message'), rows: 5 })),
+              React.createElement("button", { className: "btn-gold btn-full", onClick: submit }, "Send Message →"))
+          : React.createElement("div", { className: "contact-form", style: { display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 280 } },
+              React.createElement("div", { style: { fontSize: 36, marginBottom: 14 } }, "✅"),
+              React.createElement("div", { style: { fontFamily: "'Cormorant Garamond',serif", fontSize: 22, color: 'var(--dark)', marginBottom: 8 } }, "Message Sent!"),
+              React.createElement("div", { style: { fontSize: 13, color: 'var(--muted)', textAlign: 'center', lineHeight: 1.7 } }, "We'll get back to you within 24 hours.")))),
+    React.createElement(Footer, { onPolicy, onTerms }));
 }
 
 /* ═══════════════════════════
    LOGIN PAGE
 ═══════════════════════════ */
 function LoginPage() {
-  const {
-    navigate
-  } = useRouter();
+  const { navigate } = useRouter();
   const [tab, setTab] = useState('login');
-  const [form, setForm] = useState({
-    email: '',
-    password: '',
-    name: ''
-  });
-  const set = k => e => setForm(p => ({
-    ...p,
-    [k]: e.target.value
-  }));
+  const [form, setForm] = useState({ name: '', email: '', password: '' });
+  const set = k => e => setForm(f => ({ ...f, [k]: e.target.value }));
   const submit = () => {
-    if (!form.email || !form.password) {
-      toast('Please fill in all fields');
-      return;
-    }
-    toast(tab === 'login' ? 'Welcome back! 🌸 (Demo)' : 'Account created! 🌸 (Demo)');
-    setTimeout(() => navigate('/'), 1200);
+    if (!form.email || !form.password) { toast('Please fill in all fields'); return; }
+    toast(tab === 'login' ? 'Welcome back!' : 'Account created!');
+    navigate('/');
   };
-  return /*#__PURE__*/React.createElement("div", {
-    className: "auth-page page-enter"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "auth-box"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "auth-logo"
-  }, "Bouquet", /*#__PURE__*/React.createElement("span", null, "Studio")), /*#__PURE__*/React.createElement("div", {
-    className: "auth-sub"
-  }, tab === 'login' ? 'Welcome back' : 'Create your account'), /*#__PURE__*/React.createElement("div", {
-    className: "auth-tabs"
-  }, /*#__PURE__*/React.createElement("button", {
-    className: `auth-tab${tab === 'login' ? ' active' : ''}`,
-    onClick: () => setTab('login')
-  }, "Login"), /*#__PURE__*/React.createElement("button", {
-    className: `auth-tab${tab === 'register' ? ' active' : ''}`,
-    onClick: () => setTab('register')
-  }, "Register")), /*#__PURE__*/React.createElement("button", {
-    className: "auth-social"
-  }, /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontWeight: 700,
-      fontSize: 14
-    }
-  }, "G"), " Continue with Google"), /*#__PURE__*/React.createElement("button", {
-    className: "auth-social"
-  }, /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontWeight: 700,
-      fontSize: 14
-    }
-  }, "f"), " Continue with Facebook"), /*#__PURE__*/React.createElement("div", {
-    className: "auth-divider"
-  }, "or"), tab === 'register' && /*#__PURE__*/React.createElement("div", {
-    className: "form-row"
-  }, /*#__PURE__*/React.createElement("label", {
-    className: "form-label"
-  }, "Full Name"), /*#__PURE__*/React.createElement("input", {
-    className: "form-input",
-    placeholder: "Amelia Chen",
-    value: form.name,
-    onChange: set('name')
-  })), /*#__PURE__*/React.createElement("div", {
-    className: "form-row"
-  }, /*#__PURE__*/React.createElement("label", {
-    className: "form-label"
-  }, "Email Address"), /*#__PURE__*/React.createElement("input", {
-    className: "form-input",
-    type: "email",
-    placeholder: "you@example.com",
-    value: form.email,
-    onChange: set('email')
-  })), /*#__PURE__*/React.createElement("div", {
-    className: "form-row"
-  }, /*#__PURE__*/React.createElement("label", {
-    className: "form-label"
-  }, "Password"), /*#__PURE__*/React.createElement("input", {
-    className: "form-input",
-    type: "password",
-    placeholder: "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022",
-    value: form.password,
-    onChange: set('password')
-  })), tab === 'login' && /*#__PURE__*/React.createElement("div", {
-    className: "auth-forgot"
-  }, "Forgot password?"), /*#__PURE__*/React.createElement(MagBtn, {
-    className: "btn-gold btn-full",
-    onClick: submit
-  }, tab === 'login' ? 'Sign In →' : 'Create Account →'), /*#__PURE__*/React.createElement("div", {
-    style: {
-      marginTop: 20,
-      textAlign: 'center',
-      fontSize: 12,
-      color: 'var(--muted)'
-    }
-  }, /*#__PURE__*/React.createElement("a", {
-    style: {
-      cursor: 'pointer',
-      color: 'var(--gold)'
-    },
-    onClick: () => navigate('/')
-  }, "\u2190 Back to shop"))));
+  return React.createElement("div", { className: "page-enter" },
+    React.createElement("div", { className: "auth-page" },
+      React.createElement("div", { className: "auth-box" },
+        React.createElement("div", { className: "auth-logo" }, "Bouquet", React.createElement("span", null, "Studio")),
+        React.createElement("div", { className: "auth-sub" }, tab === 'login' ? 'Welcome back' : 'Create your account'),
+        React.createElement("div", { className: "auth-tabs" },
+          React.createElement("button", { className: `auth-tab${tab === 'login' ? ' active' : ''}`, onClick: () => setTab('login') }, "Login"),
+          React.createElement("button", { className: `auth-tab${tab === 'register' ? ' active' : ''}`, onClick: () => setTab('register') }, "Register")),
+        React.createElement("button", { className: "auth-social" }, React.createElement("span", { style: { fontWeight: 700, fontSize: 13 } }, "G"), " Continue with Google"),
+        React.createElement("button", { className: "auth-social" }, React.createElement("span", { style: { fontWeight: 700, fontSize: 13 } }, "f"), " Continue with Facebook"),
+        React.createElement("div", { className: "auth-divider" }, "or"),
+        tab === 'register' && React.createElement("div", { className: "form-row" },
+          React.createElement("label", { className: "form-label" }, "Full Name"),
+          React.createElement("input", { className: "form-input", placeholder: "Your name", value: form.name, onChange: set('name') })),
+        React.createElement("div", { className: "form-row" },
+          React.createElement("label", { className: "form-label" }, "Email Address"),
+          React.createElement("input", { className: "form-input", type: "email", placeholder: "you@example.com", value: form.email, onChange: set('email') })),
+        React.createElement("div", { className: "form-row" },
+          React.createElement("label", { className: "form-label" }, "Password"),
+          React.createElement("input", { className: "form-input", type: "password", placeholder: "••••••••", value: form.password, onChange: set('password') })),
+        tab === 'login' && React.createElement("div", { className: "auth-forgot" }, "Forgot password?"),
+        React.createElement("button", { className: "btn-gold btn-full", onClick: submit }, tab === 'login' ? 'Sign In →' : 'Create Account →'),
+        React.createElement("div", { style: { marginTop: 18, textAlign: 'center', fontSize: 11.5, color: 'var(--muted)' } },
+          React.createElement("a", { style: { cursor: 'pointer', color: 'var(--gold)' }, onClick: () => navigate('/') }, "← Back to shop")))));
 }
 
 /* ═══════════════════════════
    APP
 ═══════════════════════════ */
 function App() {
-  const {
-    path
-  } = useRouter();
+  const { path } = useRouter();
   const [policyOpen, setPolicyOpen] = useState(false);
   const [termsOpen, setTermsOpen] = useState(false);
-  const policyProps = {
-    onPolicy: () => setPolicyOpen(true),
-    onTerms: () => setTermsOpen(true)
-  };
+  const policyProps = { onPolicy: () => setPolicyOpen(true), onTerms: () => setTermsOpen(true) };
   const renderPage = () => {
     switch (path) {
-      case '/bouquets':
-        return /*#__PURE__*/React.createElement(BrowsePage, policyProps);
-      case '/cart':
-        return /*#__PURE__*/React.createElement(CartPage, policyProps);
-      case '/custom':
-        return /*#__PURE__*/React.createElement(CustomPage, policyProps);
-      case '/about':
-        return /*#__PURE__*/React.createElement(AboutPage, policyProps);
-      case '/contact':
-        return /*#__PURE__*/React.createElement(ContactPage, policyProps);
-      case '/login':
-        return /*#__PURE__*/React.createElement(LoginPage, null);
-      default:
-        return /*#__PURE__*/React.createElement(HomePage, policyProps);
+      case '/bouquets': return React.createElement(BrowsePage, policyProps);
+      case '/cart':     return React.createElement(CartPage, policyProps);
+      case '/custom':   return React.createElement(CustomPage, policyProps);
+      case '/about':    return React.createElement(AboutPage, policyProps);
+      case '/contact':  return React.createElement(ContactPage, policyProps);
+      case '/login':    return React.createElement(LoginPage);
+      default:          return React.createElement(HomePage, policyProps);
     }
   };
-  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
-    className: "grain",
-    "aria-hidden": "true"
-  }), /*#__PURE__*/React.createElement(Cursor, null), /*#__PURE__*/React.createElement(Nav, {
-    onPolicy: () => setPolicyOpen(true),
-    onTerms: () => setTermsOpen(true)
-  }), renderPage(), /*#__PURE__*/React.createElement(Modal, {
-    open: policyOpen,
-    onClose: () => setPolicyOpen(false),
-    title: "Privacy Policy"
-  }, /*#__PURE__*/React.createElement("p", null, "Last updated: May 2026"), /*#__PURE__*/React.createElement("h4", null, "Information We Collect"), /*#__PURE__*/React.createElement("p", null, "We collect information you provide when placing orders, subscribing to our newsletter, or contacting us. This includes name, email, delivery address and payment details."), /*#__PURE__*/React.createElement("h4", null, "How We Use Your Information"), /*#__PURE__*/React.createElement("p", null, "We use your information to fulfil orders, send order confirmations and delivery updates, and with your consent, send marketing communications. We never sell your personal data to third parties."), /*#__PURE__*/React.createElement("h4", null, "Data Storage"), /*#__PURE__*/React.createElement("p", null, "Your data is stored securely in Australia and is protected in accordance with the Australian Privacy Act 1988."), /*#__PURE__*/React.createElement("h4", null, "Contact"), /*#__PURE__*/React.createElement("p", null, "For privacy enquiries email privacy@bouquetstudio.com.au")), /*#__PURE__*/React.createElement(Modal, {
-    open: termsOpen,
-    onClose: () => setTermsOpen(false),
-    title: "Terms & Conditions"
-  }, /*#__PURE__*/React.createElement("p", null, "Last updated: May 2026"), /*#__PURE__*/React.createElement("h4", null, "Orders & Payment"), /*#__PURE__*/React.createElement("p", null, "All prices are in Australian dollars and include GST. Orders are confirmed once payment is received."), /*#__PURE__*/React.createElement("h4", null, "Delivery"), /*#__PURE__*/React.createElement("p", null, "Same-day delivery is available for orders placed before 12:00 PM AEST in Sydney, Melbourne and Brisbane."), /*#__PURE__*/React.createElement("h4", null, "Returns & Refunds"), /*#__PURE__*/React.createElement("p", null, "Due to the handcrafted nature of our products, we accept returns only for items damaged in transit. Please contact us within 24 hours of delivery with photo evidence."), /*#__PURE__*/React.createElement("h4", null, "Custom Orders"), /*#__PURE__*/React.createElement("p", null, "Custom orders require a 50% deposit and are non-refundable once production begins."), /*#__PURE__*/React.createElement("h4", null, "Contact"), /*#__PURE__*/React.createElement("p", null, "Legal enquiries: legal@bouquetstudio.com.au \xB7 ABN: 12 345 678 901")));
+  return React.createElement("div", null,
+    React.createElement("div", { className: "grain", "aria-hidden": "true" }),
+    /* Removed: Cursor component */
+    React.createElement(Nav, { onPolicy: () => setPolicyOpen(true), onTerms: () => setTermsOpen(true) }),
+    renderPage(),
+    React.createElement(Modal, { open: policyOpen, onClose: () => setPolicyOpen(false), title: "Privacy Policy" },
+      React.createElement("p", null, "Last updated: May 2026"),
+      React.createElement("h4", null, "Information We Collect"),
+      React.createElement("p", null, "We collect information you provide when placing orders, subscribing to our newsletter, or contacting us. This includes name, email, delivery address and payment details."),
+      React.createElement("h4", null, "How We Use Your Information"),
+      React.createElement("p", null, "We use your information to fulfil orders and send order confirmations. We never sell your personal data to third parties."),
+      React.createElement("h4", null, "Data Storage"),
+      React.createElement("p", null, "Your data is stored securely in Australia in accordance with the Australian Privacy Act 1988."),
+      React.createElement("h4", null, "Contact"),
+      React.createElement("p", null, "For privacy enquiries email privacy@bouquetstudio.com.au")),
+    React.createElement(Modal, { open: termsOpen, onClose: () => setTermsOpen(false), title: "Terms & Conditions" },
+      React.createElement("p", null, "Last updated: May 2026"),
+      React.createElement("h4", null, "Orders & Payment"),
+      React.createElement("p", null, "All prices are in Australian dollars and include GST. Orders are confirmed once payment is received."),
+      React.createElement("h4", null, "Delivery"),
+      React.createElement("p", null, "Same-day delivery is available for orders placed before 12:00 PM AEST in Sydney, Melbourne and Brisbane."),
+      React.createElement("h4", null, "Returns & Refunds"),
+      React.createElement("p", null, "Due to the handcrafted nature of our products, we accept returns only for items damaged in transit. Please contact us within 24 hours with photo evidence."),
+      React.createElement("h4", null, "Custom Orders"),
+      React.createElement("p", null, "Custom orders require a 50% deposit and are non-refundable once production begins."),
+      React.createElement("h4", null, "Contact"),
+      React.createElement("p", null, "Legal enquiries: legal@bouquetstudio.com.au · ABN: 12 345 678 901")));
 }
-ReactDOM.createRoot(document.getElementById('root')).render(/*#__PURE__*/React.createElement(RouterProvider, null, /*#__PURE__*/React.createElement(CartProvider, null, /*#__PURE__*/React.createElement(App, null))));
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  React.createElement(RouterProvider, null,
+    React.createElement(CartProvider, null,
+      React.createElement(WishlistProvider, null,
+        React.createElement(App)))));
 </script>
 </body>
 </html>
