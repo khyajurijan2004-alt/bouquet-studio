@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Bouquet Studio — Handcrafted Ribbon Flowers, Sydney</title>
-<meta name="description" content="Curated ribbon flower bouquets handcrafted in Sydney. Same-day delivery across Australia. Shop bridal, birthday, anniversary and custom bouquets."/>
+<meta name="description" content="Curated ribbon flower bouquets handcrafted in Sydney. Same-day delivery across Australia."/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
@@ -19,1362 +19,1306 @@
   --cream:#faf6f0; --cream2:#f2ece2;
   --dark:#1a2b1c;  --dark2:#111a12;
   --gold:#c4973a;  --gold-light:#e8d5a3;
-  --blush:#deb8b0; --blush-light:#f5e8e4;
+  --blush-light:#f5e8e4;
   --text:#2c2c2a;  --muted:#7a7060;
-  --border:rgba(196,151,58,.18);
-  --border-neutral:rgba(44,44,42,.1);
+  --border:rgba(196,151,58,.16);
+  --border-n:rgba(44,44,42,.09);
   --sh-sm:0 1px 4px rgba(0,0,0,.05);
   --sh-md:0 4px 16px rgba(0,0,0,.07);
   --sh-lg:0 8px 32px rgba(0,0,0,.1);
-  --px:64px; --py:88px; --nav-h:72px;
-  --r-sm:10px; --r-md:16px; --r-lg:20px; --pill:100px;
-  --ease-expo:cubic-bezier(.16,1,.3,1);
-  /* Consistent spacing scale */
-  --sp-1:8px; --sp-2:16px; --sp-3:24px; --sp-4:32px;
-  --sp-5:40px; --sp-6:48px; --sp-8:64px;
+  --px:64px; --py:80px; --nav-h:68px;
+  --r:10px; --r-lg:18px; --pill:100px;
+  --ease:cubic-bezier(.16,1,.3,1);
 }
-@media(max-width:1024px){:root{--px:40px;--py:72px}}
-@media(max-width:767px) {:root{--px:20px;--py:56px;--nav-h:60px}}
+@media(max-width:1024px){:root{--px:36px;--py:64px}}
+@media(max-width:767px){:root{--px:18px;--py:52px;--nav-h:58px}}
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 img{display:block;max-width:100%}
-button{font-family:inherit}
+button,input,textarea,select{font-family:inherit}
 ul{list-style:none}
 a{text-decoration:none}
-/* Removed: cursor:none — custom cursor deleted */
 body{font-family:'Outfit',sans-serif;background:var(--cream);color:var(--text);overflow-x:hidden}
 
-/* Subtle grain texture — kept but reduced opacity */
-.grain{position:fixed;inset:0;pointer-events:none;z-index:9000;opacity:.022;
-  background-size:200px 200px;
+/* grain — very subtle, tasteful texture */
+.grain{position:fixed;inset:0;pointer-events:none;z-index:9000;opacity:.02;
+  background-size:200px;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 
 /* ── TOAST ── */
-#toast-root{position:fixed;bottom:24px;right:24px;z-index:8000;display:flex;flex-direction:column;gap:8px;pointer-events:none}
-.toast{background:var(--dark);color:var(--cream);padding:11px 18px;border-radius:var(--pill);
-  font-size:12.5px;font-weight:500;letter-spacing:.03em;
-  display:flex;align-items:center;gap:9px;
-  box-shadow:var(--sh-lg);pointer-events:none;
-  transform:translateY(12px);opacity:0}
-.toast-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);flex-shrink:0}
+#toast-root{position:fixed;bottom:20px;right:20px;z-index:9100;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{background:var(--dark);color:var(--cream);padding:10px 16px;border-radius:var(--pill);
+  font-size:12px;font-weight:500;letter-spacing:.02em;display:flex;align-items:center;gap:8px;
+  box-shadow:var(--sh-lg);transform:translateY(10px);opacity:0}
+.toast-dot{width:5px;height:5px;border-radius:50%;background:var(--gold);flex-shrink:0}
 
 /* ── NAV ── */
-.nav{position:fixed;inset:0 0 auto 0;z-index:200;
-  display:flex;align-items:center;justify-content:space-between;
-  height:var(--nav-h);padding:0 var(--px);
+.nav{position:fixed;inset:0 0 auto 0;z-index:500;height:var(--nav-h);
+  display:flex;align-items:center;justify-content:space-between;padding:0 var(--px);
   transition:background .3s,border-color .3s}
-.nav.scrolled{background:rgba(250,246,240,.94);backdrop-filter:blur(16px);border-bottom:1px solid var(--border-neutral)}
-.nav.nav-light .nav-logo{color:var(--cream)}
-.nav.nav-light .nav-logo span{color:var(--gold)}
-.nav.nav-light .nav-links a{color:rgba(250,246,240,.65)}
-.nav.nav-light .nav-links a:hover,.nav.nav-light .nav-links a.active{color:var(--gold);opacity:1}
-.nav.nav-light .hamburger span{background:var(--cream)}
-.nav.nav-light .nav-cart-btn{color:var(--cream);opacity:.75}
-.nav-logo{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:600;letter-spacing:.07em;color:var(--dark);cursor:pointer}
+.nav.scrolled{background:rgba(250,246,240,.95);backdrop-filter:blur(14px);border-bottom:1px solid var(--border-n)}
+.nav.nav-light:not(.scrolled) .nav-logo{color:var(--cream)}
+.nav.nav-light:not(.scrolled) .nav-logo span{color:var(--gold-light)}
+.nav.nav-light:not(.scrolled) .nav-links a{color:rgba(250,246,240,.6)}
+.nav.nav-light:not(.scrolled) .nav-links a:hover,.nav.nav-light:not(.scrolled) .nav-links a.active{color:var(--gold-light);opacity:1}
+.nav.nav-light:not(.scrolled) .hamburger span{background:var(--cream)}
+.nav.nav-light:not(.scrolled) .nav-right-btn{color:rgba(250,246,240,.6)}
+.nav.nav-light:not(.scrolled) .nav-right-btn:hover{color:var(--gold-light)}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;letter-spacing:.07em;color:var(--dark);cursor:pointer;flex-shrink:0}
 .nav-logo span{color:var(--gold)}
-.nav-links{display:flex;gap:28px}
-.nav-links a{font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--text);opacity:.55;transition:opacity .2s,color .2s;cursor:pointer}
-.nav-links a:hover,.nav-links a.active{opacity:1;color:var(--gold)}
-.nav-actions{display:flex;gap:10px;align-items:center}
-.nav-cart-btn{background:none;border:none;cursor:pointer;font-size:11px;font-weight:500;letter-spacing:.07em;color:var(--text);opacity:.55;transition:opacity .2s;display:flex;align-items:center;gap:5px}
-.nav-cart-btn:hover{opacity:1}
-.cart-count{background:var(--gold);color:white;width:17px;height:17px;border-radius:50%;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center}
-.hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:4px}
-.hamburger span{display:block;width:21px;height:1.5px;background:var(--dark);border-radius:2px;transition:transform .25s,opacity .25s}
-.mob-menu{position:fixed;inset:0;z-index:300;background:var(--dark);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;transform:translateX(100%);visibility:hidden}
-.mob-close{position:absolute;top:18px;right:var(--px);background:none;border:none;cursor:pointer;font-size:26px;color:rgba(250,246,240,.4);line-height:1}
-.mob-links{display:flex;flex-direction:column;align-items:center;gap:2px}
-.mob-links a{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;font-style:italic;color:rgba(250,246,240,.7);transition:color .2s;cursor:pointer;padding:6px 0}
-.mob-links a:hover{color:var(--gold)}
-.mob-cta{margin-top:24px}
+.nav-links{display:flex;gap:26px}
+/* CodePen-inspired: underline active indicator (SimonNonnis tab pattern adapted) */
+.nav-links a{font-size:10.5px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--text);opacity:.5;transition:opacity .2s,color .2s;cursor:pointer;
+  position:relative;padding-bottom:2px}
+.nav-links a::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1px;
+  background:var(--gold);transition:width .25s var(--ease)}
+.nav-links a:hover{opacity:1}
+.nav-links a.active{opacity:1;color:var(--gold)}
+.nav-links a.active::after,.nav-links a:hover::after{width:100%}
+.nav-right{display:flex;align-items:center;gap:14px}
+.nav-right-btn{background:none;border:none;cursor:pointer;font-size:10.5px;font-weight:600;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--text);opacity:.5;
+  transition:opacity .2s,color .2s;padding:0}
+.nav-right-btn:hover{opacity:1;color:var(--gold)}
+/* Cart button with live count badge */
+.nav-cart-wrap{position:relative;display:flex;align-items:center;gap:5px;background:none;
+  border:none;cursor:pointer;font-size:10.5px;font-weight:600;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--text);opacity:.5;transition:opacity .2s}
+.nav-cart-wrap:hover{opacity:1}
+.cart-badge{background:var(--gold);color:white;width:16px;height:16px;border-radius:50%;
+  font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;
+  transition:transform .2s var(--ease)}
+.nav-cart-wrap:hover .cart-badge{transform:scale(1.15)}
+.hamburger{display:none;flex-direction:column;gap:4.5px;background:none;border:none;cursor:pointer;padding:3px}
+.hamburger span{display:block;width:20px;height:1.5px;background:var(--dark);border-radius:2px}
+.mob-menu{position:fixed;inset:0;z-index:600;background:var(--dark);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;transform:translateX(100%);visibility:hidden}
+.mob-close{position:absolute;top:16px;right:var(--px);background:none;border:none;cursor:pointer;
+  font-size:24px;color:rgba(250,246,240,.35);line-height:1}
+.mob-links a{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:300;font-style:italic;
+  color:rgba(250,246,240,.65);transition:color .2s;cursor:pointer;display:block;padding:7px 0;text-align:center}
+.mob-links a:hover{color:var(--gold-light)}
+.mob-cta{margin-top:28px}
 @media(max-width:767px){.nav-links,.cart-label{display:none}.hamburger{display:flex}}
-/* Removed: .btn-nav from nav — replaced with plain link */
-.nav-login-link{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text);opacity:.55;transition:opacity .2s,color .2s;cursor:pointer;background:none;border:none;padding:0}
-.nav-login-link:hover{opacity:1;color:var(--gold)}
+
+/* ── SLIDE-OUT CART DRAWER ──
+   CodePen pattern: TheDutchCoder slide-out cart, adapted for our design system */
+.cart-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:700;
+  opacity:0;visibility:hidden;transition:opacity .28s,visibility .28s;backdrop-filter:blur(2px)}
+.cart-overlay.open{opacity:1;visibility:visible}
+.cart-drawer{position:fixed;top:0;right:0;bottom:0;width:400px;max-width:95vw;
+  background:var(--cream);z-index:800;
+  transform:translateX(100%);transition:transform .35s var(--ease);
+  display:flex;flex-direction:column;box-shadow:-8px 0 40px rgba(0,0,0,.12)}
+.cart-drawer.open{transform:translateX(0)}
+.drawer-head{display:flex;justify-content:space-between;align-items:center;
+  padding:20px 24px;border-bottom:1px solid var(--border-n);flex-shrink:0}
+.drawer-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;color:var(--dark)}
+.drawer-close{background:none;border:none;cursor:pointer;font-size:20px;color:var(--muted);
+  width:32px;height:32px;display:flex;align-items:center;justify-content:center;
+  border-radius:50%;transition:background .2s}
+.drawer-close:hover{background:var(--cream2)}
+.drawer-body{flex:1;overflow-y:auto;padding:16px 24px}
+.drawer-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  height:100%;gap:12px;color:var(--muted);padding:40px 0}
+.drawer-empty-icon{font-size:40px;opacity:.5}
+.drawer-empty-text{font-size:13px}
+.drawer-line{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--border-n);align-items:center}
+.drawer-line-img{width:70px;height:70px;border-radius:var(--r);object-fit:cover;flex-shrink:0}
+.drawer-line-info{flex:1;min-width:0}
+.drawer-line-name{font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--dark);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.drawer-line-tag{font-size:9px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--gold);margin-bottom:2px}
+.drawer-line-price{font-size:13px;color:var(--muted);margin-top:2px}
+.drawer-line-qty{display:flex;align-items:center;gap:8px;margin-top:8px}
+.dqty-btn{width:22px;height:22px;border-radius:50%;border:1px solid var(--border-n);background:none;
+  cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;
+  transition:border-color .2s,background .2s,color .2s}
+.dqty-btn:hover{border-color:var(--gold);background:var(--gold);color:white}
+.dqty-val{font-size:12px;font-weight:600;color:var(--dark);min-width:16px;text-align:center}
+.drawer-line-remove{background:none;border:none;cursor:pointer;color:var(--muted);font-size:16px;
+  margin-left:auto;transition:color .2s;flex-shrink:0}
+.drawer-line-remove:hover{color:var(--dark)}
+.drawer-foot{padding:16px 24px;border-top:1px solid var(--border-n);flex-shrink:0;background:var(--cream)}
+.drawer-subtotal{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.drawer-subtotal-label{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.drawer-subtotal-val{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--dark)}
+.drawer-free-shipping{font-size:10.5px;color:var(--muted);margin-bottom:14px;line-height:1.5}
+.drawer-free-shipping span{color:var(--gold);font-weight:600}
+.drawer-checkout-btn{width:100%;padding:13px;background:var(--gold);color:var(--dark);border:none;
+  border-radius:var(--pill);font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  cursor:pointer;transition:opacity .2s;margin-bottom:8px}
+.drawer-checkout-btn:hover{opacity:.85}
+.drawer-continue{width:100%;padding:10px;background:none;border:1.5px solid var(--border-n);
+  border-radius:var(--pill);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;
+  cursor:pointer;color:var(--muted);transition:border-color .2s,color .2s}
+.drawer-continue:hover{border-color:var(--gold);color:var(--gold)}
 
 /* ── HERO ── */
 .hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;
-  padding:calc(var(--nav-h) + 40px) var(--px) 64px;position:relative;overflow:hidden;gap:40px}
-/* Removed: .hero-orb decorative blob — replaced with restrained bg */
-.hero-left{position:relative;z-index:2;max-width:520px}
-.hero-eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:10px;font-weight:600;
-  letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:20px}
-.hero-eyebrow::before{content:'';width:28px;height:1px;background:var(--gold)}
-/* Removed: .line / .line-inner clip animation wrappers */
-.hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(42px,4.8vw,68px);
-  font-weight:300;line-height:1.08;color:var(--dark);margin-bottom:20px}
+  padding:calc(var(--nav-h) + 36px) var(--px) 56px;gap:40px;overflow:hidden}
+.hero-left{max-width:500px}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:9.5px;font-weight:700;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:18px}
+.hero-eyebrow::before{content:'';width:24px;height:1px;background:var(--gold)}
+.hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(38px,4.4vw,62px);
+  font-weight:300;line-height:1.08;color:var(--dark);margin-bottom:18px}
 .hero-title em{font-style:italic;color:var(--gold)}
-.hero-desc{font-size:14px;font-weight:300;color:var(--muted);line-height:1.8;max-width:380px;margin-bottom:32px}
-.hero-cta{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-.hero-stats{display:flex;gap:28px;margin-top:40px;padding-top:28px;border-top:1px solid var(--border)}
-.stat-num{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;color:var(--dark);line-height:1}
-.stat-lbl{font-size:10px;color:var(--muted);letter-spacing:.09em;text-transform:uppercase;margin-top:3px}
-.hero-right{position:relative;z-index:2;display:flex;align-items:center;justify-content:center}
-.hero-img-wrap{position:relative}
-.hero-img-frame{width:400px;height:500px;border-radius:var(--r-lg);overflow:hidden;position:relative;flex-shrink:0}
-.hero-img-frame img{width:100%;height:100%;object-fit:cover;object-position:center top}
-/* Kept: small floating info badges — but removed petal emojis */
-.hero-badge{position:absolute;top:24px;left:-16px;background:white;border-radius:var(--r-sm);
-  padding:12px 16px;box-shadow:var(--sh-md);z-index:4}
-.hero-badge-label{font-size:9px;font-weight:700;letter-spacing:.14em;color:var(--gold);text-transform:uppercase}
-.hero-badge-sub{font-size:11.5px;color:var(--text);margin-top:2px}
-.hero-float-pill{position:absolute;bottom:36px;right:-12px;background:var(--dark);color:var(--cream);
-  border-radius:var(--pill);padding:9px 16px;z-index:4;box-shadow:var(--sh-md);
-  font-size:11px;font-weight:500;letter-spacing:.04em;white-space:nowrap}
-.hero-float-pill span{color:var(--gold)}
-/* Removed: .hero-petal floating emoji elements */
-@media(max-width:1024px){.hero-img-frame{width:320px;height:420px}}
+.hero-desc{font-size:13.5px;font-weight:300;color:var(--muted);line-height:1.8;max-width:360px;margin-bottom:28px}
+.hero-cta{display:flex;gap:10px;flex-wrap:wrap}
+.hero-stats{display:flex;gap:24px;margin-top:36px;padding-top:24px;border-top:1px solid var(--border)}
+.stat-num{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:400;color:var(--dark);line-height:1}
+.stat-lbl{font-size:9.5px;color:var(--muted);letter-spacing:.09em;text-transform:uppercase;margin-top:3px}
+.hero-right{position:relative;display:flex;align-items:center;justify-content:center}
+.hero-img-frame{width:390px;height:480px;border-radius:var(--r-lg);overflow:hidden;flex-shrink:0}
+.hero-img-frame img{width:100%;height:100%;object-fit:cover}
+/* Small floating info cards — kept, useful UX signal */
+.hero-badge{position:absolute;top:20px;left:-14px;background:white;border-radius:var(--r);
+  padding:10px 14px;box-shadow:var(--sh-md)}
+.hero-badge-label{font-size:8.5px;font-weight:700;letter-spacing:.13em;color:var(--gold);text-transform:uppercase}
+.hero-badge-sub{font-size:11px;color:var(--text);margin-top:2px}
+.hero-pill{position:absolute;bottom:28px;right:-10px;background:var(--dark);color:var(--cream);
+  border-radius:var(--pill);padding:8px 14px;box-shadow:var(--sh-md);
+  font-size:10.5px;font-weight:500;letter-spacing:.04em;white-space:nowrap}
+.hero-pill span{color:var(--gold)}
+@media(max-width:1024px){.hero-img-frame{width:300px;height:400px}}
 @media(max-width:767px){
-  .hero{grid-template-columns:1fr;min-height:auto;padding-bottom:48px}
-  .hero-right{margin-top:32px}
-  .hero-img-frame{width:100%;max-width:280px;height:340px;margin:0 auto}
-  .hero-badge{top:12px;left:0}
-  .hero-float-pill{bottom:12px;right:0}
-  .hero-stats{gap:18px}
+  .hero{grid-template-columns:1fr;min-height:auto;padding-bottom:44px}
+  .hero-right{margin-top:28px}
+  .hero-img-frame{width:100%;max-width:260px;height:320px;margin:0 auto}
+  .hero-badge{top:10px;left:0}
+  .hero-pill{bottom:10px;right:0}
+  .hero-stats{gap:16px}
 }
 
-/* ── TRUST BAR (replaces animated marquee/ribbon) ── */
-.trust-bar{background:var(--dark);padding:14px var(--px);display:flex;align-items:center;justify-content:center;
-  gap:32px;flex-wrap:wrap;border-top:1px solid rgba(196,151,58,.12);border-bottom:1px solid rgba(196,151,58,.12)}
-.trust-item{display:flex;align-items:center;gap:8px;font-size:11.5px;font-weight:400;
-  font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--gold-light);letter-spacing:.04em}
-.trust-icon{font-size:14px;line-height:1}
-@media(max-width:600px){.trust-bar{gap:16px;padding:12px var(--px)}.trust-item{font-size:11px}}
+/* ── TRUST BAR — static, replaces scrolling marquee ── */
+.trust-bar{background:var(--dark);padding:13px var(--px);display:flex;align-items:center;
+  justify-content:center;gap:28px;flex-wrap:wrap;
+  border-top:1px solid rgba(196,151,58,.1);border-bottom:1px solid rgba(196,151,58,.1)}
+.trust-item{display:flex;align-items:center;gap:7px;font-family:'Cormorant Garamond',serif;
+  font-size:13px;font-style:italic;color:var(--gold-light);letter-spacing:.03em}
+@media(max-width:600px){.trust-bar{gap:14px;padding:11px var(--px)}.trust-item{font-size:11.5px}}
 
-/* ── FEATURES STRIP ── */
+/* ── FEATURE STRIP ── */
 .features{background:var(--cream2);display:grid;grid-template-columns:repeat(3,1fr);
   border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
-.feat-item{padding:32px var(--px);display:flex;align-items:flex-start;gap:14px;border-right:1px solid var(--border)}
+.feat-item{padding:28px var(--px);display:flex;align-items:flex-start;gap:13px;border-right:1px solid var(--border)}
 .feat-item:last-child{border-right:none}
-.feat-icon{font-size:18px;width:40px;height:40px;background:white;border-radius:var(--r-sm);
+.feat-icon{font-size:17px;width:38px;height:38px;background:white;border-radius:var(--r);
   display:flex;align-items:center;justify-content:center;box-shadow:var(--sh-sm);flex-shrink:0}
-.feat-title{font-size:13px;font-weight:600;color:var(--dark);margin-bottom:4px}
-.feat-desc{font-size:12px;font-weight:300;color:var(--muted);line-height:1.65}
-@media(max-width:1024px){
-  .features{grid-template-columns:1fr}
-  .feat-item{border-right:none;border-bottom:1px solid var(--border);padding:24px var(--px)}
-  .feat-item:last-child{border-bottom:none}
-}
+.feat-title{font-size:12.5px;font-weight:600;color:var(--dark);margin-bottom:3px}
+.feat-desc{font-size:11.5px;font-weight:300;color:var(--muted);line-height:1.6}
+@media(max-width:1024px){.features{grid-template-columns:1fr}
+  .feat-item{border-right:none;border-bottom:1px solid var(--border);padding:22px var(--px)}
+  .feat-item:last-child{border-bottom:none}}
 
-/* ── SHARED SECTION ── */
+/* ── SHARED ── */
 .section{padding:var(--py) var(--px)}
-.eyebrow{display:flex;align-items:center;gap:10px;font-size:10px;font-weight:600;
-  letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
-.eyebrow::before{content:'';width:22px;height:1px;background:var(--gold)}
-.eyebrow.light{color:var(--gold-light)}
-.eyebrow.light::before{background:var(--gold-light)}
-.eyebrow.center{justify-content:center}
-.eyebrow.center::before{display:none}
-/* Reduced heading sizes — less cinematic */
-.sec-title{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,3.2vw,44px);
+.eyebrow{display:flex;align-items:center;gap:9px;font-size:9.5px;font-weight:700;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:11px}
+.eyebrow::before{content:'';width:20px;height:1px;background:var(--gold)}
+.eyebrow.light{color:var(--gold-light)}.eyebrow.light::before{background:var(--gold-light)}
+.eyebrow.center{justify-content:center}.eyebrow.center::before{display:none}
+.sec-title{font-family:'Cormorant Garamond',serif;font-size:clamp(26px,3vw,42px);
   font-weight:300;line-height:1.12;color:var(--dark)}
 .sec-title em{font-style:italic;color:var(--gold)}
 .sec-title.light{color:var(--cream)}
 
-/* ── PRODUCT CARD COMPONENT (reusable) ── */
-.coll-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:40px}
-.coll-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-
-/* ProductCard */
+/* ── PRODUCT CARD COMPONENT
+   CodePen-sourced pattern: mfg888 tailwind hover card + stevepiron price microinteraction.
+   Idea: action overlay slides up from bottom on hover — clean, purposeful, no clip-path gimmicks. ── */
+.prod-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
 .card{background:white;border-radius:var(--r-lg);overflow:hidden;position:relative;
-  box-shadow:var(--sh-sm);transition:box-shadow .25s,transform .25s;cursor:pointer}
-.card:hover{box-shadow:var(--sh-md);transform:translateY(-3px)}
-.card-shell{overflow:hidden;position:relative}
-.card-img{width:100%;height:248px;object-fit:cover;transition:transform .4s ease}
+  box-shadow:var(--sh-sm);transition:box-shadow .22s,transform .22s}
+.card:hover{box-shadow:var(--sh-md);transform:translateY(-2px)}
+.card-img-wrap{position:relative;overflow:hidden}
+.card-img{width:100%;height:240px;object-fit:cover;transition:transform .38s ease;display:block}
 .card:hover .card-img{transform:scale(1.04)}
-/* Wishlist button on card — real ecommerce UX */
-.card-wish{position:absolute;top:10px;right:10px;width:30px;height:30px;border-radius:50%;
+/* Slide-up action overlay — CodePen mfg888 pattern adapted */
+.card-overlay{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;
+  padding-bottom:14px;gap:8px;
+  background:linear-gradient(to top, rgba(26,43,28,.55) 0%, transparent 55%);
+  opacity:0;transform:translateY(6px);
+  transition:opacity .22s,transform .22s}
+.card:hover .card-overlay{opacity:1;transform:translateY(0)}
+.card-overlay-btn{padding:7px 14px;border-radius:var(--pill);font-size:10px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;cursor:pointer;border:none;transition:opacity .15s}
+.card-overlay-btn.primary{background:var(--gold);color:var(--dark)}
+.card-overlay-btn.secondary{background:rgba(250,246,240,.92);color:var(--dark)}
+.card-overlay-btn:hover{opacity:.88}
+/* Wish button top-right — always accessible */
+.card-wish{position:absolute;top:10px;right:10px;width:28px;height:28px;border-radius:50%;
   background:white;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
-  font-size:13px;box-shadow:var(--sh-sm);transition:background .2s,transform .15s;z-index:2;opacity:0}
-.card:hover .card-wish{opacity:1}
-.card-wish:hover{background:var(--blush-light);transform:scale(1.12)}
-.card-wish.active{opacity:1;background:var(--blush-light)}
-.card-body{padding:16px 18px 20px}
-.card-tag{font-size:9px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
-.card-name{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:400;color:var(--dark);margin-bottom:5px}
-.card-desc{font-size:11.5px;color:var(--muted);line-height:1.6;margin-bottom:12px}
+  font-size:12px;box-shadow:var(--sh-sm);transition:background .18s,transform .15s}
+.card-wish:hover{background:var(--blush-light);transform:scale(1.1)}
+.card-wish.active{background:var(--blush-light)}
+.card-badge{position:absolute;top:10px;left:10px;background:var(--dark);color:var(--cream);
+  font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  padding:3px 8px;border-radius:var(--pill)}
+.card-badge.gold{background:var(--gold);color:var(--dark)}
+.card-body{padding:14px 16px 18px}
+.card-tag{font-size:9px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:3px}
+.card-name{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:400;color:var(--dark);margin-bottom:5px}
+.card-desc{font-size:11px;color:var(--muted);line-height:1.55;margin-bottom:10px}
+/* Price microinteraction — CodePen stevepiron pattern: gold line slides in left on hover */
 .card-foot{display:flex;justify-content:space-between;align-items:center}
-.card-price{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:600;color:var(--dark)}
-.card-bdg{position:absolute;top:10px;left:10px;background:var(--dark);color:var(--cream);
-  font-size:8.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
-  padding:3px 9px;border-radius:var(--pill)}
-.card-bdg.gold{background:var(--gold);color:var(--dark)}
-@media(max-width:1024px){.coll-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:767px){.coll-grid{grid-template-columns:1fr}.coll-head{flex-direction:column;align-items:flex-start;gap:14px}}
+.card-price-wrap{position:relative;display:inline-block}
+.card-price{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:var(--dark);
+  display:inline-block;transition:transform .28s var(--ease);transition-delay:.06s}
+.card:hover .card-price{transform:translateX(18px)}
+.card-price-wrap::before{content:'';width:12px;height:1.5px;background:var(--gold);
+  position:absolute;top:50%;left:0;transform:scaleX(0) translateY(-50%);transform-origin:left;
+  transition:transform .28s var(--ease)}
+.card:hover .card-price-wrap::before{transform:scaleX(1) translateY(-50%)}
+@media(max-width:1024px){.prod-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.prod-grid{grid-template-columns:1fr}}
+
+/* ── COLLECTION SECTION ── */
+.coll-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:36px}
+@media(max-width:767px){.coll-head{flex-direction:column;align-items:flex-start;gap:12px}}
 
 /* ── QUICK VIEW MODAL ── */
-.qv-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:6000;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s}
+.qv-bg{position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:5000;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;visibility:hidden;transition:opacity .22s,visibility .22s;backdrop-filter:blur(3px)}
 .qv-bg.open{opacity:1;visibility:visible}
-.qv-box{background:var(--cream);border-radius:var(--r-lg);width:90%;max-width:680px;
+.qv-box{background:var(--cream);border-radius:var(--r-lg);width:90%;max-width:660px;
   display:grid;grid-template-columns:1fr 1fr;overflow:hidden;
-  transform:translateY(12px);transition:transform .3s var(--ease-expo);box-shadow:var(--sh-lg)}
+  transform:translateY(10px);transition:transform .28s var(--ease);box-shadow:var(--sh-lg)}
 .qv-bg.open .qv-box{transform:translateY(0)}
-.qv-img{width:100%;height:360px;object-fit:cover}
-.qv-info{padding:28px;display:flex;flex-direction:column;justify-content:center;gap:10px;position:relative}
-.qv-close{position:absolute;top:14px;right:14px;background:none;border:none;cursor:pointer;font-size:20px;color:var(--muted);line-height:1}
-.qv-tag{font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--gold)}
-.qv-name{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;color:var(--dark)}
-.qv-desc{font-size:12.5px;color:var(--muted);line-height:1.7}
-.qv-price{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:var(--dark)}
-.qv-qty{display:flex;align-items:center;gap:10px}
-.qv-qty-label{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-right:4px}
-@media(max-width:600px){.qv-box{grid-template-columns:1fr}.qv-img{height:220px}}
+.qv-img{width:100%;height:340px;object-fit:cover;display:block}
+.qv-info{padding:24px;display:flex;flex-direction:column;justify-content:center;gap:8px;position:relative}
+.qv-close{position:absolute;top:12px;right:12px;background:none;border:none;cursor:pointer;
+  font-size:18px;color:var(--muted);width:28px;height:28px;display:flex;align-items:center;
+  justify-content:center;border-radius:50%;transition:background .18s}
+.qv-close:hover{background:var(--cream2)}
+.qv-tag{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+.qv-name{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;color:var(--dark)}
+.qv-desc{font-size:12px;color:var(--muted);line-height:1.65}
+.qv-price{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;color:var(--dark)}
+.qv-qty-row{display:flex;align-items:center;gap:8px}
+.qty-btn{width:24px;height:24px;border-radius:50%;border:1px solid var(--border-n);background:none;
+  cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;
+  transition:border-color .18s,background .18s,color .18s}
+.qty-btn:hover{border-color:var(--gold);background:var(--gold);color:white}
+.qty-val{font-size:14px;font-weight:600;color:var(--dark);min-width:20px;text-align:center}
+@media(max-width:580px){.qv-box{grid-template-columns:1fr}.qv-img{height:200px}}
 
-/* ── BESPOKE SECTION ── */
-.bespoke{background:var(--dark);display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:56px;padding:88px var(--px)}
-.bespoke-desc{font-size:13.5px;font-weight:300;color:rgba(250,246,240,.58);line-height:1.8;margin:16px 0 28px;max-width:400px}
-.bespoke-steps{display:flex;flex-direction:column;gap:14px;margin-bottom:30px}
-.bespoke-step{display:flex;align-items:center;gap:12px}
-.step-n{width:28px;height:28px;border-radius:50%;border:1px solid var(--gold);color:var(--gold);
+/* ── BESPOKE DARK SECTION ── */
+.bespoke{background:var(--dark);display:grid;grid-template-columns:1fr 1fr;
+  align-items:center;gap:52px;padding:80px var(--px)}
+.bespoke-desc{font-size:13px;font-weight:300;color:rgba(250,246,240,.55);
+  line-height:1.8;margin:14px 0 24px;max-width:400px}
+.bespoke-steps{display:flex;flex-direction:column;gap:12px;margin-bottom:26px}
+.bespoke-step{display:flex;align-items:center;gap:11px}
+.step-n{width:26px;height:26px;border-radius:50%;border:1px solid var(--gold);color:var(--gold);
   font-family:'Cormorant Garamond',serif;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.step-t{font-size:12.5px;color:rgba(250,246,240,.68);font-weight:300}
+.step-t{font-size:12px;color:rgba(250,246,240,.65);font-weight:300}
 .bespoke-img-wrap{position:relative}
-.bespoke-img{width:100%;height:460px;object-fit:cover;border-radius:var(--r-lg)}
-/* Kept: one tasteful floating card */
-.bespoke-float{position:absolute;bottom:-12px;left:-16px;background:var(--gold);
-  border-radius:var(--r-md);padding:14px 20px;width:190px;box-shadow:var(--sh-md)}
-.bespoke-float-t{font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--dark);font-weight:600}
-.bespoke-float-s{font-size:10.5px;color:rgba(26,43,28,.62);margin-top:2px}
-@media(max-width:767px){.bespoke{grid-template-columns:1fr;gap:36px;padding:56px var(--px)}.bespoke-float{bottom:12px;left:12px}}
+.bespoke-img{width:100%;height:440px;object-fit:cover;border-radius:var(--r-lg)}
+.bespoke-float{position:absolute;bottom:-10px;left:-14px;background:var(--gold);
+  border-radius:var(--r);padding:13px 18px;box-shadow:var(--sh-md)}
+.bespoke-float-t{font-family:'Cormorant Garamond',serif;font-size:14px;color:var(--dark);font-weight:600}
+.bespoke-float-s{font-size:10px;color:rgba(26,43,28,.6);margin-top:2px}
+@media(max-width:767px){.bespoke{grid-template-columns:1fr;gap:32px;padding:52px var(--px)}.bespoke-float{bottom:10px;left:10px}}
 
 /* ── PROCESS ── */
-.proc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:48px;position:relative}
-.proc-grid::before{content:'';position:absolute;top:32px;left:10%;right:10%;height:1px;background:var(--border);z-index:0}
-.proc-item{text-align:center;padding:0 16px;position:relative;z-index:1}
-.proc-n{width:64px;height:64px;border-radius:50%;background:white;border:1px solid var(--border);
-  font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:var(--gold);
-  display:flex;align-items:center;justify-content:center;margin:0 auto 16px;
-  transition:background .25s,border-color .25s}
+.proc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:44px;position:relative}
+.proc-grid::before{content:'';position:absolute;top:30px;left:10%;right:10%;height:1px;background:var(--border)}
+.proc-item{text-align:center;padding:0 14px;position:relative}
+.proc-n{width:60px;height:60px;border-radius:50%;background:white;border:1px solid var(--border);
+  font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--gold);
+  display:flex;align-items:center;justify-content:center;margin:0 auto 14px;
+  transition:background .22s,border-color .22s}
 .proc-item:hover .proc-n{background:var(--gold);color:white;border-color:var(--gold)}
-.proc-title{font-size:13px;font-weight:600;color:var(--dark);margin-bottom:6px}
-.proc-desc{font-size:11.5px;color:var(--muted);line-height:1.65}
-@media(max-width:1024px){.proc-grid{grid-template-columns:repeat(2,1fr);row-gap:32px}.proc-grid::before{display:none}}
+.proc-title{font-size:12.5px;font-weight:600;color:var(--dark);margin-bottom:5px}
+.proc-desc{font-size:11px;color:var(--muted);line-height:1.6}
+@media(max-width:1024px){.proc-grid{grid-template-columns:repeat(2,1fr);row-gap:28px}.proc-grid::before{display:none}}
 @media(max-width:767px){.proc-grid{grid-template-columns:1fr}}
 
 /* ── REVIEWS ── */
-.rev-track{display:flex;gap:16px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.rev-track{display:flex;gap:14px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
 .rev-track::-webkit-scrollbar{display:none}
-.rev-card{background:white;border-radius:var(--r-lg);padding:24px;min-width:320px;flex-shrink:0;
+.rev-card{background:white;border-radius:var(--r-lg);padding:22px;min-width:300px;flex-shrink:0;
   border:1px solid var(--border);box-shadow:var(--sh-sm)}
-.rev-stars{color:var(--gold);font-size:11px;margin-bottom:12px;letter-spacing:2px}
-.rev-q{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:400;font-style:italic;
-  color:var(--dark);line-height:1.5;margin-bottom:18px}
-.rev-author{display:flex;align-items:center;gap:10px}
-.rev-avatar{width:34px;height:34px;border-radius:50%;object-fit:cover}
-.rev-name{font-size:12.5px;font-weight:600;color:var(--dark)}
-.rev-loc{font-size:10.5px;color:var(--muted);margin-top:1px}
-@media(max-width:767px){.rev-card{min-width:80vw}}
+.rev-stars{color:var(--gold);font-size:11px;margin-bottom:10px;letter-spacing:2px}
+.rev-q{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:400;font-style:italic;
+  color:var(--dark);line-height:1.5;margin-bottom:16px}
+.rev-author{display:flex;align-items:center;gap:9px}
+.rev-avatar{width:32px;height:32px;border-radius:50%;object-fit:cover}
+.rev-name{font-size:12px;font-weight:600;color:var(--dark)}
+.rev-loc{font-size:10px;color:var(--muted);margin-top:1px}
+@media(max-width:767px){.rev-card{min-width:78vw}}
 
 /* ── NEWSLETTER ── */
-.newsletter{background:var(--cream2);padding:64px var(--px);display:flex;align-items:center;justify-content:space-between;gap:40px;border-top:1px solid var(--border)}
-.nl-left .sec-title{font-size:clamp(24px,2.8vw,36px)}
-.nl-left p{font-size:13px;color:var(--muted);margin-top:8px}
-.nl-form{display:flex;gap:10px;flex-wrap:wrap}
-.nl-input{flex:1;min-width:200px;border:1.5px solid var(--border);background:white;
-  border-radius:var(--pill);padding:12px 20px;font-size:13px;font-family:'Outfit',sans-serif;
-  color:var(--text);outline:none;transition:border-color .2s}
+.newsletter{background:var(--cream2);padding:60px var(--px);display:flex;
+  align-items:center;justify-content:space-between;gap:36px;border-top:1px solid var(--border)}
+.nl-left .sec-title{font-size:clamp(22px,2.6vw,34px)}
+.nl-left p{font-size:12.5px;color:var(--muted);margin-top:7px}
+.nl-form{display:flex;gap:8px;flex-wrap:wrap}
+.nl-input{flex:1;min-width:190px;border:1.5px solid var(--border-n);background:white;
+  border-radius:var(--pill);padding:11px 18px;font-size:12.5px;color:var(--text);
+  outline:none;transition:border-color .2s}
 .nl-input:focus{border-color:var(--gold)}
 .nl-input::placeholder{color:var(--muted)}
-@media(max-width:767px){.newsletter{flex-direction:column;text-align:center}.nl-form{width:100%}.eyebrow.nl-ey{justify-content:center}.eyebrow.nl-ey::before{display:none}}
+@media(max-width:767px){.newsletter{flex-direction:column;text-align:center}.nl-form{width:100%}
+  .eyebrow.nl-ey{justify-content:center}.eyebrow.nl-ey::before{display:none}}
 
 /* ── OFFER BANNER ── */
-.offer{background:linear-gradient(135deg,#1a2b1c 0%,#243d26 55%,#1a2b1c 100%);
-  text-align:center;padding:80px var(--px);position:relative;overflow:hidden}
-.offer-title{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,4vw,50px);
-  font-weight:300;color:var(--cream);line-height:1.1;margin-bottom:12px}
+.offer{background:linear-gradient(135deg,#1a2b1c 0%,#243d26 60%,#1a2b1c 100%);
+  text-align:center;padding:72px var(--px)}
+.offer-title{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,3.6vw,46px);
+  font-weight:300;color:var(--cream);line-height:1.1;margin-bottom:10px}
 .offer-title em{color:var(--gold);font-style:italic}
-.offer-desc{font-size:13px;color:rgba(250,246,240,.5);margin-bottom:28px}
-.offer-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-.offer-code{display:inline-block;margin:0 auto 18px;background:rgba(196,151,58,.1);
-  border:1px solid rgba(196,151,58,.28);border-radius:var(--pill);
-  padding:5px 16px;font-size:11px;letter-spacing:.12em;color:var(--gold-light);font-weight:600}
-
-/* ── FOOTER ── */
-.footer{background:var(--dark2);padding:56px var(--px) 28px}
-.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;
-  padding-bottom:40px;border-bottom:1px solid rgba(255,255,255,.06)}
-.footer-brand p{font-size:11.5px;color:rgba(250,246,240,.35);line-height:1.8;max-width:220px;margin-top:12px}
-.footer-col h4{font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--gold-light);margin-bottom:14px}
-.footer-col ul{display:flex;flex-direction:column;gap:7px}
-.footer-col a{font-size:11.5px;color:rgba(250,246,240,.34);transition:color .2s;cursor:pointer}
-.footer-col a:hover{color:var(--gold-light)}
-.footer-bottom{padding-top:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
-.footer-copy{font-size:10.5px;color:rgba(250,246,240,.2)}
-.footer-legal{display:flex;gap:14px}
-.footer-legal a{font-size:10.5px;color:rgba(250,246,240,.23);transition:color .2s;cursor:pointer}
-.footer-legal a:hover{color:var(--gold)}
-.footer-socials{display:flex;gap:14px}
-.footer-socials a{font-size:10.5px;color:rgba(250,246,240,.26);letter-spacing:.07em;transition:color .2s;cursor:pointer}
-.footer-socials a:hover{color:var(--gold)}
-@media(max-width:1024px){.footer-top{grid-template-columns:1fr 1fr 1fr}}
-@media(max-width:767px){.footer-top{grid-template-columns:1fr 1fr;gap:24px}.footer-bottom{flex-direction:column;text-align:center}}
-
-/* ── MODAL (policy/terms) ── */
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:6000;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s;backdrop-filter:blur(4px)}
-.modal-bg.open{opacity:1;visibility:visible}
-.modal-box{background:var(--cream);border-radius:var(--r-lg);width:90%;max-width:540px;max-height:80vh;display:flex;flex-direction:column;overflow:hidden;transform:translateY(10px);transition:transform .3s var(--ease-expo)}
-.modal-bg.open .modal-box{transform:translateY(0)}
-.modal-head{display:flex;justify-content:space-between;align-items:center;padding:18px 22px;border-bottom:1px solid var(--border)}
-.modal-head h3{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;color:var(--dark)}
-.modal-close{background:none;border:none;cursor:pointer;font-size:20px;color:var(--muted)}
-.modal-body{padding:18px 22px;overflow-y:auto;font-size:13px;color:var(--muted);line-height:1.8}
-.modal-body h4{font-size:12.5px;font-weight:600;color:var(--dark);margin:14px 0 5px}
-.modal-body h4:first-child{margin-top:0}
+.offer-desc{font-size:12.5px;color:rgba(250,246,240,.48);margin-bottom:24px}
+.offer-code{display:inline-block;margin-bottom:16px;background:rgba(196,151,58,.1);
+  border:1px solid rgba(196,151,58,.26);border-radius:var(--pill);
+  padding:4px 14px;font-size:10.5px;letter-spacing:.12em;color:var(--gold-light);font-weight:700}
+.offer-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
 
 /* ── BUTTONS ── */
 .btn-primary{background:var(--dark);color:var(--cream);border:none;border-radius:var(--pill);
-  padding:13px 30px;font-size:11.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  padding:12px 28px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
   cursor:pointer;transition:background .2s}
-.btn-primary:hover{background:#2c3f2e}
-/* Removed: btn-primary pseudo-element gold fill slide — too "demo" */
-.btn-outline{background:transparent;border:1.5px solid var(--border-neutral);color:var(--text);
-  border-radius:var(--pill);padding:12px 26px;font-size:11.5px;font-weight:500;letter-spacing:.08em;
+.btn-primary:hover{background:#243d26}
+.btn-outline{background:transparent;border:1.5px solid var(--border-n);color:var(--text);
+  border-radius:var(--pill);padding:11px 24px;font-size:11px;font-weight:500;letter-spacing:.08em;
   cursor:pointer;transition:border-color .2s,color .2s}
 .btn-outline:hover{border-color:var(--gold);color:var(--gold)}
 .btn-gold{background:var(--gold);color:var(--dark);border:none;border-radius:var(--pill);
-  padding:13px 36px;font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  padding:12px 32px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
   cursor:pointer;transition:opacity .2s}
 .btn-gold:hover{opacity:.85}
-/* Removed: btn-gold transform:scale(1.02) — overdone */
-.btn-ghost{background:transparent;border:1.5px solid rgba(250,246,240,.18);color:var(--cream);
-  border-radius:var(--pill);padding:12px 32px;font-size:11.5px;font-weight:500;letter-spacing:.08em;
+.btn-ghost{background:transparent;border:1.5px solid rgba(250,246,240,.16);color:var(--cream);
+  border-radius:var(--pill);padding:11px 28px;font-size:11px;font-weight:500;letter-spacing:.08em;
   cursor:pointer;transition:border-color .2s}
 .btn-ghost:hover{border-color:var(--gold)}
-.btn-card{background:var(--dark);color:var(--cream);border:none;border-radius:var(--pill);
-  padding:7px 14px;font-size:10px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;
-  cursor:pointer;transition:background .2s}
-.btn-card:hover{background:var(--gold);color:var(--dark)}
-.btn-full{width:100%;padding:14px;font-size:12.5px}
-/* Quantity button (shared) */
-.qty-btn{width:26px;height:26px;border-radius:50%;border:1px solid var(--border-neutral);background:none;cursor:pointer;font-size:13px;color:var(--text);display:flex;align-items:center;justify-content:center;transition:border-color .2s,background .2s}
-.qty-btn:hover{border-color:var(--gold);background:var(--gold);color:white}
+.btn-full{width:100%;padding:13px}
 
-/* ── PAGE TRANSITIONS ── */
-.page-enter{animation:fadeUp .35s var(--ease-expo) both}
-@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+/* ── PAGE TRANSITION ── */
+.page-enter{animation:fadeUp .32s var(--ease) both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
-/* ── CART PAGE ── */
-.cart-page{padding:calc(var(--nav-h) + 40px) var(--px) var(--py);min-height:100vh}
-.cart-page-head{margin-bottom:36px}
-.cart-page-title{font-family:'Cormorant Garamond',serif;font-size:clamp(30px,3.5vw,46px);font-weight:300;color:var(--dark)}
-.cart-page-title em{font-style:italic;color:var(--gold)}
-.cart-layout{display:grid;grid-template-columns:1fr 340px;gap:28px;align-items:start}
-.cart-items-list{display:flex;flex-direction:column}
-.cart-line{display:flex;gap:16px;padding:20px 0;border-bottom:1px solid var(--border);align-items:center}
-.cart-line-img{width:80px;height:80px;border-radius:var(--r-sm);object-fit:cover;flex-shrink:0}
-.cart-line-info{flex:1}
-.cart-line-tag{font-size:9px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--gold);margin-bottom:3px}
-.cart-line-name{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:400;color:var(--dark);margin-bottom:4px}
-.cart-line-price{font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--muted)}
-.cart-line-qty{display:flex;align-items:center;gap:10px;margin-top:8px}
-.qty-val{font-size:13px;font-weight:600;color:var(--dark);min-width:18px;text-align:center}
-.cart-line-remove{background:none;border:none;cursor:pointer;color:var(--muted);font-size:18px;transition:color .2s;line-height:1;margin-left:6px}
-.cart-line-remove:hover{color:var(--dark)}
-.cart-summary{background:white;border-radius:var(--r-lg);padding:24px;border:1px solid var(--border);box-shadow:var(--sh-sm);position:sticky;top:calc(var(--nav-h) + 16px)}
-.cart-summary-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;color:var(--dark);margin-bottom:18px}
-.summary-row{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);margin-bottom:9px}
-.summary-row.total{font-size:15px;font-weight:600;color:var(--dark);padding-top:12px;border-top:1px solid var(--border);margin-top:4px}
-.summary-row.total .val{font-family:'Cormorant Garamond',serif;font-size:20px}
-.summary-note{font-size:10.5px;color:var(--muted);margin:10px 0 18px;line-height:1.55}
-.cart-empty-page{text-align:center;padding:80px var(--px);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.cart-empty-icon{font-size:48px;margin-bottom:16px}
-.cart-empty-title{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;color:var(--dark);margin-bottom:10px}
-.cart-empty-sub{font-size:13px;color:var(--muted);margin-bottom:28px}
-@media(max-width:900px){.cart-layout{grid-template-columns:1fr}}
-
-/* ── BROWSE PAGE ── */
-.browse-page{padding:calc(var(--nav-h) + 40px) var(--px) var(--py);min-height:100vh}
-/* Search bar */
-.browse-toolbar{display:flex;gap:12px;align-items:center;margin-bottom:20px;flex-wrap:wrap}
-.browse-search{flex:1;min-width:200px;border:1.5px solid var(--border-neutral);background:white;
-  border-radius:var(--pill);padding:10px 18px;font-size:12.5px;font-family:'Outfit',sans-serif;
-  color:var(--text);outline:none;transition:border-color .2s}
+/* ── BROWSE PAGE ──
+   CodePen SimonNonnis tab pattern: underline tab filter, not pill buttons ── */
+.browse-page{padding:calc(var(--nav-h) + 36px) var(--px) var(--py);min-height:100vh}
+.browse-toolbar{display:flex;gap:10px;align-items:center;margin-bottom:18px;flex-wrap:wrap}
+.browse-search{flex:1;min-width:180px;border:1.5px solid var(--border-n);background:white;
+  border-radius:var(--pill);padding:9px 16px;font-size:12px;color:var(--text);
+  outline:none;transition:border-color .2s}
 .browse-search:focus{border-color:var(--gold)}
 .browse-search::placeholder{color:var(--muted)}
-.browse-sort{border:1.5px solid var(--border-neutral);background:white;border-radius:var(--pill);
-  padding:10px 16px;font-size:11.5px;font-family:'Outfit',sans-serif;color:var(--text);
-  outline:none;cursor:pointer;transition:border-color .2s;appearance:none}
+.browse-sort{border:1.5px solid var(--border-n);background:white;border-radius:var(--pill);
+  padding:9px 14px;font-size:11.5px;color:var(--text);outline:none;cursor:pointer;
+  transition:border-color .2s;-webkit-appearance:none}
 .browse-sort:focus{border-color:var(--gold)}
-.browse-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:32px}
-.filter-pill{background:none;border:1.5px solid var(--border-neutral);border-radius:var(--pill);
-  padding:7px 18px;font-size:10.5px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;
-  cursor:pointer;color:var(--muted);transition:all .18s}
-.filter-pill:hover,.filter-pill.active{background:var(--dark);border-color:var(--dark);color:var(--cream)}
-.browse-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.browse-count{font-size:12px;color:var(--muted);margin-bottom:20px}
-@media(max-width:1024px){.browse-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:600px){.browse-grid{grid-template-columns:1fr}}
+/* Tab-style filter — CodePen SimonNonnis pattern */
+.filter-tabs{display:flex;gap:0;border-bottom:1px solid var(--border-n);margin-bottom:28px;overflow-x:auto;scrollbar-width:none}
+.filter-tabs::-webkit-scrollbar{display:none}
+.filter-tab{background:none;border:none;cursor:pointer;padding:9px 16px;
+  font-size:10.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--muted);white-space:nowrap;position:relative;transition:color .2s}
+.filter-tab::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;
+  background:var(--gold);transform:scaleX(0);transition:transform .22s var(--ease)}
+.filter-tab:hover{color:var(--text)}
+.filter-tab.active{color:var(--dark)}
+.filter-tab.active::after{transform:scaleX(1)}
+.browse-meta{font-size:11.5px;color:var(--muted);margin-bottom:18px}
+@media(max-width:1024px){.browse-page .prod-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.browse-page .prod-grid{grid-template-columns:1fr}}
+
+/* ── CART PAGE (kept as fallback if drawer not used) ── */
+.cart-page{padding:calc(var(--nav-h) + 36px) var(--px) var(--py);min-height:100vh}
+.cart-layout{display:grid;grid-template-columns:1fr 320px;gap:24px;align-items:start}
+.cart-line{display:flex;gap:14px;padding:18px 0;border-bottom:1px solid var(--border-n);align-items:center}
+.cart-line-img{width:72px;height:72px;border-radius:var(--r);object-fit:cover;flex-shrink:0}
+.cart-line-info{flex:1}
+.cart-line-tag{font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:2px}
+.cart-line-name{font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--dark);margin-bottom:3px}
+.cart-line-price{font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--muted)}
+.cart-line-qty{display:flex;align-items:center;gap:9px;margin-top:8px}
+.cart-line-remove{background:none;border:none;cursor:pointer;color:var(--muted);font-size:17px;transition:color .2s;margin-left:6px}
+.cart-line-remove:hover{color:var(--dark)}
+.cart-summary{background:white;border-radius:var(--r-lg);padding:22px;border:1px solid var(--border);
+  box-shadow:var(--sh-sm);position:sticky;top:calc(var(--nav-h) + 14px)}
+.cart-summary-title{font-family:'Cormorant Garamond',serif;font-size:19px;color:var(--dark);margin-bottom:16px}
+.summary-row{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:8px}
+.summary-row.total{font-size:14px;font-weight:600;color:var(--dark);padding-top:11px;border-top:1px solid var(--border);margin-top:4px}
+.summary-row.total .val{font-family:'Cormorant Garamond',serif;font-size:19px}
+.summary-note{font-size:10px;color:var(--muted);margin:9px 0 16px;line-height:1.55}
+.cart-empty-page{text-align:center;padding:80px var(--px);min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}
+.cart-empty-icon{font-size:44px;opacity:.5}
+.cart-empty-title{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:300;color:var(--dark)}
+.cart-empty-sub{font-size:13px;color:var(--muted);margin-bottom:20px}
+@media(max-width:900px){.cart-layout{grid-template-columns:1fr}}
 
 /* ── CUSTOM PAGE ── */
-.custom-page{padding:calc(var(--nav-h) + 40px) var(--px) var(--py);min-height:100vh}
-.custom-layout{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start}
-.custom-preview{background:white;border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--sh-md);position:sticky;top:calc(var(--nav-h) + 16px)}
-.custom-preview-img{width:100%;height:340px;object-fit:cover}
-.custom-preview-info{padding:20px}
-.custom-form-section{margin-bottom:28px}
-.custom-form-label{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;display:block}
-.custom-options{display:flex;gap:8px;flex-wrap:wrap}
-.custom-opt{border:1.5px solid var(--border-neutral);border-radius:var(--pill);padding:7px 16px;
-  font-size:11.5px;font-weight:500;cursor:pointer;color:var(--text);background:none;transition:all .18s}
+.custom-page{padding:calc(var(--nav-h) + 36px) var(--px) var(--py);min-height:100vh}
+.custom-layout{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start}
+.custom-preview{background:white;border-radius:var(--r-lg);overflow:hidden;
+  box-shadow:var(--sh-md);position:sticky;top:calc(var(--nav-h) + 14px)}
+.custom-preview-img{width:100%;height:320px;object-fit:cover}
+.custom-preview-info{padding:18px}
+.custom-section{margin-bottom:26px}
+.custom-label{font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:10px;display:block}
+.custom-opts{display:flex;gap:7px;flex-wrap:wrap}
+.custom-opt{border:1.5px solid var(--border-n);border-radius:var(--pill);padding:6px 14px;
+  font-size:11px;font-weight:500;cursor:pointer;color:var(--text);background:none;transition:all .18s}
 .custom-opt:hover,.custom-opt.sel{background:var(--dark);border-color:var(--dark);color:var(--cream)}
-.custom-opt.color-opt{width:30px;height:30px;border-radius:50%;padding:0;border-width:2px}
-.custom-opt.color-opt.sel{box-shadow:0 0 0 3px white,0 0 0 5px var(--gold)}
-.custom-qty-row{display:flex;align-items:center;gap:14px}
-.custom-qty-btn{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--border-neutral);background:none;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .18s}
+.custom-opt.color-opt{width:28px;height:28px;border-radius:50%;padding:0;border-width:2px}
+.custom-opt.color-opt.sel{box-shadow:0 0 0 2.5px white,0 0 0 4.5px var(--gold)}
+.custom-qty-row{display:flex;align-items:center;gap:12px}
+.custom-qty-btn{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--border-n);background:none;
+  cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;transition:all .18s}
 .custom-qty-btn:hover{border-color:var(--gold);color:var(--gold)}
-.custom-qty-num{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:400;color:var(--dark);min-width:36px;text-align:center}
-.custom-note{border:1.5px solid var(--border-neutral);border-radius:var(--r-md);padding:12px 16px;width:100%;font-size:12.5px;font-family:'Outfit',sans-serif;color:var(--text);outline:none;resize:none;transition:border-color .2s;background:white}
-.custom-note:focus{border-color:var(--gold)}
-.form-input{width:100%;border:1.5px solid var(--border-neutral);border-radius:var(--r-sm);padding:11px 14px;font-size:12.5px;font-family:'Outfit',sans-serif;color:var(--text);outline:none;transition:border-color .2s;background:var(--cream)}
+.custom-qty-num{font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--dark);min-width:32px;text-align:center}
+.form-input{width:100%;border:1.5px solid var(--border-n);border-radius:var(--r);padding:10px 13px;
+  font-size:12px;color:var(--text);outline:none;transition:border-color .2s;background:white}
 .form-input:focus{border-color:var(--gold)}
+.form-textarea{resize:vertical;min-height:100px}
 @media(max-width:900px){.custom-layout{grid-template-columns:1fr}.custom-preview{position:static}}
 
 /* ── ABOUT PAGE ── */
-.about-hero{min-height:55vh;background:linear-gradient(135deg,var(--dark) 0%,#243d26 100%);
-  display:flex;align-items:center;padding:calc(var(--nav-h) + 40px) var(--px) 64px}
-.about-hero-content{max-width:560px}
+.about-hero{min-height:52vh;background:linear-gradient(135deg,var(--dark) 0%,#243d26 100%);
+  display:flex;align-items:center;padding:calc(var(--nav-h) + 36px) var(--px) 56px}
 .about-section{padding:var(--py) var(--px)}
-.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
-.about-img{width:100%;height:440px;object-fit:cover;border-radius:var(--r-lg)}
-.about-values{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:56px}
-.about-val-card{background:white;border-radius:var(--r-lg);padding:24px;border:1px solid var(--border);box-shadow:var(--sh-sm)}
-.about-val-icon{font-size:24px;margin-bottom:12px}
-.about-val-title{font-size:13px;font-weight:600;color:var(--dark);margin-bottom:6px}
-.about-val-desc{font-size:12px;color:var(--muted);line-height:1.65}
-.team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:44px}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:52px;align-items:center}
+.about-img{width:100%;height:420px;object-fit:cover;border-radius:var(--r-lg)}
+.about-values{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:52px}
+.about-val-card{background:white;border-radius:var(--r-lg);padding:22px;border:1px solid var(--border)}
+.about-val-icon{font-size:22px;margin-bottom:10px}
+.about-val-title{font-size:12.5px;font-weight:600;color:var(--dark);margin-bottom:5px}
+.about-val-desc{font-size:11.5px;color:var(--muted);line-height:1.6}
+.team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:40px}
 .team-card{text-align:center}
-.team-img{width:100%;height:260px;object-fit:cover;border-radius:var(--r-lg);margin-bottom:14px}
-.team-name{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:400;color:var(--dark)}
-.team-role{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-top:3px}
-@media(max-width:900px){.about-grid{grid-template-columns:1fr}.about-values{grid-template-columns:1fr}.team-grid{grid-template-columns:1fr 1fr}}
-@media(max-width:600px){.team-grid{grid-template-columns:1fr}}
+.team-img{width:100%;height:240px;object-fit:cover;border-radius:var(--r-lg);margin-bottom:12px}
+.team-name{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--dark)}
+.team-role{font-size:9.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-top:3px}
+@media(max-width:900px){.about-grid{grid-template-columns:1fr}.about-values{grid-template-columns:1fr}}
+@media(max-width:600px){.team-grid{grid-template-columns:1fr 1fr}}
 
 /* ── CONTACT PAGE ── */
-.contact-page{padding:calc(var(--nav-h) + 40px) var(--px) var(--py);min-height:100vh}
-.contact-layout{display:grid;grid-template-columns:1fr 1.2fr;gap:56px;margin-top:44px}
-.contact-info-item{display:flex;gap:14px;margin-bottom:28px;align-items:flex-start}
-.contact-info-icon{width:40px;height:40px;background:var(--cream2);border-radius:var(--r-sm);
-  display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
-.contact-info-label{font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:3px}
-.contact-info-val{font-size:13px;color:var(--text);line-height:1.55}
-.contact-form{background:white;border-radius:var(--r-lg);padding:32px;border:1px solid var(--border);box-shadow:var(--sh-sm)}
-.form-row{margin-bottom:16px}
-.form-row.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.form-label{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px}
-.form-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a7060' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
-.form-textarea{resize:vertical;min-height:110px}
+.contact-page{padding:calc(var(--nav-h) + 36px) var(--px) var(--py);min-height:100vh}
+.contact-layout{display:grid;grid-template-columns:1fr 1.2fr;gap:52px;margin-top:40px}
+.contact-info-item{display:flex;gap:12px;margin-bottom:24px;align-items:flex-start}
+.contact-info-icon{width:38px;height:38px;background:var(--cream2);border-radius:var(--r);
+  display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.contact-info-label{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:2px}
+.contact-info-val{font-size:12.5px;color:var(--text);line-height:1.55}
+.contact-form{background:white;border-radius:var(--r-lg);padding:28px;border:1px solid var(--border);box-shadow:var(--sh-sm)}
+.form-row{margin-bottom:14px}
+.form-row.two{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.form-label{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px}
+.form-select{-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237a7060' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
 @media(max-width:900px){.contact-layout{grid-template-columns:1fr}}
 
-/* ── LOGIN PAGE ── */
-.auth-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:var(--nav-h) var(--px) 40px;background:var(--cream2)}
-.auth-box{background:white;border-radius:var(--r-lg);padding:40px;width:100%;max-width:400px;box-shadow:var(--sh-lg);border:1px solid var(--border)}
-.auth-logo{font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:600;letter-spacing:.07em;color:var(--dark);text-align:center;margin-bottom:6px}
+/* ── AUTH PAGE ── */
+.auth-page{min-height:100vh;display:flex;align-items:center;justify-content:center;
+  padding:var(--nav-h) var(--px) 36px;background:var(--cream2)}
+.auth-box{background:white;border-radius:var(--r-lg);padding:36px;width:100%;max-width:390px;
+  box-shadow:var(--sh-lg);border:1px solid var(--border)}
+.auth-logo{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;
+  letter-spacing:.07em;color:var(--dark);text-align:center;margin-bottom:5px}
 .auth-logo span{color:var(--gold)}
-.auth-sub{font-size:12.5px;color:var(--muted);text-align:center;margin-bottom:28px}
-.auth-tabs{display:flex;background:var(--cream2);border-radius:var(--pill);padding:4px;margin-bottom:24px}
-.auth-tab{flex:1;padding:8px;border-radius:var(--pill);border:none;background:none;font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;cursor:pointer;color:var(--muted);transition:all .2s}
+.auth-sub{font-size:12px;color:var(--muted);text-align:center;margin-bottom:24px}
+.auth-tabs{display:flex;background:var(--cream2);border-radius:var(--pill);padding:3px;margin-bottom:20px}
+.auth-tab{flex:1;padding:8px;border-radius:var(--pill);border:none;background:none;
+  font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+  cursor:pointer;color:var(--muted);transition:all .2s}
 .auth-tab.active{background:var(--dark);color:var(--cream)}
-.auth-divider{display:flex;align-items:center;gap:10px;margin:18px 0;font-size:10.5px;color:var(--muted)}
+.auth-divider{display:flex;align-items:center;gap:9px;margin:16px 0;font-size:10px;color:var(--muted)}
 .auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border)}
-.auth-social{width:100%;border:1.5px solid var(--border-neutral);border-radius:var(--r-sm);padding:11px;
-  background:none;font-size:12.5px;font-family:'Outfit',sans-serif;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;gap:9px;color:var(--text);transition:border-color .2s;margin-bottom:8px}
+.auth-social{width:100%;border:1.5px solid var(--border-n);border-radius:var(--r);padding:10px;
+  background:none;font-size:12px;cursor:pointer;display:flex;align-items:center;
+  justify-content:center;gap:8px;color:var(--text);transition:border-color .2s;margin-bottom:7px}
 .auth-social:hover{border-color:var(--gold)}
-.auth-forgot{font-size:11.5px;color:var(--gold);cursor:pointer;text-align:right;margin-top:-8px;margin-bottom:14px}
+.auth-forgot{font-size:11px;color:var(--gold);cursor:pointer;text-align:right;margin-top:-6px;margin-bottom:12px}
 
-/* PAGE HERO SHARED */
-.page-hero{background:linear-gradient(135deg,var(--dark) 0%,#243d26 100%);
-  padding:calc(var(--nav-h) + 48px) var(--px) 56px;position:relative;overflow:hidden}
+/* ── MODAL (policy/terms) ── */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:5500;display:flex;
+  align-items:center;justify-content:center;opacity:0;visibility:hidden;
+  transition:opacity .22s,visibility .22s}
+.modal-bg.open{opacity:1;visibility:visible}
+.modal-box{background:var(--cream);border-radius:var(--r-lg);width:90%;max-width:520px;
+  max-height:80vh;display:flex;flex-direction:column;overflow:hidden;
+  transform:translateY(8px);transition:transform .28s var(--ease)}
+.modal-bg.open .modal-box{transform:translateY(0)}
+.modal-head{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border-n)}
+.modal-head h3{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:400;color:var(--dark)}
+.modal-close{background:none;border:none;cursor:pointer;font-size:19px;color:var(--muted)}
+.modal-body{padding:16px 20px;overflow-y:auto;font-size:12.5px;color:var(--muted);line-height:1.8}
+.modal-body h4{font-size:12px;font-weight:600;color:var(--dark);margin:13px 0 4px}
+.modal-body h4:first-child{margin-top:0}
 
-/* LOADING STATE */
-.skeleton{background:linear-gradient(90deg,var(--cream2) 25%,var(--cream) 50%,var(--cream2) 75%);
-  background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:var(--r-sm)}
-@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+/* ── FOOTER ── */
+.footer{background:var(--dark2);padding:52px var(--px) 24px}
+.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:36px;
+  padding-bottom:36px;border-bottom:1px solid rgba(255,255,255,.05)}
+.footer-brand p{font-size:11px;color:rgba(250,246,240,.32);line-height:1.8;max-width:200px;margin-top:10px}
+.footer-col h4{font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-light);margin-bottom:12px}
+.footer-col ul{display:flex;flex-direction:column;gap:6px}
+.footer-col a{font-size:11px;color:rgba(250,246,240,.3);transition:color .2s;cursor:pointer}
+.footer-col a:hover{color:var(--gold-light)}
+.footer-bottom{padding-top:18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:9px}
+.footer-copy{font-size:10px;color:rgba(250,246,240,.18)}
+.footer-legal{display:flex;gap:12px}
+.footer-legal a{font-size:10px;color:rgba(250,246,240,.2);transition:color .2s;cursor:pointer}
+.footer-legal a:hover{color:var(--gold)}
+.footer-socials{display:flex;gap:12px}
+.footer-socials a{font-size:10px;color:rgba(250,246,240,.24);letter-spacing:.06em;transition:color .2s;cursor:pointer}
+.footer-socials a:hover{color:var(--gold)}
+@media(max-width:1024px){.footer-top{grid-template-columns:1fr 1fr 1fr}}
+@media(max-width:767px){.footer-top{grid-template-columns:1fr 1fr;gap:22px}.footer-bottom{flex-direction:column;text-align:center}}
 
-@media(prefers-reduced-motion:reduce){
-  *{animation-duration:.01ms!important;transition-duration:.01ms!important}
-}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
 </head>
 <body>
 <div id="root"></div>
 <div id="toast-root"></div>
-<!-- Removed: #cur, #cur-r custom cursor elements -->
 
 <script>
-const PAGE_TITLES = {
-  '/': 'Bouquet Studio — Handcrafted Ribbon Flowers, Sydney',
-  '/bouquets': 'Browse Collection — Bouquet Studio',
-  '/custom': 'Custom Bouquet Builder — Bouquet Studio',
-  '/about': 'Our Story — Bouquet Studio',
-  '/contact': 'Contact Us — Bouquet Studio',
-  '/cart': 'Your Cart — Bouquet Studio',
-  '/login': 'Login — Bouquet Studio',
+const PAGE_TITLES={
+  '/':'Bouquet Studio — Handcrafted Ribbon Flowers, Sydney',
+  '/bouquets':'Browse Collection — Bouquet Studio',
+  '/custom':'Custom Bouquet Builder — Bouquet Studio',
+  '/about':'Our Story — Bouquet Studio',
+  '/contact':'Contact Us — Bouquet Studio',
+  '/cart':'Your Cart — Bouquet Studio',
+  '/login':'Login — Bouquet Studio',
 };
-const DARK_NAV_PAGES = new Set(['/about']);
-function updateTitle(p) { document.title = PAGE_TITLES[p] || 'Bouquet Studio'; }
+const DARK_NAV=new Set(['/about']);
+function updateTitle(p){document.title=PAGE_TITLES[p]||'Bouquet Studio';}
+function getCart(){try{return JSON.parse(localStorage.getItem('bs_cart')||'[]');}catch(e){return[];}}
+function saveCart(i){try{localStorage.setItem('bs_cart',JSON.stringify(i));}catch(e){}}
 
-function getStoredCart() {
-  try { return JSON.parse(localStorage.getItem('bs_cart') || '[]'); } catch(e){ return []; }
-}
-function saveCart(items) {
-  try { localStorage.setItem('bs_cart', JSON.stringify(items)); } catch(e){}
-}
-
-function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
-const { useState, useLayoutEffect, useEffect, useRef, useCallback, createContext, useContext } = React;
+function _extends(){return _extends=Object.assign?Object.assign.bind():function(n){for(var e=1;e<arguments.length;e++){var t=arguments[e];for(var r in t)({}).hasOwnProperty.call(t,r)&&(n[r]=t[r]);}return n;},_extends.apply(null,arguments);}
+const{useState,useLayoutEffect,useEffect,useRef,useCallback,createContext,useContext}=React;
 gsap.registerPlugin(ScrollTrigger);
-
-/* ── Streamlined motion constants — faster, more functional ── */
-const M = {
-  ease: { out: 'power2.out', expo: 'expo.out' },
-  dur:  { fast: .22, base: .42, slow: .62 }
-};
+const E={ease:'expo.out',out:'power2.out'};
+const D={fast:.2,base:.4,slow:.58};
 
 /* ─── ROUTER ─── */
-const RouterCtx = createContext(null);
-function RouterProvider({ children }) {
-  const [path, setPath] = useState(window.location.hash.slice(1) || '/');
-  const navigate = useCallback(to => {
-    window.location.hash = to;
-    setPath(to);
-    updateTitle(to);
-    window.scrollTo({ top: 0, behavior: 'instant' });
-  }, []);
-  useEffect(() => {
-    const fn = () => { const p = window.location.hash.slice(1) || '/'; setPath(p); updateTitle(p); };
-    window.addEventListener('hashchange', fn);
-    return () => window.removeEventListener('hashchange', fn);
-  }, []);
-  return React.createElement(RouterCtx.Provider, { value: { path, navigate } }, children);
+const RouterCtx=createContext(null);
+function RouterProvider({children}){
+  const[path,setPath]=useState(window.location.hash.slice(1)||'/');
+  const navigate=useCallback(to=>{window.location.hash=to;setPath(to);updateTitle(to);window.scrollTo({top:0,behavior:'instant'});},[]);
+  useEffect(()=>{const fn=()=>{const p=window.location.hash.slice(1)||'/';setPath(p);updateTitle(p);};window.addEventListener('hashchange',fn);return()=>window.removeEventListener('hashchange',fn);},[]);
+  return React.createElement(RouterCtx.Provider,{value:{path,navigate}},children);
 }
-const useRouter = () => useContext(RouterCtx);
+const useRouter=()=>useContext(RouterCtx);
 
 /* ─── CART CONTEXT ─── */
-const CartCtx = createContext(null);
-function CartProvider({ children }) {
-  const [items, setItems] = useState(getStoredCart);
-  useEffect(() => { saveCart(items); }, [items]);
-  const add = useCallback(product => {
-    setItems(prev => {
-      const ex = prev.find(i => i.name === product.name);
-      if (ex) return prev.map(i => i.name === product.name ? { ...i, qty: i.qty + 1 } : i);
-      return [...prev, { ...product, qty: 1 }];
-    });
-    toast(`${product.name} added to cart`);
-  }, []);
-  const remove = useCallback(name => setItems(prev => prev.filter(i => i.name !== name)), []);
-  const updateQty = useCallback((name, delta) => {
-    setItems(prev => prev.map(i => i.name === name ? { ...i, qty: Math.max(1, i.qty + delta) } : i));
-  }, []);
-  const total = items.reduce((s, i) => s + parseFloat(i.price.replace('$', '')) * i.qty, 0);
-  const count = items.reduce((s, i) => s + i.qty, 0);
-  return React.createElement(CartCtx.Provider, { value: { items, add, remove, updateQty, total, count } }, children);
+const CartCtx=createContext(null);
+function CartProvider({children}){
+  const[items,setItems]=useState(getCart);
+  useEffect(()=>{saveCart(items);},[items]);
+  const add=useCallback(product=>{
+    setItems(prev=>{const ex=prev.find(i=>i.name===product.name);
+      if(ex)return prev.map(i=>i.name===product.name?{...i,qty:i.qty+1}:i);
+      return[...prev,{...product,qty:1}];});
+    toast(product.name+' added to cart');
+  },[]);
+  const remove=useCallback(name=>setItems(prev=>prev.filter(i=>i.name!==name)),[]);
+  const updateQty=useCallback((name,delta)=>{setItems(prev=>prev.map(i=>i.name===name?{...i,qty:Math.max(1,i.qty+delta)}:i));},[]);
+  const total=items.reduce((s,i)=>s+parseFloat(i.price.replace('$','').replace('+',''))*i.qty,0);
+  const count=items.reduce((s,i)=>s+i.qty,0);
+  return React.createElement(CartCtx.Provider,{value:{items,add,remove,updateQty,total,count}},children);
 }
-const useCart = () => useContext(CartCtx);
+const useCart=()=>useContext(CartCtx);
 
-/* ─── WISHLIST CONTEXT ─── */
-const WishCtx = createContext(null);
-function WishlistProvider({ children }) {
-  const [wished, setWished] = useState([]);
-  const toggle = useCallback(name => {
-    setWished(prev => prev.includes(name) ? prev.filter(n => n !== name) : [...prev, name]);
-  }, []);
-  return React.createElement(WishCtx.Provider, { value: { wished, toggle } }, children);
+/* ─── WISHLIST ─── */
+const WishCtx=createContext(null);
+function WishlistProvider({children}){
+  const[wished,setWished]=useState([]);
+  const toggle=useCallback(name=>setWished(p=>p.includes(name)?p.filter(n=>n!==name):[...p,name]),[]);
+  return React.createElement(WishCtx.Provider,{value:{wished,toggle}},children);
 }
-const useWishlist = () => useContext(WishCtx);
+const useWish=()=>useContext(WishCtx);
+
+/* ─── CART DRAWER CONTEXT ─── */
+const DrawerCtx=createContext(null);
+function DrawerProvider({children}){
+  const[open,setOpen]=useState(false);
+  return React.createElement(DrawerCtx.Provider,{value:{open,openDrawer:()=>setOpen(true),closeDrawer:()=>setOpen(false)}},children);
+}
+const useDrawer=()=>useContext(DrawerCtx);
 
 /* ─── TOAST ─── */
-function toast(msg) {
-  const root = document.getElementById('toast-root');
-  const el = document.createElement('div');
-  el.className = 'toast';
-  el.innerHTML = `<span class="toast-dot"></span>${msg}`;
+function toast(msg){
+  const root=document.getElementById('toast-root');
+  const el=document.createElement('div');el.className='toast';
+  el.innerHTML='<span class="toast-dot"></span>'+msg;
   root.appendChild(el);
-  gsap.to(el, { opacity: 1, y: 0, duration: M.dur.fast, ease: M.ease.expo });
-  setTimeout(() => {
-    gsap.to(el, { opacity: 0, y: 6, duration: M.dur.fast, ease: M.ease.out, onComplete: () => el.remove() });
-  }, 2600);
-}
-
-/* ─── SCROLL REVEAL HOOK ─── Only animate section titles + card groups ─── */
-function useReveal(scopeRef, fn) {
-  useLayoutEffect(() => {
-    const ctx = gsap.context(fn, scopeRef);
-    return () => ctx.revert();
-  }, []);
+  gsap.to(el,{opacity:1,y:0,duration:D.fast,ease:E.ease});
+  setTimeout(()=>gsap.to(el,{opacity:0,y:6,duration:D.fast,ease:E.out,onComplete:()=>el.remove()}),2600);
 }
 
 /* ─── MODAL ─── */
-function Modal({ open, onClose, title, children }) {
-  useEffect(() => {
-    const fn = e => e.key === 'Escape' && onClose();
-    document.addEventListener('keydown', fn);
-    return () => document.removeEventListener('keydown', fn);
-  }, [onClose]);
-  return React.createElement("div", { className: `modal-bg${open ? ' open' : ''}`, onClick: e => e.currentTarget === e.target && onClose() },
-    React.createElement("div", { className: "modal-box" },
-      React.createElement("div", { className: "modal-head" },
-        React.createElement("h3", null, title),
-        React.createElement("button", { className: "modal-close", onClick: onClose }, "×")),
-      React.createElement("div", { className: "modal-body" }, children)));
+function Modal({open,onClose,title,children}){
+  useEffect(()=>{const fn=e=>e.key==='Escape'&&onClose();document.addEventListener('keydown',fn);return()=>document.removeEventListener('keydown',fn);},[onClose]);
+  return React.createElement('div',{className:'modal-bg'+(open?' open':''),onClick:e=>e.currentTarget===e.target&&onClose()},
+    React.createElement('div',{className:'modal-box'},
+      React.createElement('div',{className:'modal-head'},React.createElement('h3',null,title),React.createElement('button',{className:'modal-close',onClick:onClose},'×')),
+      React.createElement('div',{className:'modal-body'},children)));
 }
 
-/* ─── NAV ─── Removed MagBtn from nav, plain button instead ─── */
-function Nav({ onPolicy, onTerms }) {
-  const { count } = useCart();
-  const { path, navigate } = useRouter();
-  const [scrolled, setScrolled] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const navRef = useRef(null);
-  const menuRef = useRef(null);
+/* ─── CART DRAWER COMPONENT — CodePen TheDutchCoder pattern ─── */
+function CartDrawer(){
+  const{open,closeDrawer}=useDrawer();
+  const{items,remove,updateQty,total,count}=useCart();
+  const{navigate}=useRouter();
+  const delivery=total>=100?0:12;
+  const freeLeft=Math.max(0,100-total);
+  return React.createElement(React.Fragment,null,
+    React.createElement('div',{className:'cart-overlay'+(open?' open':''),onClick:closeDrawer}),
+    React.createElement('div',{className:'cart-drawer'+(open?' open':'')},
+      React.createElement('div',{className:'drawer-head'},
+        React.createElement('div',{className:'drawer-title'},'Cart ',React.createElement('span',{style:{fontSize:13,color:'var(--muted)',fontFamily:'Outfit'}},count>0?'('+count+')':'')),
+        React.createElement('button',{className:'drawer-close',onClick:closeDrawer},'×')),
+      React.createElement('div',{className:'drawer-body'},
+        items.length===0
+          ?React.createElement('div',{className:'drawer-empty'},
+              React.createElement('div',{className:'drawer-empty-icon'},'🛒'),
+              React.createElement('div',{className:'drawer-empty-text'},'Your cart is empty'))
+          :items.map(item=>React.createElement('div',{key:item.name,className:'drawer-line'},
+              React.createElement('img',{className:'drawer-line-img',src:'https://images.unsplash.com/'+item.photo+'?auto=format&fit=crop&q=80&w=200',alt:item.name}),
+              React.createElement('div',{className:'drawer-line-info'},
+                React.createElement('div',{className:'drawer-line-tag'},item.tag),
+                React.createElement('div',{className:'drawer-line-name'},item.name),
+                React.createElement('div',{className:'drawer-line-price'},item.price),
+                React.createElement('div',{className:'drawer-line-qty'},
+                  React.createElement('button',{className:'dqty-btn',onClick:()=>updateQty(item.name,-1)},'−'),
+                  React.createElement('span',{className:'dqty-val'},item.qty),
+                  React.createElement('button',{className:'dqty-btn',onClick:()=>updateQty(item.name,1)},'+'))),
+              React.createElement('button',{className:'drawer-line-remove',onClick:()=>remove(item.name)},'×')))),
+      React.createElement('div',{className:'drawer-foot'},
+        React.createElement('div',{className:'drawer-subtotal'},
+          React.createElement('span',{className:'drawer-subtotal-label'},'Subtotal'),
+          React.createElement('span',{className:'drawer-subtotal-val'},'$'+total.toFixed(2))),
+        React.createElement('div',{className:'drawer-free-shipping'},
+          freeLeft>0
+            ?React.createElement(React.Fragment,null,'Add ',React.createElement('span',null,'$'+freeLeft.toFixed(2)),' more for free delivery')
+            :React.createElement('span',{style:{color:'#5a9e6a'}},'✓ You qualify for free delivery')),
+        React.createElement('button',{className:'drawer-checkout-btn',onClick:()=>toast('Checkout coming soon — demo mode!')},'Proceed to Checkout →'),
+        React.createElement('button',{className:'drawer-continue',onClick:closeDrawer},'Continue Shopping'))));
+}
 
-  useLayoutEffect(() => {
-    // Kept: one simple nav fade in — purposeful, not decorative
-    gsap.from(navRef.current, { y: -10, opacity: 0, duration: M.dur.base, ease: M.ease.out, delay: .1 });
-    const st = ScrollTrigger.create({
-      start: 72,
-      onEnter: () => setScrolled(true),
-      onLeaveBack: () => setScrolled(false)
-    });
-    return () => st.kill();
-  }, []);
-
-  const openMenu = () => {
-    setMenuOpen(true);
-    gsap.set(menuRef.current, { visibility: 'visible' });
-    gsap.fromTo(menuRef.current, { x: '100%' }, { x: '0%', duration: .38, ease: M.ease.expo });
-  };
-  const closeMenu = () => {
-    gsap.to(menuRef.current, { x: '100%', duration: .28, ease: 'power3.in', onComplete: () => {
-      gsap.set(menuRef.current, { visibility: 'hidden' }); setMenuOpen(false);
-    }});
-  };
-
-  const LINKS = [
-    { label: 'Home', path: '/' },
-    { label: 'Browse', path: '/bouquets' },
-    { label: 'Custom', path: '/custom' },
-    { label: 'About', path: '/about' },
-    { label: 'Contact', path: '/contact' },
-  ];
-
-  return React.createElement(React.Fragment, null,
-    React.createElement("nav", { ref: navRef, className: `nav${scrolled ? ' scrolled' : ''}${(!scrolled && DARK_NAV_PAGES.has(path)) ? ' nav-light' : ''}` },
-      React.createElement("a", { className: "nav-logo", onClick: () => navigate('/') }, "Bouquet", React.createElement("span", null, "Studio")),
-      React.createElement("ul", { className: "nav-links" }, LINKS.map(l =>
-        React.createElement("li", { key: l.label },
-          React.createElement("a", { className: path === l.path ? 'active' : '', onClick: () => navigate(l.path) }, l.label)))),
-      React.createElement("div", { className: "nav-actions" },
-        React.createElement("button", { className: "nav-cart-btn", onClick: () => navigate('/cart') },
-          React.createElement("span", { className: "cart-label" }, "Cart"),
-          React.createElement("span", { className: "cart-count" }, count)),
-        React.createElement("button", { className: "nav-login-link", onClick: () => navigate('/login') }, "Login"),
-        React.createElement("button", { className: "hamburger", onClick: openMenu, "aria-label": "Open menu" },
-          React.createElement("span"), React.createElement("span"), React.createElement("span")))),
-    React.createElement("div", { ref: menuRef, className: "mob-menu" },
-      React.createElement("button", { className: "mob-close", onClick: closeMenu }, "×"),
-      React.createElement("ul", { className: "mob-links" },
-        LINKS.map(l => React.createElement("li", { key: l.label },
-          React.createElement("a", { onClick: () => { closeMenu(); navigate(l.path); } }, l.label))),
-        React.createElement("li", null, React.createElement("a", { onClick: () => { closeMenu(); navigate('/login'); } }, "Login"))),
-      React.createElement("div", { className: "mob-cta" },
-        React.createElement("button", { className: "btn-gold", onClick: () => { closeMenu(); navigate('/cart'); } }, `View Cart (${count})`))));
+/* ─── NAV ─── */
+function Nav({onPolicy,onTerms}){
+  const{count}=useCart();
+  const{path,navigate}=useRouter();
+  const{openDrawer}=useDrawer();
+  const[scrolled,setScrolled]=useState(false);
+  const navRef=useRef(null);
+  const menuRef=useRef(null);
+  useLayoutEffect(()=>{
+    gsap.from(navRef.current,{y:-8,opacity:0,duration:D.base,ease:E.out,delay:.1});
+    const st=ScrollTrigger.create({start:60,onEnter:()=>setScrolled(true),onLeaveBack:()=>setScrolled(false)});
+    return()=>st.kill();
+  },[]);
+  const openMenu=()=>{gsap.set(menuRef.current,{visibility:'visible'});gsap.fromTo(menuRef.current,{x:'100%'},{x:'0%',duration:.35,ease:E.ease});};
+  const closeMenu=()=>{gsap.to(menuRef.current,{x:'100%',duration:.26,ease:'power3.in',onComplete:()=>gsap.set(menuRef.current,{visibility:'hidden'})});};
+  const LINKS=[{label:'Home',path:'/'},{label:'Browse',path:'/bouquets'},{label:'Custom',path:'/custom'},{label:'About',path:'/about'},{label:'Contact',path:'/contact'}];
+  return React.createElement(React.Fragment,null,
+    React.createElement('nav',{ref:navRef,className:'nav'+(scrolled?' scrolled':'')+(!scrolled&&DARK_NAV.has(path)?' nav-light':'')},
+      React.createElement('a',{className:'nav-logo',onClick:()=>navigate('/')},'Bouquet',React.createElement('span',null,'Studio')),
+      React.createElement('ul',{className:'nav-links'},LINKS.map(l=>
+        React.createElement('li',{key:l.label},React.createElement('a',{className:path===l.path?'active':'',onClick:()=>navigate(l.path)},l.label)))),
+      React.createElement('div',{className:'nav-right'},
+        React.createElement('button',{className:'nav-right-btn',onClick:()=>navigate('/login')},'Login'),
+        React.createElement('button',{className:'nav-cart-wrap',onClick:openDrawer},
+          React.createElement('span',{className:'cart-label',style:{fontSize:'10.5px',fontWeight:600,letterSpacing:'.1em',textTransform:'uppercase'}},'Cart'),
+          React.createElement('span',{className:'cart-badge'},count)),
+        React.createElement('button',{className:'hamburger',onClick:openMenu,'aria-label':'Open menu'},
+          React.createElement('span'),React.createElement('span'),React.createElement('span')))),
+    React.createElement('div',{ref:menuRef,className:'mob-menu'},
+      React.createElement('button',{className:'mob-close',onClick:closeMenu},'×'),
+      React.createElement('ul',{className:'mob-links'},
+        LINKS.map(l=>React.createElement('li',{key:l.label},React.createElement('a',{onClick:()=>{closeMenu();navigate(l.path);}},l.label))),
+        React.createElement('li',null,React.createElement('a',{onClick:()=>{closeMenu();navigate('/login');}},'Login'))),
+      React.createElement('div',{className:'mob-cta'},React.createElement('button',{className:'btn-gold',onClick:()=>{closeMenu();openDrawer();}},'View Cart ('+count+')'))));
 }
 
 /* ─── FOOTER ─── */
-function Footer({ onPolicy, onTerms }) {
-  const { navigate } = useRouter();
-  const Col = ({ title, links }) => React.createElement("div", { className: "footer-col" },
-    React.createElement("h4", null, title),
-    React.createElement("ul", null, links.map(([l, fn]) =>
-      React.createElement("li", { key: l }, React.createElement("a", { onClick: fn || (() => {}) }, l)))));
-  return React.createElement("footer", { className: "footer" },
-    React.createElement("div", { className: "footer-top" },
-      React.createElement("div", { className: "footer-brand" },
-        React.createElement("a", { className: "nav-logo", onClick: () => navigate('/') }, "Bouquet", React.createElement("span", null, "Studio")),
-        React.createElement("p", null, "Timeless ribbon elegance, handcrafted in Sydney. Delivering beauty across Australia since 2020."),
-        React.createElement("div", { style: { marginTop: 12, fontSize: 10.5, color: 'rgba(250,246,240,.24)' } }, "ABN: 12 345 678 901 · Sydney NSW 2000")),
-      React.createElement(Col, { title: "Shop", links: [['All Bouquets', () => navigate('/bouquets')], ['Custom', () => navigate('/custom')], ['Gift Cards', null]] }),
-      React.createElement(Col, { title: "Studio", links: [['Our Story', () => navigate('/about')], ['Craftsmanship', null], ['Sustainability', null], ['Press', null]] }),
-      React.createElement(Col, { title: "Help", links: [['Contact Us', () => navigate('/contact')], ['Delivery Info', null], ['Returns', null], ['FAQ', null]] })),
-    React.createElement("div", { className: "footer-bottom" },
-      React.createElement("div", { className: "footer-copy" }, "© 2026 Bouquet Studio Pty Ltd. All rights reserved."),
-      React.createElement("div", { className: "footer-legal" },
-        React.createElement("a", { onClick: onPolicy }, "Privacy Policy"),
-        React.createElement("a", { onClick: onTerms }, "Terms & Conditions"),
-        React.createElement("a", null, "Refund Policy")),
-      React.createElement("div", { className: "footer-socials" }, ['Instagram', 'TikTok', 'Pinterest'].map(s =>
-        React.createElement("a", { key: s }, s)))));
+function Footer({onPolicy,onTerms}){
+  const{navigate}=useRouter();
+  const Col=({title,links})=>React.createElement('div',{className:'footer-col'},
+    React.createElement('h4',null,title),
+    React.createElement('ul',null,links.map(([l,fn])=>React.createElement('li',{key:l},React.createElement('a',{onClick:fn||(()=>{})},l)))));
+  return React.createElement('footer',{className:'footer'},
+    React.createElement('div',{className:'footer-top'},
+      React.createElement('div',{className:'footer-brand'},
+        React.createElement('a',{className:'nav-logo',onClick:()=>navigate('/')},'Bouquet',React.createElement('span',null,'Studio')),
+        React.createElement('p',null,'Timeless ribbon elegance, handcrafted in Sydney. Delivering beauty across Australia since 2020.'),
+        React.createElement('div',{style:{marginTop:10,fontSize:10,color:'rgba(250,246,240,.2)'}},'ABN: 12 345 678 901 · Sydney NSW 2000')),
+      React.createElement(Col,{title:'Shop',links:[['All Bouquets',()=>navigate('/bouquets')],['Custom',()=>navigate('/custom')],['Gift Cards',null]]}),
+      React.createElement(Col,{title:'Studio',links:[['Our Story',()=>navigate('/about')],['Craftsmanship',null],['Sustainability',null],['Press',null]]}),
+      React.createElement(Col,{title:'Help',links:[['Contact Us',()=>navigate('/contact')],['Delivery Info',null],['Returns',null],['FAQ',null]]})),
+    React.createElement('div',{className:'footer-bottom'},
+      React.createElement('div',{className:'footer-copy'},'© 2026 Bouquet Studio Pty Ltd.'),
+      React.createElement('div',{className:'footer-legal'},
+        React.createElement('a',{onClick:onPolicy},'Privacy Policy'),
+        React.createElement('a',{onClick:onTerms},'Terms & Conditions')),
+      React.createElement('div',{className:'footer-socials'},['Instagram','TikTok','Pinterest'].map(s=>React.createElement('a',{key:s},s)))));
 }
 
-/* ═══════════════════════════
-   PRODUCT DATA
-═══════════════════════════ */
-const BOUQS = [
-  { name: 'The Classic Romantic', tag: 'Bestseller', price: '$89', photo: 'photo-1526047932273-341f2a7631f9', desc: 'Soft blush pinks and ivory ribbons, artfully arranged for timeless elegance.', badge: 'Best Seller', badgeGold: true },
-  { name: 'Midnight Garden', tag: 'Limited Edition', price: '$114', photo: 'photo-1558618666-fcd25c85cd64', desc: 'Deep burgundy and forest green ribbons for a dramatic, moody statement.', badge: 'New', badgeGold: false },
-  { name: 'Golden Hour', tag: 'Bridal', price: '$139', photo: 'photo-1545048702-79362596cdc9', desc: 'Warm amber, champagne and ivory — perfect for bridal and anniversary gifts.', badge: null },
-  { name: 'Spring Awakening', tag: 'Seasonal', price: '$79', photo: 'photo-1490750967868-88df5691cc1e', desc: 'Fresh lilac, mint and pale yellow ribbons celebrating the joy of spring.', badge: 'New', badgeGold: false },
-  { name: 'Eternal White', tag: 'Sympathy', price: '$99', photo: 'photo-1487530811176-3780de880c2d', desc: 'Pure white and silver ribbons in a serene, minimalist composition.', badge: null },
-  { name: 'Crimson Kiss', tag: 'Romance', price: '$109', photo: 'photo-1455659817273-f96807779a8a', desc: 'Passionate red and deep rose ribbons with gold accents for grand gestures.', badge: 'Popular', badgeGold: false },
-  { name: 'Lavender Dreams', tag: 'Birthday', price: '$84', photo: 'photo-1508610048659-a06b669e3321', desc: 'Soft lavender, lilac and pearl ribbons — a dreamy gift for any occasion.', badge: null },
-  { name: 'Bespoke Masterpiece', tag: 'Custom', price: '$159+', photo: 'photo-1520271348891-049f9432f40c', desc: 'Fully customised to your palette, size and wrapping preferences.', badge: 'Custom', badgeGold: true },
-  { name: 'Sunrise Blush', tag: 'Gift', price: '$94', photo: 'photo-1439539698758-ba2680ecadb9', desc: 'Peachy coral and cream ribbons with a warm, sunrise glow.', badge: null },
+/* ── DATA ── */
+const BOUQS=[
+  {name:'The Classic Romantic',tag:'Bestseller',price:'$89',photo:'photo-1526047932273-341f2a7631f9',desc:'Soft blush pinks and ivory ribbons, artfully arranged for timeless elegance.',badge:'Best Seller',badgeGold:true},
+  {name:'Midnight Garden',tag:'Limited Edition',price:'$114',photo:'photo-1558618666-fcd25c85cd64',desc:'Deep burgundy and forest green ribbons for a dramatic, moody statement.',badge:'New',badgeGold:false},
+  {name:'Golden Hour',tag:'Bridal',price:'$139',photo:'photo-1545048702-79362596cdc9',desc:'Warm amber, champagne and ivory — perfect for bridal and anniversary gifts.',badge:null},
+  {name:'Spring Awakening',tag:'Seasonal',price:'$79',photo:'photo-1490750967868-88df5691cc1e',desc:'Fresh lilac, mint and pale yellow ribbons celebrating the joy of spring.',badge:'New',badgeGold:false},
+  {name:'Eternal White',tag:'Sympathy',price:'$99',photo:'photo-1487530811176-3780de880c2d',desc:'Pure white and silver ribbons in a serene, minimalist composition.',badge:null},
+  {name:'Crimson Kiss',tag:'Romance',price:'$109',photo:'photo-1455659817273-f96807779a8a',desc:'Passionate red and deep rose ribbons with gold accents for grand gestures.',badge:'Popular',badgeGold:false},
+  {name:'Lavender Dreams',tag:'Birthday',price:'$84',photo:'photo-1508610048659-a06b669e3321',desc:'Soft lavender, lilac and pearl ribbons — a dreamy gift for any occasion.',badge:null},
+  {name:'Bespoke Masterpiece',tag:'Custom',price:'$159+',photo:'photo-1520271348891-049f9432f40c',desc:'Fully customised to your palette, size and wrapping preferences.',badge:'Custom',badgeGold:true},
+  {name:'Sunrise Blush',tag:'Gift',price:'$94',photo:'photo-1439539698758-ba2680ecadb9',desc:'Peachy coral and cream ribbons with a warm, sunrise glow.',badge:null},
 ];
-const FILTER_CATS = ['All', 'Bestseller', 'Bridal', 'Birthday', 'Romance', 'Custom', 'Seasonal', 'Limited Edition'];
+const CATS=['All','Bestseller','Bridal','Birthday','Romance','Custom','Seasonal','Limited Edition'];
 
-/* ═══════════════════════════
-   REUSABLE PRODUCT CARD COMPONENT
-═══════════════════════════ */
-function ProductCard({ b, onAdd, onQuickView }) {
-  const { wished, toggle } = useWishlist();
-  const isWished = wished.includes(b.name);
-  return React.createElement("div", { className: "card" },
-    b.badge && React.createElement("div", { className: `card-bdg${b.badgeGold ? ' gold' : ''}` }, b.badge),
-    React.createElement("div", { className: "card-shell" },
-      React.createElement("img", { className: "card-img", src: `https://images.unsplash.com/${b.photo}?auto=format&fit=crop&q=80&w=600`, alt: b.name, loading: "lazy" }),
-      React.createElement("button", {
-        className: `card-wish${isWished ? ' active' : ''}`,
-        onClick: e => { e.stopPropagation(); toggle(b.name); toast(isWished ? 'Removed from wishlist' : 'Added to wishlist'); },
-        "aria-label": "Add to wishlist"
-      }, isWished ? '♥' : '♡')),
-    React.createElement("div", { className: "card-body" },
-      React.createElement("div", { className: "card-tag" }, b.tag),
-      React.createElement("div", { className: "card-name" }, b.name),
-      React.createElement("div", { className: "card-desc" }, b.desc),
-      React.createElement("div", { className: "card-foot" },
-        React.createElement("div", { className: "card-price" }, b.price),
-        React.createElement("div", { style: { display: 'flex', gap: 6 } },
-          React.createElement("button", { className: "btn-card", style: { background: 'none', border: '1.5px solid var(--border-neutral)', color: 'var(--muted)', padding: '6px 10px', fontSize: 10 }, onClick: () => onQuickView && onQuickView(b) }, "View"),
-          React.createElement("button", { className: "btn-card", onClick: () => onAdd(b) }, "Add")))));
+/* ── REUSABLE PRODUCT CARD ── */
+function ProductCard({b,onAdd,onQuickView}){
+  const{wished,toggle}=useWish();
+  const isWished=wished.includes(b.name);
+  return React.createElement('div',{className:'card'},
+    b.badge&&React.createElement('div',{className:'card-badge'+(b.badgeGold?' gold':'')},b.badge),
+    React.createElement('div',{className:'card-img-wrap'},
+      React.createElement('img',{className:'card-img',src:'https://images.unsplash.com/'+b.photo+'?auto=format&fit=crop&q=80&w=600',alt:b.name,loading:'lazy'}),
+      React.createElement('button',{className:'card-wish'+(isWished?' active':''),onClick:e=>{e.stopPropagation();toggle(b.name);toast(isWished?'Removed from wishlist':'Saved to wishlist');}},isWished?'♥':'♡'),
+      React.createElement('div',{className:'card-overlay'},
+        React.createElement('button',{className:'card-overlay-btn secondary',onClick:()=>onQuickView&&onQuickView(b)},'Quick View'),
+        React.createElement('button',{className:'card-overlay-btn primary',onClick:()=>onAdd(b)},'Add to Cart'))),
+    React.createElement('div',{className:'card-body'},
+      React.createElement('div',{className:'card-tag'},b.tag),
+      React.createElement('div',{className:'card-name'},b.name),
+      React.createElement('div',{className:'card-desc'},b.desc),
+      React.createElement('div',{className:'card-foot'},
+        React.createElement('div',{className:'card-price-wrap'},
+          React.createElement('div',{className:'card-price'},b.price)))));
 }
 
-/* ─── QUICK VIEW MODAL COMPONENT ─── */
-function QuickViewModal({ item, onClose, onAdd }) {
-  const [qty, setQty] = useState(1);
-  if (!item) return null;
-  return React.createElement("div", { className: `qv-bg open`, onClick: e => e.currentTarget === e.target && onClose() },
-    React.createElement("div", { className: "qv-box" },
-      React.createElement("img", { className: "qv-img", src: `https://images.unsplash.com/${item.photo}?auto=format&fit=crop&q=80&w=700`, alt: item.name }),
-      React.createElement("div", { className: "qv-info" },
-        React.createElement("button", { className: "qv-close", onClick: onClose }, "×"),
-        React.createElement("div", { className: "qv-tag" }, item.tag),
-        React.createElement("div", { className: "qv-name" }, item.name),
-        React.createElement("div", { className: "qv-desc" }, item.desc),
-        React.createElement("div", { className: "qv-price" }, item.price),
-        React.createElement("div", { className: "qv-qty" },
-          React.createElement("span", { className: "qv-qty-label" }, "Qty"),
-          React.createElement("button", { className: "qty-btn", onClick: () => setQty(q => Math.max(1, q - 1)) }, "−"),
-          React.createElement("span", { style: { fontFamily: "'Cormorant Garamond',serif", fontSize: 18, minWidth: 24, textAlign: 'center' } }, qty),
-          React.createElement("button", { className: "qty-btn", onClick: () => setQty(q => q + 1) }, "+")),
-        React.createElement("button", { className: "btn-gold btn-full", style: { marginTop: 4 }, onClick: () => {
-          for(let i=0;i<qty;i++) onAdd(item); onClose();
-        }}, "Add to Cart →"),
-        React.createElement("p", { style: { fontSize: 11, color: 'var(--muted)', marginTop: 10, lineHeight: 1.6 } }, "🔒 Secure checkout · Free delivery on orders $100+"))));
+/* ── QUICK VIEW MODAL ── */
+function QuickViewModal({item,onClose,onAdd}){
+  const[qty,setQty]=useState(1);
+  if(!item)return null;
+  return React.createElement('div',{className:'qv-bg open',onClick:e=>e.currentTarget===e.target&&onClose()},
+    React.createElement('div',{className:'qv-box'},
+      React.createElement('img',{className:'qv-img',src:'https://images.unsplash.com/'+item.photo+'?auto=format&fit=crop&q=80&w=700',alt:item.name}),
+      React.createElement('div',{className:'qv-info'},
+        React.createElement('button',{className:'qv-close',onClick:onClose},'×'),
+        React.createElement('div',{className:'qv-tag'},item.tag),
+        React.createElement('div',{className:'qv-name'},item.name),
+        React.createElement('div',{className:'qv-desc'},item.desc),
+        React.createElement('div',{className:'qv-price'},item.price),
+        React.createElement('div',{className:'qv-qty-row'},
+          React.createElement('span',{style:{fontSize:'9.5px',fontWeight:700,letterSpacing:'.12em',textTransform:'uppercase',color:'var(--muted)',marginRight:4}},'Qty'),
+          React.createElement('button',{className:'qty-btn',onClick:()=>setQty(q=>Math.max(1,q-1))},'−'),
+          React.createElement('span',{className:'qty-val'},qty),
+          React.createElement('button',{className:'qty-btn',onClick:()=>setQty(q=>q+1)},'+')
+        ),
+        React.createElement('button',{className:'btn-gold btn-full',style:{marginTop:8},onClick:()=>{for(let i=0;i<qty;i++)onAdd(item);onClose();}},'Add to Cart →'),
+        React.createElement('p',{style:{fontSize:10.5,color:'var(--muted)',marginTop:8,lineHeight:1.6}},'🔒 Secure checkout · Free delivery on orders $100+'))));
 }
 
-/* ═══════════════════════════
-   HOME PAGE
-═══════════════════════════ */
-function Hero() {
-  const { navigate } = useRouter();
-  const secRef = useRef(null);
-
-  useLayoutEffect(() => {
-    // Kept: hero intro — but simplified. No line-clip, no floating petals, no parallax
-    const tl = gsap.timeline({ delay: .2 });
-    tl.from('.hero-title', { opacity: 0, y: 16, duration: M.dur.base, ease: M.ease.out });
-    tl.from(['.hero-eyebrow', '.hero-desc', '.hero-cta', '.hero-stats'], {
-      opacity: 0, y: 10, duration: M.dur.slow, ease: M.ease.out, stagger: .08
-    }, '-=.3');
-    tl.from('.hero-img-frame', { opacity: 0, y: 10, duration: M.dur.base, ease: M.ease.out }, '-=.5');
-    tl.from(['.hero-badge', '.hero-float-pill'], {
-      opacity: 0, duration: M.dur.base, ease: M.ease.out, stagger: .1
-    }, '-=.3');
-
-    // Counter animation — kept, useful UI pattern
-    document.querySelectorAll('[data-target]').forEach(el => {
-      const target = +el.dataset.target;
-      ScrollTrigger.create({
-        trigger: el, start: 'top 90%', once: true,
-        onEnter: () => gsap.to({ v: 0 }, {
-          v: target, duration: 1.4, ease: 'power2.out',
-          onUpdate() { el.textContent = Math.round(this.targets()[0].v).toLocaleString() + (target === 98 ? '%' : '+'); }
-        })
-      });
+/* ══════════════════ HOME PAGE ══════════════════ */
+function Hero(){
+  const{navigate}=useRouter();
+  const ref=useRef(null);
+  useLayoutEffect(()=>{
+    const tl=gsap.timeline({delay:.18});
+    tl.from('.hero-title',{opacity:0,y:14,duration:D.base,ease:E.out});
+    tl.from(['.hero-eyebrow','.hero-desc','.hero-cta','.hero-stats'],{opacity:0,y:8,duration:D.slow,ease:E.out,stagger:.07},'-=.28');
+    tl.from('.hero-img-frame',{opacity:0,y:8,duration:D.base,ease:E.out},'-=.4');
+    tl.from(['.hero-badge','.hero-pill'],{opacity:0,duration:D.base,ease:E.out,stagger:.08},'-=.25');
+    document.querySelectorAll('[data-target]').forEach(el=>{
+      const t=+el.dataset.target;
+      ScrollTrigger.create({trigger:el,start:'top 90%',once:true,
+        onEnter:()=>gsap.to({v:0},{v:t,duration:1.3,ease:'power2.out',
+          onUpdate(){el.textContent=Math.round(this.targets()[0].v).toLocaleString()+(t===98?'%':'+')}})});
     });
-  }, []);
-
-  return React.createElement("section", { ref: secRef, className: "hero", id: "hero" },
-    React.createElement("div", { className: "hero-left" },
-      React.createElement("div", { className: "hero-eyebrow" }, "Handcrafted in Sydney, Australia"),
-      React.createElement("h1", { className: "hero-title" },
-        "Elegance in", React.createElement("br"), React.createElement("em", null, "Every"), " Bloom"),
-      React.createElement("p", { className: "hero-desc" }, "Curated ribbon flower bouquets, handcrafted with artistic precision and delivered across Australia."),
-      React.createElement("div", { className: "hero-cta" },
-        React.createElement("button", { className: "btn-primary", onClick: () => navigate('/bouquets') },
-          React.createElement("span", null, "Explore Collection")),
-        React.createElement("button", { className: "btn-outline", onClick: () => navigate('/about') }, "Our Story")),
-      React.createElement("div", { className: "hero-stats" },
-        React.createElement("div", null,
-          React.createElement("div", { className: "stat-num", "data-target": "2400" }, "0"),
-          React.createElement("div", { className: "stat-lbl" }, "Bouquets Delivered")),
-        React.createElement("div", null,
-          React.createElement("div", { className: "stat-num", "data-target": "98" }, "0"),
-          React.createElement("div", { className: "stat-lbl" }, "% Happy Customers")),
-        React.createElement("div", null,
-          React.createElement("div", { className: "stat-num", "data-target": "5" }, "0"),
-          React.createElement("div", { className: "stat-lbl" }, "Years of Craft")))),
-    React.createElement("div", { className: "hero-right" },
-      React.createElement("div", { className: "hero-img-wrap" },
-        React.createElement("div", { className: "hero-img-frame" },
-          React.createElement("img", { src: "https://images.unsplash.com/photo-1526047932273-341f2a7631f9?auto=format&fit=crop&q=80&w=700", alt: "Premium handcrafted ribbon bouquet" })),
-        React.createElement("div", { className: "hero-badge" },
-          React.createElement("div", { className: "hero-badge-label" }, "⭐ Top Rated"),
-          React.createElement("div", { className: "hero-badge-sub" }, "Same-day delivery")),
-        React.createElement("div", { className: "hero-float-pill" }, "100% ", React.createElement("span", null, "Handmade"), " in Sydney"))));
+  },[]);
+  return React.createElement('section',{ref,className:'hero',id:'hero'},
+    React.createElement('div',{className:'hero-left'},
+      React.createElement('div',{className:'hero-eyebrow'},'Handcrafted in Sydney, Australia'),
+      React.createElement('h1',{className:'hero-title'},'Elegance in',React.createElement('br'),React.createElement('em',null,'Every'),' Bloom'),
+      React.createElement('p',{className:'hero-desc'},'Curated ribbon flower bouquets, handcrafted with precision and delivered across Australia.'),
+      React.createElement('div',{className:'hero-cta'},
+        React.createElement('button',{className:'btn-primary',onClick:()=>navigate('/bouquets')},'Explore Collection'),
+        React.createElement('button',{className:'btn-outline',onClick:()=>navigate('/about')},'Our Story')),
+      React.createElement('div',{className:'hero-stats'},
+        React.createElement('div',null,React.createElement('div',{className:'stat-num','data-target':'2400'},'0'),React.createElement('div',{className:'stat-lbl'},'Bouquets Delivered')),
+        React.createElement('div',null,React.createElement('div',{className:'stat-num','data-target':'98'},'0'),React.createElement('div',{className:'stat-lbl'},'% Happy Customers')),
+        React.createElement('div',null,React.createElement('div',{className:'stat-num','data-target':'5'},'0'),React.createElement('div',{className:'stat-lbl'},'Years of Craft')))),
+    React.createElement('div',{className:'hero-right'},
+      React.createElement('div',{style:{position:'relative'}},
+        React.createElement('div',{className:'hero-img-frame'},
+          React.createElement('img',{src:'https://images.unsplash.com/photo-1526047932273-341f2a7631f9?auto=format&fit=crop&q=80&w=700',alt:'Handcrafted ribbon bouquet'})),
+        React.createElement('div',{className:'hero-badge'},
+          React.createElement('div',{className:'hero-badge-label'},'⭐ Top Rated'),
+          React.createElement('div',{className:'hero-badge-sub'},'Same-day delivery')),
+        React.createElement('div',{className:'hero-pill'},'100% ',React.createElement('span',null,'Handmade'),' in Sydney'))));
 }
 
-/* Replaced autoplay marquee with static trust bar */
-function TrustBar() {
-  const items = [
-    { icon: '🌸', text: 'Handcrafted Bouquets' },
-    { icon: '🚚', text: 'Same-Day Delivery' },
-    { icon: '✨', text: 'Everlasting Ribbon Florals' },
-    { icon: '📦', text: 'Custom Orders Welcome' },
-  ];
-  return React.createElement("div", { className: "trust-bar" },
-    items.map(i => React.createElement("div", { key: i.text, className: "trust-item" },
-      React.createElement("span", { className: "trust-icon" }, i.icon), i.text)));
+function TrustBar(){
+  return React.createElement('div',{className:'trust-bar'},
+    [{icon:'🌸',text:'Handcrafted Bouquets'},{icon:'🚚',text:'Same-Day Delivery'},{icon:'✨',text:'Everlasting Ribbon Florals'},{icon:'📦',text:'Custom Orders Welcome'}]
+    .map(i=>React.createElement('div',{key:i.text,className:'trust-item'},React.createElement('span',null,i.icon),' ',i.text)));
 }
 
-const FEATS = [
-  { icon: '🌸', title: 'Everlasting Blooms', desc: 'Ribbon flowers that never wilt — a timeless keepsake for every occasion.' },
-  { icon: '🚀', title: 'Same-Day Delivery', desc: 'Order before noon for same-day delivery in Sydney, Melbourne & Brisbane.' },
-  { icon: '✨', title: 'Fully Customisable', desc: 'Choose your ribbon palette, flower count, and luxury wrapping.' },
+function Features(){
+  return React.createElement('div',{className:'features'},
+    [{icon:'🌸',title:'Everlasting Blooms',desc:'Ribbon flowers that never wilt — a timeless keepsake for every occasion.'},
+     {icon:'🚀',title:'Same-Day Delivery',desc:'Order before noon for same-day delivery across Sydney, Melbourne & Brisbane.'},
+     {icon:'✨',title:'Fully Customisable',desc:'Choose your ribbon palette, flower count, and luxury wrapping.'}]
+    .map(f=>React.createElement('div',{key:f.title,className:'feat-item'},
+      React.createElement('div',{className:'feat-icon'},f.icon),
+      React.createElement('div',null,React.createElement('div',{className:'feat-title'},f.title),React.createElement('div',{className:'feat-desc'},f.desc)))));
+}
+
+function Collection(){
+  const{add}=useCart();
+  const{navigate}=useRouter();
+  const[qvItem,setQvItem]=useState(null);
+  const ref=useRef(null);
+  useLayoutEffect(()=>{
+    const ctx=gsap.context(()=>{
+      gsap.from('.coll-head',{opacity:0,y:10,duration:D.base,ease:E.out,scrollTrigger:{trigger:ref.current,start:'top 86%'}});
+      gsap.from(ref.current.querySelectorAll('.card'),{opacity:0,y:14,duration:D.slow,ease:E.out,stagger:.05,scrollTrigger:{trigger:ref.current,start:'top 82%'}});
+    },ref);
+    return()=>ctx.revert();
+  },[]);
+  return React.createElement('section',{ref,className:'section',style:{background:'var(--cream)'}},
+    React.createElement('div',{className:'coll-head'},
+      React.createElement('div',null,
+        React.createElement('div',{className:'eyebrow'},'Our Collections'),
+        React.createElement('h2',{className:'sec-title'},'Curated Florals For',React.createElement('br'),React.createElement('em',null,'Every Moment'))),
+      React.createElement('button',{className:'btn-outline',style:{flexShrink:0},onClick:()=>navigate('/bouquets')},'View All')),
+    React.createElement('div',{className:'prod-grid'},BOUQS.slice(0,6).map(b=>React.createElement(ProductCard,{key:b.name,b,onAdd:add,onQuickView:setQvItem}))),
+    qvItem&&React.createElement(QuickViewModal,{item:qvItem,onClose:()=>setQvItem(null),onAdd:add}));
+}
+
+const STEPS=['Choose your ribbon palette','Set the flower count & size','Pick your luxury wrapping','Add a personal message'];
+function Bespoke(){
+  const{navigate}=useRouter();
+  const ref=useRef(null);
+  useLayoutEffect(()=>{
+    const ctx=gsap.context(()=>{
+      gsap.from('.bespoke-content',{opacity:0,x:-14,duration:D.slow,ease:E.out,scrollTrigger:{trigger:ref.current,start:'top 74%'}});
+      gsap.from('.bespoke-img',{opacity:0,x:14,duration:D.slow,ease:E.out,scrollTrigger:{trigger:ref.current,start:'top 74%'}});
+    },ref);
+    return()=>ctx.revert();
+  },[]);
+  return React.createElement('section',{ref,className:'bespoke'},
+    React.createElement('div',{className:'bespoke-content'},
+      React.createElement('div',{className:'eyebrow light'},'Design Yours'),
+      React.createElement('h2',{className:'sec-title light'},'Create a',React.createElement('br'),React.createElement('em',null,'Masterpiece'),React.createElement('br'),'Unique to You'),
+      React.createElement('p',{className:'bespoke-desc'},'Select your perfect flower count, choose from our premium ribbon palette, and finish with luxury wrapping.'),
+      React.createElement('div',{className:'bespoke-steps'},STEPS.map((s,i)=>
+        React.createElement('div',{key:i,className:'bespoke-step'},
+          React.createElement('div',{className:'step-n'},i+1),
+          React.createElement('div',{className:'step-t'},s)))),
+      React.createElement('button',{className:'btn-gold',onClick:()=>navigate('/custom')},'Start Customising →')),
+    React.createElement('div',{className:'bespoke-img-wrap'},
+      React.createElement('img',{className:'bespoke-img',src:'https://images.unsplash.com/photo-1520271348891-049f9432f40c?auto=format&fit=crop&q=80&w=800',alt:'Custom bouquet'}),
+      React.createElement('div',{className:'bespoke-float'},
+        React.createElement('div',{className:'bespoke-float-t'},'100% Handmade'),
+        React.createElement('div',{className:'bespoke-float-s'},'Crafted in our Sydney studio'))));
+}
+
+const PROC=[
+  {n:'01',title:'Browse & Select',desc:'Explore curated collections or start a custom design.'},
+  {n:'02',title:'We Handcraft',desc:'Sydney artisans create your bouquet with premium materials.'},
+  {n:'03',title:'Packed with Love',desc:'Wrapped in signature packaging with your personal note.'},
+  {n:'04',title:'Delivered Fresh',desc:'Same-day or next-day delivery across major Australian cities.'},
 ];
-function Features() {
-  return React.createElement("div", { className: "features" },
-    FEATS.map(f => React.createElement("div", { key: f.title, className: "feat-item" },
-      React.createElement("div", { className: "feat-icon" }, f.icon),
-      React.createElement("div", null,
-        React.createElement("div", { className: "feat-title" }, f.title),
-        React.createElement("div", { className: "feat-desc" }, f.desc)))));
+function Process(){
+  const ref=useRef(null);
+  useLayoutEffect(()=>{
+    const ctx=gsap.context(()=>{
+      gsap.from('.proc-head',{opacity:0,y:10,duration:D.base,ease:E.out,scrollTrigger:{trigger:'.proc-head',start:'top 87%'}});
+      gsap.from(ref.current.querySelectorAll('.proc-item'),{opacity:0,y:10,duration:D.base,ease:E.out,stagger:.09,scrollTrigger:{trigger:'.proc-grid',start:'top 85%'}});
+    },ref);
+    return()=>ctx.revert();
+  },[]);
+  return React.createElement('section',{ref,className:'section',style:{background:'var(--cream2)'}},
+    React.createElement('div',{className:'proc-head'},
+      React.createElement('div',{className:'eyebrow'},'Process'),
+      React.createElement('h2',{className:'sec-title'},'From Studio to ',React.createElement('em',null,'Your Door'))),
+    React.createElement('div',{className:'proc-grid'},PROC.map(p=>
+      React.createElement('div',{key:p.n,className:'proc-item'},
+        React.createElement('div',{className:'proc-n'},p.n),
+        React.createElement('div',{className:'proc-title'},p.title),
+        React.createElement('div',{className:'proc-desc'},p.desc)))));
 }
 
-function Collection() {
-  const { add } = useCart();
-  const { navigate } = useRouter();
-  const [qvItem, setQvItem] = useState(null);
-  const ref = useRef(null);
-
-  useReveal(ref, () => {
-    // Only title + card group — restrained, not every element
-    gsap.from('.coll-head', { opacity: 0, y: 12, duration: M.dur.base, ease: M.ease.out,
-      scrollTrigger: { trigger: ref.current, start: 'top 84%' } });
-    gsap.from(ref.current.querySelectorAll('.card'), { opacity: 0, y: 16, duration: M.dur.slow,
-      ease: M.ease.out, stagger: .06, scrollTrigger: { trigger: ref.current, start: 'top 80%' } });
-  });
-
-  return React.createElement("section", { ref, className: "section", style: { background: 'var(--cream)' } },
-    React.createElement("div", { className: "coll-head" },
-      React.createElement("div", null,
-        React.createElement("div", { className: "eyebrow" }, "Our Collections"),
-        React.createElement("h2", { className: "sec-title" }, "Curated Florals", React.createElement("br"), "For Every Moment")),
-      React.createElement("button", { className: "btn-outline", style: { whiteSpace: 'nowrap', flexShrink: 0 }, onClick: () => navigate('/bouquets') }, "View All")),
-    React.createElement("div", { className: "coll-grid" },
-      BOUQS.slice(0, 6).map(b => React.createElement(ProductCard, { key: b.name, b, onAdd: add, onQuickView: setQvItem }))),
-    qvItem && React.createElement(QuickViewModal, { item: qvItem, onClose: () => setQvItem(null), onAdd: add }));
-}
-
-const STEPS = ['Choose your ribbon palette', 'Set the flower count & size', 'Pick your luxury wrapping', 'Add a personal message'];
-function Bespoke() {
-  const { navigate } = useRouter();
-  const secRef = useRef(null);
-
-  useReveal(secRef, () => {
-    // Only animate the content block once — no scale/elastic on float card
-    gsap.from('.bespoke-content', { opacity: 0, x: -16, duration: M.dur.slow, ease: M.ease.out,
-      scrollTrigger: { trigger: secRef.current, start: 'top 72%' } });
-    gsap.from('.bespoke-img', { opacity: 0, x: 16, duration: M.dur.slow, ease: M.ease.out,
-      scrollTrigger: { trigger: secRef.current, start: 'top 72%' } });
-  });
-
-  return React.createElement("section", { ref: secRef, className: "bespoke" },
-    React.createElement("div", { className: "bespoke-content" },
-      React.createElement("div", { className: "eyebrow light" }, "Design Yours"),
-      React.createElement("h2", { className: "sec-title light" }, "Create a", React.createElement("br"), React.createElement("em", null, "Masterpiece"), React.createElement("br"), "Unique to You"),
-      React.createElement("p", { className: "bespoke-desc" }, "Select your perfect flower count, choose from our premium ribbon palette, and finish with luxury wrapping."),
-      React.createElement("div", { className: "bespoke-steps" }, STEPS.map((s, i) =>
-        React.createElement("div", { key: i, className: "bespoke-step" },
-          React.createElement("div", { className: "step-n" }, i + 1),
-          React.createElement("div", { className: "step-t" }, s)))),
-      React.createElement("button", { className: "btn-gold", onClick: () => navigate('/custom') }, "Start Customising →")),
-    React.createElement("div", { className: "bespoke-img-wrap" },
-      React.createElement("img", { className: "bespoke-img", src: "https://images.unsplash.com/photo-1520271348891-049f9432f40c?auto=format&fit=crop&q=80&w=800", alt: "Custom bouquet creation" }),
-      React.createElement("div", { className: "bespoke-float" },
-        React.createElement("div", { className: "bespoke-float-t" }, "100% Handmade"),
-        React.createElement("div", { className: "bespoke-float-s" }, "Crafted in our Sydney studio"))));
-}
-
-const PROC = [
-  { n: '01', title: 'Browse & Select', desc: 'Explore curated collections or start a custom design.' },
-  { n: '02', title: 'We Handcraft', desc: 'Our Sydney artisans create your bouquet with premium materials.' },
-  { n: '03', title: 'Packed with Love', desc: 'Wrapped in signature packaging with your personal note.' },
-  { n: '04', title: 'Delivered Fresh', desc: 'Same-day or next-day delivery across major Australian cities.' },
+const REVS=[
+  {q:'Absolutely breathtaking. The ribbon details are exquisite — better than any real flower arrangement.',name:'Sophie R.',loc:'Sydney, NSW',img:'5'},
+  {q:'Ordered a custom bouquet for my wedding and it was PERFECT. The team nailed every detail.',name:'Mia L.',loc:'Melbourne, VIC',img:'9'},
+  {q:"I've gifted Bouquet Studio to three friends now. Everlasting flowers mean the gift lasts forever.",name:'Jasmine T.',loc:'Brisbane, QLD',img:'16'},
+  {q:'Premium quality, speedy delivery, and the bouquet is a work of art. Highly recommend!',name:'Emma K.',loc:'Perth, WA',img:'20'},
 ];
-function Process() {
-  const ref = useRef(null);
-  useReveal(ref, () => {
-    gsap.from('.proc-head', { opacity: 0, y: 10, duration: M.dur.base, ease: M.ease.out,
-      scrollTrigger: { trigger: '.proc-head', start: 'top 86%' } });
-    gsap.from(ref.current.querySelectorAll('.proc-item'), { opacity: 0, y: 12, duration: M.dur.base, ease: M.ease.out, stagger: .1,
-      scrollTrigger: { trigger: '.proc-grid', start: 'top 84%' } });
-  });
-  return React.createElement("section", { ref, className: "section", style: { background: 'var(--cream2)' } },
-    React.createElement("div", { className: "proc-head" },
-      React.createElement("div", { className: "eyebrow" }, "Process"),
-      React.createElement("h2", { className: "sec-title" }, "From Studio to ", React.createElement("em", null, "Your Door"))),
-    React.createElement("div", { className: "proc-grid" }, PROC.map(p =>
-      React.createElement("div", { key: p.n, className: "proc-item" },
-        React.createElement("div", { className: "proc-n" }, p.n),
-        React.createElement("div", { className: "proc-title" }, p.title),
-        React.createElement("div", { className: "proc-desc" }, p.desc)))));
+function Reviews(){
+  const ref=useRef(null);
+  useLayoutEffect(()=>{
+    const ctx=gsap.context(()=>{
+      gsap.from('.rev-head',{opacity:0,y:10,duration:D.base,ease:E.out,scrollTrigger:{trigger:'.rev-head',start:'top 88%'}});
+      gsap.from(ref.current.querySelectorAll('.rev-card'),{opacity:0,x:12,duration:D.base,ease:E.out,stagger:.07,scrollTrigger:{trigger:'.rev-track',start:'top 87%'}});
+    },ref);
+    return()=>ctx.revert();
+  },[]);
+  return React.createElement('section',{ref,className:'section',style:{background:'var(--cream)',overflow:'hidden'}},
+    React.createElement('div',{className:'rev-head',style:{marginBottom:32}},
+      React.createElement('div',{className:'eyebrow'},'Reviews'),
+      React.createElement('h2',{className:'sec-title'},'Loved by ',React.createElement('em',null,'Thousands'))),
+    React.createElement('div',{className:'rev-track'},REVS.map(r=>
+      React.createElement('div',{key:r.name,className:'rev-card'},
+        React.createElement('div',{className:'rev-stars'},'★★★★★'),
+        React.createElement('div',{className:'rev-q'},'"'+r.q+'"'),
+        React.createElement('div',{className:'rev-author'},
+          React.createElement('img',{className:'rev-avatar',src:'https://i.pravatar.cc/100?img='+r.img,alt:r.name}),
+          React.createElement('div',null,React.createElement('div',{className:'rev-name'},r.name),React.createElement('div',{className:'rev-loc'},r.loc)))))));
 }
 
-const REVS = [
-  { q: "Absolutely breathtaking. The ribbon details are exquisite — it looked better than any real flower arrangement.", name: 'Sophie R.', loc: 'Sydney, NSW', img: '5' },
-  { q: "Ordered a custom bouquet for my wedding and it was PERFECT. The team nailed every detail and delivered on time.", name: 'Mia L.', loc: 'Melbourne, VIC', img: '9' },
-  { q: "I've gifted Bouquet Studio to three friends now. The everlasting flowers mean the gift lasts forever.", name: 'Jasmine T.', loc: 'Brisbane, QLD', img: '16' },
-  { q: "The packaging alone made me cry. Premium quality, speedy delivery, and the bouquet is a work of art.", name: 'Emma K.', loc: 'Perth, WA', img: '20' },
-];
-function Reviews() {
-  const ref = useRef(null);
-  useReveal(ref, () => {
-    gsap.from('.rev-head', { opacity: 0, y: 10, duration: M.dur.base, ease: M.ease.out,
-      scrollTrigger: { trigger: '.rev-head', start: 'top 87%' } });
-    gsap.from(ref.current.querySelectorAll('.rev-card'), { opacity: 0, x: 14, duration: M.dur.base, ease: M.ease.out, stagger: .08,
-      scrollTrigger: { trigger: '.rev-track', start: 'top 86%' } });
-  });
-  return React.createElement("section", { ref, className: "section", style: { background: 'var(--cream)', overflow: 'hidden' } },
-    React.createElement("div", { className: "rev-head", style: { marginBottom: 36 } },
-      React.createElement("div", { className: "eyebrow" }, "Reviews"),
-      React.createElement("h2", { className: "sec-title" }, "Loved by ", React.createElement("em", null, "Thousands"))),
-    React.createElement("div", { className: "rev-track" }, REVS.map(r =>
-      React.createElement("div", { key: r.name, className: "rev-card" },
-        React.createElement("div", { className: "rev-stars" }, "★★★★★"),
-        React.createElement("div", { className: "rev-q" }, `"${r.q}"`),
-        React.createElement("div", { className: "rev-author" },
-          React.createElement("img", { className: "rev-avatar", src: `https://i.pravatar.cc/100?img=${r.img}`, alt: r.name }),
-          React.createElement("div", null,
-            React.createElement("div", { className: "rev-name" }, r.name),
-            React.createElement("div", { className: "rev-loc" }, r.loc)))))));
-}
-
-function Newsletter() {
-  const [email, setEmail] = useState('');
-  const [sent, setSent] = useState(false);
-  const submit = () => {
-    if (!email.includes('@')) { toast('Please enter a valid email'); return; }
-    setSent(true); toast("You're subscribed! 🌸");
-  };
-  return React.createElement("div", { className: "newsletter" },
-    React.createElement("div", { className: "nl-left" },
-      React.createElement("div", { className: "eyebrow nl-ey" }, "Stay in Bloom"),
-      React.createElement("h3", { className: "sec-title", style: { fontSize: 'clamp(22px,2.6vw,34px)' } }, "Get 10% off", React.createElement("br"), React.createElement("em", null, "your first order")),
-      React.createElement("p", null, "Join 8,000+ subscribers for seasonal collections and exclusive offers.")),
-    React.createElement("div", { style: { flexShrink: 0, width: '100%', maxWidth: 420 } },
+function Newsletter(){
+  const[email,setEmail]=useState('');
+  const[sent,setSent]=useState(false);
+  const submit=()=>{if(!email.includes('@')){toast('Please enter a valid email');return;}setSent(true);toast("You're subscribed! 🌸");};
+  return React.createElement('div',{className:'newsletter'},
+    React.createElement('div',{className:'nl-left'},
+      React.createElement('div',{className:'eyebrow nl-ey'},'Stay in Bloom'),
+      React.createElement('h3',{className:'sec-title',style:{fontSize:'clamp(20px,2.4vw,32px)'}},'Get 10% off',React.createElement('br'),React.createElement('em',null,'your first order')),
+      React.createElement('p',null,'Join 8,000+ subscribers for seasonal collections and exclusive offers.')),
+    React.createElement('div',{style:{flexShrink:0,width:'100%',maxWidth:400}},
       !sent
-        ? React.createElement("div", null,
-            React.createElement("div", { className: "nl-form" },
-              React.createElement("input", { className: "nl-input", type: "email", placeholder: "your@email.com", value: email, onChange: e => setEmail(e.target.value), onKeyDown: e => e.key === 'Enter' && submit() }),
-              React.createElement("button", { className: "btn-gold", onClick: submit }, "Subscribe")),
-            React.createElement("div", { style: { fontSize: 10.5, color: 'var(--muted)', marginTop: 8 } }, "No spam, unsubscribe any time."))
-        : React.createElement("div", { style: { padding: '18px 0', textAlign: 'center' } },
-            React.createElement("div", { style: { fontFamily: "'Cormorant Garamond',serif", fontSize: 20, color: 'var(--dark)', marginBottom: 5 } }, "You're in the garden!"),
-            React.createElement("div", { style: { fontSize: 12.5, color: 'var(--muted)' } }, "Check your inbox for your 10% discount code."))));
+        ?React.createElement('div',null,
+            React.createElement('div',{className:'nl-form'},
+              React.createElement('input',{className:'nl-input',type:'email',placeholder:'your@email.com',value:email,onChange:e=>setEmail(e.target.value),onKeyDown:e=>e.key==='Enter'&&submit()}),
+              React.createElement('button',{className:'btn-gold',onClick:submit},'Subscribe')),
+            React.createElement('div',{style:{fontSize:10.5,color:'var(--muted)',marginTop:7}},'No spam, unsubscribe any time.'))
+        :React.createElement('div',{style:{padding:'16px 0',textAlign:'center'}},
+            React.createElement('div',{style:{fontFamily:"'Cormorant Garamond',serif",fontSize:19,color:'var(--dark)',marginBottom:4}},"You're in the garden!"),
+            React.createElement('div',{style:{fontSize:12,color:'var(--muted)'}},'Check your inbox for your 10% discount code.'))));
 }
 
-function Offer() {
-  const { navigate } = useRouter();
-  return React.createElement("section", { className: "offer" },
-    React.createElement("div", { className: "eyebrow light center", style: { justifyContent: 'center', marginBottom: 14 } },
-      React.createElement("span", null, "Limited Time Offer")),
-    React.createElement("div", { className: "offer-code" }, "USE CODE: BLOOM10"),
-    React.createElement("h2", { className: "offer-title" }, "10% Off Your", React.createElement("br"), React.createElement("em", null, "First Order")),
-    React.createElement("p", { className: "offer-desc" }, "Free delivery on orders over $100 · Ships across Australia"),
-    React.createElement("div", { className: "offer-btns" },
-      React.createElement("button", { className: "btn-gold", onClick: () => navigate('/bouquets') }, "Shop Now"),
-      React.createElement("button", { className: "btn-ghost", onClick: () => navigate('/custom') }, "Design Custom")));
+function Offer(){
+  const{navigate}=useRouter();
+  return React.createElement('section',{className:'offer'},
+    React.createElement('div',{className:'eyebrow light center',style:{justifyContent:'center',marginBottom:12}},'Limited Time Offer'),
+    React.createElement('div',{className:'offer-code'},'USE CODE: BLOOM10'),
+    React.createElement('h2',{className:'offer-title'},'10% Off Your',React.createElement('br'),React.createElement('em',null,'First Order')),
+    React.createElement('p',{className:'offer-desc'},'Free delivery on orders over $100 · Ships across Australia'),
+    React.createElement('div',{className:'offer-btns'},
+      React.createElement('button',{className:'btn-gold',onClick:()=>navigate('/bouquets')},'Shop Now'),
+      React.createElement('button',{className:'btn-ghost',onClick:()=>navigate('/custom')},'Design Custom')));
 }
 
-function HomePage({ onPolicy, onTerms }) {
-  return React.createElement("div", { className: "page-enter" },
-    React.createElement(Hero),
-    React.createElement(TrustBar),
-    React.createElement(Features),
-    React.createElement(Collection),
-    React.createElement(Bespoke),
-    React.createElement(Process),
-    React.createElement(Reviews),
-    React.createElement(Newsletter),
-    React.createElement(Offer),
-    React.createElement(Footer, { onPolicy, onTerms }));
+function HomePage({onPolicy,onTerms}){
+  return React.createElement('div',{className:'page-enter'},
+    React.createElement(Hero),React.createElement(TrustBar),React.createElement(Features),
+    React.createElement(Collection),React.createElement(Bespoke),React.createElement(Process),
+    React.createElement(Reviews),React.createElement(Newsletter),React.createElement(Offer),
+    React.createElement(Footer,{onPolicy,onTerms}));
 }
 
-/* ═══════════════════════════
-   BROWSE PAGE — search + filter + sort
-═══════════════════════════ */
-function BrowsePage({ onPolicy, onTerms }) {
-  const { add } = useCart();
-  const [filter, setFilter] = useState('All');
-  const [search, setSearch] = useState('');
-  const [sort, setSort] = useState('default');
-  const [qvItem, setQvItem] = useState(null);
-
-  let results = BOUQS.filter(b =>
-    (filter === 'All' || b.tag === filter) &&
-    (!search || b.name.toLowerCase().includes(search.toLowerCase()) || b.desc.toLowerCase().includes(search.toLowerCase()))
-  );
-  if (sort === 'price-asc') results = [...results].sort((a,b) => parseFloat(a.price.replace('$','')) - parseFloat(b.price.replace('$','')));
-  if (sort === 'price-desc') results = [...results].sort((a,b) => parseFloat(b.price.replace('$','')) - parseFloat(a.price.replace('$','')));
-  if (sort === 'name') results = [...results].sort((a,b) => a.name.localeCompare(b.name));
-
-  return React.createElement("div", { className: "page-enter" },
-    React.createElement("div", { className: "browse-page" },
-      React.createElement("div", { className: "eyebrow" }, "Collection"),
-      React.createElement("h1", { className: "sec-title", style: { marginBottom: 10 } }, "All ", React.createElement("em", null, "Bouquets")),
-      React.createElement("p", { style: { fontSize: 13, color: 'var(--muted)', marginBottom: 28, maxWidth: 460 } }, "Every arrangement is handcrafted in our Sydney studio using premium ribbon and finishing materials."),
-      React.createElement("div", { className: "browse-toolbar" },
-        React.createElement("input", { className: "browse-search", placeholder: "Search bouquets...", value: search, onChange: e => setSearch(e.target.value) }),
-        React.createElement("select", { className: "browse-sort form-input", style: { width: 'auto', minWidth: 160 }, value: sort, onChange: e => setSort(e.target.value) },
-          React.createElement("option", { value: "default" }, "Sort: Featured"),
-          React.createElement("option", { value: "price-asc" }, "Price: Low to High"),
-          React.createElement("option", { value: "price-desc" }, "Price: High to Low"),
-          React.createElement("option", { value: "name" }, "Name A-Z"))),
-      React.createElement("div", { className: "browse-filters" },
-        FILTER_CATS.map(c => React.createElement("button", { key: c, className: `filter-pill${filter === c ? ' active' : ''}`, onClick: () => setFilter(c) }, c))),
-      React.createElement("div", { className: "browse-count" }, `${results.length} product${results.length !== 1 ? 's' : ''}`),
-      results.length > 0
-        ? React.createElement("div", { className: "browse-grid" },
-            results.map(b => React.createElement(ProductCard, { key: b.name, b, onAdd: add, onQuickView: setQvItem })))
-        : React.createElement("div", { style: { padding: '48px 0', textAlign: 'center', color: 'var(--muted)', fontSize: 14 } },
-            "No bouquets match your search. Try a different term or filter."),
-      qvItem && React.createElement(QuickViewModal, { item: qvItem, onClose: () => setQvItem(null), onAdd: add })),
-    React.createElement(Footer, { onPolicy, onTerms }));
+/* ══════════════════ BROWSE PAGE ══════════════════ */
+function BrowsePage({onPolicy,onTerms}){
+  const{add}=useCart();
+  const[cat,setCat]=useState('All');
+  const[search,setSearch]=useState('');
+  const[sort,setSort]=useState('default');
+  const[qvItem,setQvItem]=useState(null);
+  let results=BOUQS.filter(b=>(cat==='All'||b.tag===cat)&&(!search||b.name.toLowerCase().includes(search.toLowerCase())||b.desc.toLowerCase().includes(search.toLowerCase())));
+  if(sort==='asc')results=[...results].sort((a,b)=>parseFloat(a.price.replace(/[^0-9.]/g,''))-parseFloat(b.price.replace(/[^0-9.]/g,'')));
+  if(sort==='desc')results=[...results].sort((a,b)=>parseFloat(b.price.replace(/[^0-9.]/g,''))-parseFloat(a.price.replace(/[^0-9.]/g,'')));
+  if(sort==='name')results=[...results].sort((a,b)=>a.name.localeCompare(b.name));
+  return React.createElement('div',{className:'page-enter'},
+    React.createElement('div',{className:'browse-page'},
+      React.createElement('div',{className:'eyebrow'},'Collection'),
+      React.createElement('h1',{className:'sec-title',style:{marginBottom:8}},'All ',React.createElement('em',null,'Bouquets')),
+      React.createElement('p',{style:{fontSize:12.5,color:'var(--muted)',marginBottom:22,maxWidth:440}},'Every arrangement handcrafted in our Sydney studio using premium ribbon and finishing materials.'),
+      React.createElement('div',{className:'browse-toolbar'},
+        React.createElement('input',{className:'browse-search',placeholder:'Search bouquets...',value:search,onChange:e=>setSearch(e.target.value)}),
+        React.createElement('select',{className:'browse-sort form-input',style:{width:'auto',minWidth:150},value:sort,onChange:e=>setSort(e.target.value)},
+          React.createElement('option',{value:'default'},'Sort: Featured'),
+          React.createElement('option',{value:'asc'},'Price: Low → High'),
+          React.createElement('option',{value:'desc'},'Price: High → Low'),
+          React.createElement('option',{value:'name'},'Name A–Z'))),
+      React.createElement('div',{className:'filter-tabs'},CATS.map(c=>
+        React.createElement('button',{key:c,className:'filter-tab'+(cat===c?' active':''),onClick:()=>setCat(c)},c))),
+      React.createElement('div',{className:'browse-meta'},results.length+' product'+(results.length!==1?'s':'')),
+      results.length>0
+        ?React.createElement('div',{className:'prod-grid'},results.map(b=>React.createElement(ProductCard,{key:b.name,b,onAdd:add,onQuickView:setQvItem})))
+        :React.createElement('div',{style:{padding:'40px 0',textAlign:'center',color:'var(--muted)',fontSize:13}},'No bouquets match your search.'),
+      qvItem&&React.createElement(QuickViewModal,{item:qvItem,onClose:()=>setQvItem(null),onAdd:add})),
+    React.createElement(Footer,{onPolicy,onTerms}));
 }
 
-/* ═══════════════════════════
-   CART PAGE
-═══════════════════════════ */
-function CartPage({ onPolicy, onTerms }) {
-  const { items, remove, updateQty, total, count } = useCart();
-  const { navigate } = useRouter();
-
-  if (items.length === 0) {
-    return React.createElement("div", { className: "page-enter" },
-      React.createElement("div", { className: "cart-empty-page" },
-        React.createElement("div", { className: "cart-empty-icon" }, "🛒"),
-        React.createElement("h1", { className: "cart-empty-title" }, "Your Cart is Empty"),
-        React.createElement("p", { className: "cart-empty-sub" }, "Add some beautiful bouquets to get started."),
-        React.createElement("button", { className: "btn-gold", onClick: () => navigate('/bouquets') }, "Browse Bouquets")),
-      React.createElement(Footer, { onPolicy, onTerms }));
-  }
-
-  const delivery = total >= 100 ? 0 : 12;
-  return React.createElement("div", { className: "page-enter" },
-    React.createElement("div", { className: "cart-page" },
-      React.createElement("div", { className: "cart-page-head" },
-        React.createElement("div", { className: "eyebrow" }, "Checkout"),
-        React.createElement("h1", { className: "cart-page-title" }, "Your ", React.createElement("em", null, "Cart"))),
-      React.createElement("div", { className: "cart-layout" },
-        React.createElement("div", { className: "cart-items-list" },
-          items.map(item => React.createElement("div", { key: item.name, className: "cart-line" },
-            React.createElement("img", { className: "cart-line-img", src: `https://images.unsplash.com/${item.photo}?auto=format&fit=crop&q=80&w=200`, alt: item.name }),
-            React.createElement("div", { className: "cart-line-info" },
-              React.createElement("div", { className: "cart-line-tag" }, item.tag),
-              React.createElement("div", { className: "cart-line-name" }, item.name),
-              React.createElement("div", { className: "cart-line-price" }, item.price),
-              React.createElement("div", { className: "cart-line-qty" },
-                React.createElement("button", { className: "qty-btn", onClick: () => updateQty(item.name, -1) }, "−"),
-                React.createElement("span", { className: "qty-val" }, item.qty),
-                React.createElement("button", { className: "qty-btn", onClick: () => updateQty(item.name, 1) }, "+"))),
-            React.createElement("button", { className: "cart-line-remove", onClick: () => remove(item.name), "aria-label": "Remove" }, "×")))),
-        React.createElement("div", { className: "cart-summary" },
-          React.createElement("div", { className: "cart-summary-title" }, "Order Summary"),
-          React.createElement("div", { className: "summary-row" }, React.createElement("span", null, "Subtotal"), React.createElement("span", null, `$${total.toFixed(2)}`)),
-          React.createElement("div", { className: "summary-row" }, React.createElement("span", null, "Delivery"), React.createElement("span", null, delivery === 0 ? 'Free' : `$${delivery}.00`)),
-          total < 100 && React.createElement("div", { className: "summary-note" }, `Add $${(100 - total).toFixed(2)} more for free delivery`),
-          React.createElement("div", { className: "summary-row total" },
-            React.createElement("span", null, "Total"),
-            React.createElement("span", { className: "val" }, `$${(total + delivery).toFixed(2)}`)),
-          React.createElement("div", { className: "summary-note" }, "Use code ", React.createElement("strong", null, "BLOOM10"), " for 10% off your first order"),
-          React.createElement("button", { className: "btn-gold btn-full", onClick: () => toast('Checkout coming soon — this is a demo!') }, "Proceed to Checkout →"),
-          React.createElement("div", { style: { marginTop: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, fontSize: 10.5, color: 'var(--muted)' } }, "🔒 Secure checkout · SSL encrypted")))),
-    React.createElement(Footer, { onPolicy, onTerms }));
+/* ══════════════════ CART PAGE ══════════════════ */
+function CartPage({onPolicy,onTerms}){
+  const{items,remove,updateQty,total,count}=useCart();
+  const{navigate}=useRouter();
+  if(items.length===0)return React.createElement('div',{className:'page-enter'},
+    React.createElement('div',{className:'cart-empty-page'},
+      React.createElement('div',{className:'cart-empty-icon'},'🛒'),
+      React.createElement('h1',{className:'cart-empty-title'},'Your Cart is Empty'),
+      React.createElement('p',{className:'cart-empty-sub'},'Add some beautiful bouquets to get started.'),
+      React.createElement('button',{className:'btn-gold',onClick:()=>navigate('/bouquets')},'Browse Bouquets')),
+    React.createElement(Footer,{onPolicy,onTerms}));
+  const delivery=total>=100?0:12;
+  return React.createElement('div',{className:'page-enter'},
+    React.createElement('div',{className:'cart-page'},
+      React.createElement('div',{className:'eyebrow'},'Checkout'),
+      React.createElement('h1',{className:'sec-title',style:{marginBottom:28}},'Your ',React.createElement('em',null,'Cart')),
+      React.createElement('div',{className:'cart-layout'},
+        React.createElement('div',null,items.map(item=>React.createElement('div',{key:item.name,className:'cart-line'},
+          React.createElement('img',{className:'cart-line-img',src:'https://images.unsplash.com/'+item.photo+'?auto=format&fit=crop&q=80&w=200',alt:item.name}),
+          React.createElement('div',{className:'cart-line-info'},
+            React.createElement('div',{className:'cart-line-tag'},item.tag),
+            React.createElement('div',{className:'cart-line-name'},item.name),
+            React.createElement('div',{className:'cart-line-price'},item.price),
+            React.createElement('div',{className:'cart-line-qty'},
+              React.createElement('button',{className:'qty-btn',onClick:()=>updateQty(item.name,-1)},'−'),
+              React.createElement('span',{className:'qty-val'},item.qty),
+              React.createElement('button',{className:'qty-btn',onClick:()=>updateQty(item.name,1)},'+'))),
+          React.createElement('button',{className:'cart-line-remove',onClick:()=>remove(item.name)},'×')))),
+        React.createElement('div',{className:'cart-summary'},
+          React.createElement('div',{className:'cart-summary-title'},'Order Summary'),
+          React.createElement('div',{className:'summary-row'},React.createElement('span',null,'Subtotal'),React.createElement('span',null,'$'+total.toFixed(2))),
+          React.createElement('div',{className:'summary-row'},React.createElement('span',null,'Delivery'),React.createElement('span',null,delivery===0?'Free':'$'+delivery+'.00')),
+          total<100&&React.createElement('div',{className:'summary-note'},'Add $'+(100-total).toFixed(2)+' more for free delivery'),
+          React.createElement('div',{className:'summary-row total'},React.createElement('span',null,'Total'),React.createElement('span',{className:'val'},'$'+(total+delivery).toFixed(2))),
+          React.createElement('div',{className:'summary-note'},'Use code ',React.createElement('strong',null,'BLOOM10'),' for 10% off your first order'),
+          React.createElement('button',{className:'btn-gold btn-full',onClick:()=>toast('Checkout coming soon — demo mode!')},'Proceed to Checkout →'),
+          React.createElement('div',{style:{marginTop:10,textAlign:'center',fontSize:10.5,color:'var(--muted)'}},'🔒 Secure checkout · SSL encrypted')))),
+    React.createElement(Footer,{onPolicy,onTerms}));
 }
 
-/* ═══════════════════════════
-   CUSTOM PAGE
-═══════════════════════════ */
-const RIBBON_COLORS = [
-  { name: 'Blush', hex: '#f5b8b0' }, { name: 'Ivory', hex: '#f5f0e8' }, { name: 'Gold', hex: '#c4973a' },
-  { name: 'Forest', hex: '#2d5a3d' }, { name: 'Burgundy', hex: '#6b1f2e' }, { name: 'Midnight', hex: '#1a2b4c' },
-  { name: 'Lilac', hex: '#c8b0d0' }, { name: 'Sage', hex: '#8faa8a' },
+/* ══════════════════ CUSTOM PAGE ══════════════════ */
+const RIBBON_COLORS=[
+  {name:'Blush',hex:'#f5b8b0'},{name:'Ivory',hex:'#f5f0e8'},{name:'Gold',hex:'#c4973a'},
+  {name:'Forest',hex:'#2d5a3d'},{name:'Burgundy',hex:'#6b1f2e'},{name:'Midnight',hex:'#1a2b4c'},
+  {name:'Lilac',hex:'#c8b0d0'},{name:'Sage',hex:'#8faa8a'},
 ];
-function CustomPage({ onPolicy, onTerms }) {
-  const { add } = useCart();
-  const { navigate } = useRouter();
-  const [stemCount, setStemCount] = useState(24);
-  const [selectedColors, setSelectedColors] = useState(['Blush', 'Ivory']);
-  const [wrapping, setWrapping] = useState('Silk');
-  const [note, setNote] = useState('');
-  const toggleColor = c => setSelectedColors(prev => prev.includes(c) ? prev.filter(x => x !== c) : [...prev, c]);
-  const price = 60 + stemCount * 1.5 + (wrapping === 'Kraft' ? 0 : wrapping === 'Satin' ? 10 : 20);
-  const handleAdd = () => {
-    add({ name: `Custom ${stemCount}-Stem Bouquet`, tag: 'Custom', price: `$${price.toFixed(0)}`, photo: 'photo-1520271348891-049f9432f40c' });
-    navigate('/cart');
-  };
-  return React.createElement("div", { className: "page-enter" },
-    React.createElement("div", { className: "custom-page" },
-      React.createElement("div", { className: "eyebrow" }, "Design Yours"),
-      React.createElement("h1", { className: "sec-title", style: { marginBottom: 6 } }, "Create a ", React.createElement("em", null, "Masterpiece")),
-      React.createElement("p", { style: { fontSize: 13, color: 'var(--muted)', marginBottom: 40, maxWidth: 460 } }, "Configure your perfect bouquet below. Every detail, handcrafted just for you."),
-      React.createElement("div", { className: "custom-layout" },
-        React.createElement("div", null,
-          React.createElement("div", { className: "custom-form-section" },
-            React.createElement("label", { className: "custom-form-label" }, "Number of Stems"),
-            React.createElement("div", { className: "custom-qty-row" },
-              React.createElement("button", { className: "custom-qty-btn", onClick: () => setStemCount(c => Math.max(12, c - 6)) }, "−"),
-              React.createElement("div", { className: "custom-qty-num" }, stemCount),
-              React.createElement("button", { className: "custom-qty-btn", onClick: () => setStemCount(c => Math.min(100, c + 6)) }, "+"),
-              React.createElement("span", { style: { fontSize: 11.5, color: 'var(--muted)', marginLeft: 8 } }, "stems (12–100)"))),
-          React.createElement("div", { className: "custom-form-section" },
-            React.createElement("label", { className: "custom-form-label" },
-              "Ribbon Palette",
-              selectedColors.length > 0 && React.createElement("span", { style: { color: 'var(--gold)', fontStyle: 'italic', letterSpacing: 0, textTransform: 'none', marginLeft: 4 } }, selectedColors.join(', '))),
-            React.createElement("div", { className: "custom-options" },
-              RIBBON_COLORS.map(c => React.createElement("button", { key: c.name, className: `custom-opt color-opt${selectedColors.includes(c.name) ? ' sel' : ''}`, style: { background: c.hex, borderColor: c.hex }, title: c.name, onClick: () => toggleColor(c.name) })))),
-          React.createElement("div", { className: "custom-form-section" },
-            React.createElement("label", { className: "custom-form-label" }, "Luxury Wrapping"),
-            React.createElement("div", { className: "custom-options" },
-              [['Kraft', 'Classic & eco-friendly'], ['Satin', 'Elegant & smooth (+$10)'], ['Silk', 'Premium & luxurious (+$20)']].map(([k, desc]) =>
-                React.createElement("button", { key: k, className: `custom-opt${wrapping === k ? ' sel' : ''}`, title: desc, onClick: () => setWrapping(k) }, k)))),
-          React.createElement("div", { className: "custom-form-section" },
-            React.createElement("label", { className: "custom-form-label" }, "Personal Message Card (optional)"),
-            React.createElement("textarea", { className: "custom-note", placeholder: "Write a personal message...", value: note, onChange: e => setNote(e.target.value), rows: 4 }))),
-        React.createElement("div", { className: "custom-preview" },
-          React.createElement("img", { className: "custom-preview-img", src: "https://images.unsplash.com/photo-1520271348891-049f9432f40c?auto=format&fit=crop&q=80&w=700", alt: "Custom bouquet preview" }),
-          React.createElement("div", { className: "custom-preview-info" },
-            React.createElement("div", { style: { fontFamily: "'Cormorant Garamond',serif", fontSize: 20, color: 'var(--dark)', marginBottom: 6 } }, "Your Custom Bouquet"),
-            React.createElement("div", { style: { fontSize: 12.5, color: 'var(--muted)', lineHeight: 1.75 } },
-              React.createElement("div", null, `🌸 ${stemCount} stems`),
-              selectedColors.length > 0 && React.createElement("div", null, `🎀 ${selectedColors.join(' + ')} ribbons`),
-              React.createElement("div", null, `📦 ${wrapping} wrapping`),
-              note && React.createElement("div", null, "💌 Personal card included")),
-            React.createElement("div", { style: { marginTop: 18, paddingTop: 14, borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' } },
-              React.createElement("div", null,
-                React.createElement("div", { style: { fontSize: 10, color: 'var(--muted)', letterSpacing: '.1em', textTransform: 'uppercase' } }, "Total"),
-                React.createElement("div", { style: { fontFamily: "'Cormorant Garamond',serif", fontSize: 28, color: 'var(--dark)', fontWeight: 600 } }, `$${price.toFixed(0)}`)),
-              React.createElement("button", { className: "btn-gold", onClick: handleAdd }, "Add to Cart →")))))),
-    React.createElement(Footer, { onPolicy, onTerms }));
+function CustomPage({onPolicy,onTerms}){
+  const{add}=useCart();
+  const{navigate}=useRouter();
+  const[stems,setStems]=useState(24);
+  const[colors,setColors]=useState(['Blush','Ivory']);
+  const[wrap,setWrap]=useState('Silk');
+  const[note,setNote]=useState('');
+  const toggleColor=c=>setColors(p=>p.includes(c)?p.filter(x=>x!==c):[...p,c]);
+  const price=60+stems*1.5+(wrap==='Kraft'?0:wrap==='Satin'?10:20);
+  const handleAdd=()=>{add({name:'Custom '+stems+'-Stem Bouquet',tag:'Custom',price:'$'+price.toFixed(0),photo:'photo-1520271348891-049f9432f40c'});navigate('/cart');};
+  return React.createElement('div',{className:'page-enter'},
+    React.createElement('div',{className:'custom-page'},
+      React.createElement('div',{className:'eyebrow'},'Design Yours'),
+      React.createElement('h1',{className:'sec-title',style:{marginBottom:6}},'Create a ',React.createElement('em',null,'Masterpiece')),
+      React.createElement('p',{style:{fontSize:12.5,color:'var(--muted)',marginBottom:36,maxWidth:440}},'Configure your perfect bouquet below. Every detail, handcrafted just for you.'),
+      React.createElement('div',{className:'custom-layout'},
+        React.createElement('div',null,
+          React.createElement('div',{className:'custom-section'},
+            React.createElement('label',{className:'custom-label'},'Number of Stems'),
+            React.createElement('div',{className:'custom-qty-row'},
+              React.createElement('button',{className:'custom-qty-btn',onClick:()=>setStems(c=>Math.max(12,c-6))},'−'),
+              React.createElement('div',{className:'custom-qty-num'},stems),
+              React.createElement('button',{className:'custom-qty-btn',onClick:()=>setStems(c=>Math.min(100,c+6))},'+'),
+              React.createElement('span',{style:{fontSize:11,color:'var(--muted)',marginLeft:8}},'(12–100)'))),
+          React.createElement('div',{className:'custom-section'},
+            React.createElement('label',{className:'custom-label'},'Ribbon Palette',colors.length>0&&React.createElement('span',{style:{color:'var(--gold)',fontStyle:'italic',letterSpacing:0,textTransform:'none',marginLeft:4}},colors.join(', '))),
+            React.createElement('div',{className:'custom-opts'},RIBBON_COLORS.map(c=>
+              React.createElement('button',{key:c.name,className:'custom-opt color-opt'+(colors.includes(c.name)?' sel':''),style:{background:c.hex,borderColor:c.hex},title:c.name,onClick:()=>toggleColor(c.name)})))),
+          React.createElement('div',{className:'custom-section'},
+            React.createElement('label',{className:'custom-label'},'Luxury Wrapping'),
+            React.createElement('div',{className:'custom-opts'},[['Kraft','Classic & eco-friendly'],['Satin','Elegant & smooth (+$10)'],['Silk','Premium & luxurious (+$20)']].map(([k,d])=>
+              React.createElement('button',{key:k,className:'custom-opt'+(wrap===k?' sel':''),title:d,onClick:()=>setWrap(k)},k)))),
+          React.createElement('div',{className:'custom-section'},
+            React.createElement('label',{className:'custom-label'},'Personal Message (optional)'),
+            React.createElement('textarea',{className:'form-input form-textarea',placeholder:'Write a personal message...',value:note,onChange:e=>setNote(e.target.value),rows:4}))),
+        React.createElement('div',{className:'custom-preview'},
+          React.createElement('img',{className:'custom-preview-img',src:'https://images.unsplash.com/photo-1520271348891-049f9432f40c?auto=format&fit=crop&q=80&w=700',alt:'Custom bouquet'}),
+          React.createElement('div',{className:'custom-preview-info'},
+            React.createElement('div',{style:{fontFamily:"'Cormorant Garamond',serif",fontSize:19,color:'var(--dark)',marginBottom:5}},'Your Custom Bouquet'),
+            React.createElement('div',{style:{fontSize:12,color:'var(--muted)',lineHeight:1.75}},
+              React.createElement('div',null,'🌸 '+stems+' stems'),
+              colors.length>0&&React.createElement('div',null,'🎀 '+colors.join(' + ')+' ribbons'),
+              React.createElement('div',null,'📦 '+wrap+' wrapping'),
+              note&&React.createElement('div',null,'💌 Personal card included')),
+            React.createElement('div',{style:{marginTop:16,paddingTop:13,borderTop:'1px solid var(--border)',display:'flex',justifyContent:'space-between',alignItems:'center'}},
+              React.createElement('div',null,
+                React.createElement('div',{style:{fontSize:9.5,color:'var(--muted)',letterSpacing:'.1em',textTransform:'uppercase'}},'Total'),
+                React.createElement('div',{style:{fontFamily:"'Cormorant Garamond',serif",fontSize:26,color:'var(--dark)',fontWeight:600}},'$'+price.toFixed(0))),
+              React.createElement('button',{className:'btn-gold',onClick:handleAdd},'Add to Cart →')))))),
+    React.createElement(Footer,{onPolicy,onTerms}));
 }
 
-/* ═══════════════════════════
-   ABOUT PAGE
-═══════════════════════════ */
-function AboutPage({ onPolicy, onTerms }) {
-  const { navigate } = useRouter();
-  const VALUES = [
-    { icon: '🌸', title: 'Timeless Craft', desc: 'Each bouquet is made by hand with meticulous attention to detail.' },
-    { icon: '🌱', title: 'Sustainability', desc: 'Ribbon flowers are reusable, eco-friendly and last a lifetime.' },
-    { icon: '💛', title: 'Made With Love', desc: 'Our Sydney studio team pours heart into every single arrangement.' },
+/* ══════════════════ ABOUT PAGE ══════════════════ */
+function AboutPage({onPolicy,onTerms}){
+  const{navigate}=useRouter();
+  const VALUES=[
+    {icon:'🌸',title:'Timeless Craft',desc:'Each bouquet is made by hand with meticulous attention to detail.'},
+    {icon:'🌱',title:'Sustainability',desc:'Ribbon flowers are reusable, eco-friendly and last a lifetime.'},
+    {icon:'💛',title:'Made With Love',desc:'Our Sydney team pours heart into every single arrangement.'},
   ];
-  const TEAM = [
-    { name: 'Clara Ashworth', role: 'Founder & Head Florist', img: 'photo-1487412720507-e7ab37603c6f' },
-    { name: 'James Liu', role: 'Lead Artisan', img: 'photo-1472099645785-5658abf4ff4e' },
-    { name: 'Priya Nair', role: 'Creative Director', img: 'photo-1438761681033-6461ffad8d80' },
+  const TEAM=[
+    {name:'Clara Ashworth',role:'Founder & Head Florist',img:'photo-1487412720507-e7ab37603c6f'},
+    {name:'James Liu',role:'Lead Artisan',img:'photo-1472099645785-5658abf4ff4e'},
+    {name:'Priya Nair',role:'Creative Director',img:'photo-1438761681033-6461ffad8d80'},
   ];
-  return React.createElement("div", { className: "page-enter" },
-    React.createElement("div", { className: "about-hero" },
-      React.createElement("div", { className: "about-hero-content" },
-        React.createElement("div", { className: "eyebrow light" }, "Our Story"),
-        React.createElement("h1", { className: "sec-title light", style: { fontSize: 'clamp(32px,4vw,52px)' } }, "Handcrafted with ", React.createElement("em", null, "Love"), React.createElement("br"), "in Sydney"),
-        React.createElement("p", { style: { fontSize: 13.5, color: 'rgba(250,246,240,.58)', lineHeight: 1.8, marginTop: 16, maxWidth: 420 } }, "Founded in 2020, Bouquet Studio was born from a love of floristry and a desire to create something that lasts forever. Ribbon flowers that never wilt, always beautiful."))),
-    React.createElement("div", { className: "about-section" },
-      React.createElement("div", { className: "about-grid" },
-        React.createElement("div", null,
-          React.createElement("div", { className: "eyebrow" }, "Who We Are"),
-          React.createElement("h2", { className: "sec-title" }, "Art Meets ", React.createElement("em", null, "Floristry")),
-          React.createElement("p", { style: { fontSize: 13.5, color: 'var(--muted)', lineHeight: 1.85, marginTop: 16, maxWidth: 440 } }, "Our Sydney studio blends traditional ribbon craft with modern floral design. Every bouquet takes hours to create by hand, ensuring a quality and character that mass-produced flowers simply cannot match."),
-          React.createElement("p", { style: { fontSize: 13.5, color: 'var(--muted)', lineHeight: 1.85, marginTop: 14, maxWidth: 440 } }, "We deliver across Australia and have fulfilled over 2,400 orders for weddings, birthdays, anniversaries, and everything in between."),
-          React.createElement("button", { className: "btn-outline", style: { marginTop: 28 }, onClick: () => navigate('/bouquets') }, "Explore the Collection")),
-        React.createElement("img", { className: "about-img", src: "https://images.unsplash.com/photo-1487530811176-3780de880c2d?auto=format&fit=crop&q=80&w=800", alt: "Our studio" })),
-      React.createElement("div", { className: "about-values" }, VALUES.map(v =>
-        React.createElement("div", { key: v.title, className: "about-val-card" },
-          React.createElement("div", { className: "about-val-icon" }, v.icon),
-          React.createElement("div", { className: "about-val-title" }, v.title),
-          React.createElement("div", { className: "about-val-desc" }, v.desc)))),
-      React.createElement("div", { style: { marginTop: 64 } },
-        React.createElement("div", { className: "eyebrow" }, "The Team"),
-        React.createElement("h2", { className: "sec-title" }, "Meet the ", React.createElement("em", null, "Artisans")),
-        React.createElement("div", { className: "team-grid" }, TEAM.map(t =>
-          React.createElement("div", { key: t.name, className: "team-card" },
-            React.createElement("img", { className: "team-img", src: `https://images.unsplash.com/${t.img}?auto=format&fit=crop&q=80&w=600`, alt: t.name }),
-            React.createElement("div", { className: "team-name" }, t.name),
-            React.createElement("div", { className: "team-role" }, t.role)))))),
-    React.createElement(Footer, { onPolicy, onTerms }));
+  return React.createElement('div',{className:'page-enter'},
+    React.createElement('div',{className:'about-hero'},
+      React.createElement('div',{style:{maxWidth:520}},
+        React.createElement('div',{className:'eyebrow light'},'Our Story'),
+        React.createElement('h1',{className:'sec-title light',style:{fontSize:'clamp(28px,3.8vw,48px)'}},'Handcrafted with ',React.createElement('em',null,'Love'),React.createElement('br'),'in Sydney'),
+        React.createElement('p',{style:{fontSize:13,color:'rgba(250,246,240,.55)',lineHeight:1.8,marginTop:14,maxWidth:400}},'Founded in 2020, Bouquet Studio was born from a love of floristry and a desire to create something that lasts forever.'))),
+    React.createElement('div',{className:'about-section'},
+      React.createElement('div',{className:'about-grid'},
+        React.createElement('div',null,
+          React.createElement('div',{className:'eyebrow'},'Who We Are'),
+          React.createElement('h2',{className:'sec-title'},'Art Meets ',React.createElement('em',null,'Floristry')),
+          React.createElement('p',{style:{fontSize:13,color:'var(--muted)',lineHeight:1.82,marginTop:14,maxWidth:420}},'Our Sydney studio blends traditional ribbon craft with modern floral design. Every bouquet takes hours to create by hand, ensuring quality that mass-produced flowers cannot match.'),
+          React.createElement('p',{style:{fontSize:13,color:'var(--muted)',lineHeight:1.82,marginTop:12,maxWidth:420}},'We have fulfilled over 2,400 orders for weddings, birthdays, anniversaries, and everything in between.'),
+          React.createElement('button',{className:'btn-outline',style:{marginTop:24},onClick:()=>navigate('/bouquets')},'Explore the Collection')),
+        React.createElement('img',{className:'about-img',src:'https://images.unsplash.com/photo-1487530811176-3780de880c2d?auto=format&fit=crop&q=80&w=800',alt:'Our studio'})),
+      React.createElement('div',{className:'about-values'},VALUES.map(v=>
+        React.createElement('div',{key:v.title,className:'about-val-card'},
+          React.createElement('div',{className:'about-val-icon'},v.icon),
+          React.createElement('div',{className:'about-val-title'},v.title),
+          React.createElement('div',{className:'about-val-desc'},v.desc)))),
+      React.createElement('div',{style:{marginTop:56}},
+        React.createElement('div',{className:'eyebrow'},'The Team'),
+        React.createElement('h2',{className:'sec-title'},'Meet the ',React.createElement('em',null,'Artisans')),
+        React.createElement('div',{className:'team-grid'},TEAM.map(t=>
+          React.createElement('div',{key:t.name,className:'team-card'},
+            React.createElement('img',{className:'team-img',src:'https://images.unsplash.com/'+t.img+'?auto=format&fit=crop&q=80&w=600',alt:t.name}),
+            React.createElement('div',{className:'team-name'},t.name),
+            React.createElement('div',{className:'team-role'},t.role)))))),
+    React.createElement(Footer,{onPolicy,onTerms}));
 }
 
-/* ═══════════════════════════
-   CONTACT PAGE
-═══════════════════════════ */
-function ContactPage({ onPolicy, onTerms }) {
-  const [form, setForm] = useState({ name: '', email: '', subject: 'General', message: '' });
-  const [sent, setSent] = useState(false);
-  const set = k => e => setForm(f => ({ ...f, [k]: e.target.value }));
-  const submit = () => {
-    if (!form.name || !form.email || !form.message) { toast('Please fill in all required fields'); return; }
-    setSent(true); toast('Message sent! We\'ll be in touch within 24 hours.');
-  };
-  const INFO = [
-    { icon: '📍', label: 'Studio', val: '12 Floral Lane, Surry Hills\nSydney NSW 2010' },
-    { icon: '✉️', label: 'Email', val: 'hello@bouquetstudio.com.au' },
-    { icon: '📞', label: 'Phone', val: '+61 2 9000 0000\nMon – Fri, 9am – 5pm AEST' },
-    { icon: '🚚', label: 'Delivery', val: 'Same-day · Sydney, Melbourne & Brisbane' },
+/* ══════════════════ CONTACT PAGE ══════════════════ */
+function ContactPage({onPolicy,onTerms}){
+  const[form,setForm]=useState({name:'',email:'',subject:'General',message:''});
+  const[sent,setSent]=useState(false);
+  const set=k=>e=>setForm(f=>({...f,[k]:e.target.value}));
+  const submit=()=>{if(!form.name||!form.email||!form.message){toast('Please fill in all required fields');return;}setSent(true);toast("Message sent! We'll be in touch within 24 hours.");};
+  const INFO=[
+    {icon:'📍',label:'Studio',val:'12 Floral Lane, Surry Hills\nSydney NSW 2010'},
+    {icon:'✉️',label:'Email',val:'hello@bouquetstudio.com.au'},
+    {icon:'📞',label:'Phone',val:'+61 2 9000 0000\nMon – Fri, 9am – 5pm AEST'},
+    {icon:'🚚',label:'Delivery',val:'Same-day · Sydney, Melbourne & Brisbane'},
   ];
-  return React.createElement("div", { className: "page-enter" },
-    React.createElement("div", { className: "contact-page" },
-      React.createElement("div", { className: "eyebrow" }, "Get in Touch"),
-      React.createElement("h1", { className: "sec-title", style: { marginBottom: 8 } }, "Contact ", React.createElement("em", null, "Us")),
-      React.createElement("p", { style: { fontSize: 13, color: 'var(--muted)', maxWidth: 440 } }, "Have a question or want to place a custom order? We'd love to hear from you."),
-      React.createElement("div", { className: "contact-layout" },
-        React.createElement("div", null, INFO.map(i =>
-          React.createElement("div", { key: i.label, className: "contact-info-item" },
-            React.createElement("div", { className: "contact-info-icon" }, i.icon),
-            React.createElement("div", null,
-              React.createElement("div", { className: "contact-info-label" }, i.label),
-              React.createElement("div", { className: "contact-info-val" }, i.val))))),
+  return React.createElement('div',{className:'page-enter'},
+    React.createElement('div',{className:'contact-page'},
+      React.createElement('div',{className:'eyebrow'},'Get in Touch'),
+      React.createElement('h1',{className:'sec-title',style:{marginBottom:6}},'Contact ',React.createElement('em',null,'Us')),
+      React.createElement('p',{style:{fontSize:12.5,color:'var(--muted)',maxWidth:420}},'Have a question or want to place a custom order? We\'d love to hear from you.'),
+      React.createElement('div',{className:'contact-layout'},
+        React.createElement('div',null,INFO.map(i=>
+          React.createElement('div',{key:i.label,className:'contact-info-item'},
+            React.createElement('div',{className:'contact-info-icon'},i.icon),
+            React.createElement('div',null,
+              React.createElement('div',{className:'contact-info-label'},i.label),
+              React.createElement('div',{className:'contact-info-val'},i.val))))),
         !sent
-          ? React.createElement("div", { className: "contact-form" },
-              React.createElement("h3", { style: { fontFamily: "'Cormorant Garamond',serif", fontSize: 20, fontWeight: 400, color: 'var(--dark)', marginBottom: 20 } }, "Send a Message"),
-              React.createElement("div", { className: "form-row two" },
-                React.createElement("div", null,
-                  React.createElement("label", { className: "form-label" }, "Full Name *"),
-                  React.createElement("input", { className: "form-input", placeholder: "Your name", value: form.name, onChange: set('name') })),
-                React.createElement("div", null,
-                  React.createElement("label", { className: "form-label" }, "Email *"),
-                  React.createElement("input", { className: "form-input", type: "email", placeholder: "you@example.com", value: form.email, onChange: set('email') }))),
-              React.createElement("div", { className: "form-row" },
-                React.createElement("label", { className: "form-label" }, "Subject"),
-                React.createElement("select", { className: "form-input form-select", value: form.subject, onChange: set('subject') },
-                  ['General', 'Custom Order', 'Delivery', 'Wedding', 'Corporate', 'Other'].map(s => React.createElement("option", { key: s }, s)))),
-              React.createElement("div", { className: "form-row" },
-                React.createElement("label", { className: "form-label" }, "Message *"),
-                React.createElement("textarea", { className: "form-input form-textarea", placeholder: "How can we help?", value: form.message, onChange: set('message'), rows: 5 })),
-              React.createElement("button", { className: "btn-gold btn-full", onClick: submit }, "Send Message →"))
-          : React.createElement("div", { className: "contact-form", style: { display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 280 } },
-              React.createElement("div", { style: { fontSize: 36, marginBottom: 14 } }, "✅"),
-              React.createElement("div", { style: { fontFamily: "'Cormorant Garamond',serif", fontSize: 22, color: 'var(--dark)', marginBottom: 8 } }, "Message Sent!"),
-              React.createElement("div", { style: { fontSize: 13, color: 'var(--muted)', textAlign: 'center', lineHeight: 1.7 } }, "We'll get back to you within 24 hours.")))),
-    React.createElement(Footer, { onPolicy, onTerms }));
+          ?React.createElement('div',{className:'contact-form'},
+              React.createElement('h3',{style:{fontFamily:"'Cormorant Garamond',serif",fontSize:19,fontWeight:400,color:'var(--dark)',marginBottom:18}},'Send a Message'),
+              React.createElement('div',{className:'form-row two'},
+                React.createElement('div',null,React.createElement('label',{className:'form-label'},'Full Name *'),React.createElement('input',{className:'form-input',placeholder:'Your name',value:form.name,onChange:set('name')})),
+                React.createElement('div',null,React.createElement('label',{className:'form-label'},'Email *'),React.createElement('input',{className:'form-input',type:'email',placeholder:'you@example.com',value:form.email,onChange:set('email')}))),
+              React.createElement('div',{className:'form-row'},
+                React.createElement('label',{className:'form-label'},'Subject'),
+                React.createElement('select',{className:'form-input form-select',value:form.subject,onChange:set('subject')},['General','Custom Order','Delivery','Wedding','Corporate','Other'].map(s=>React.createElement('option',{key:s},s)))),
+              React.createElement('div',{className:'form-row'},
+                React.createElement('label',{className:'form-label'},'Message *'),
+                React.createElement('textarea',{className:'form-input form-textarea',placeholder:'How can we help?',value:form.message,onChange:set('message'),rows:5})),
+              React.createElement('button',{className:'btn-gold btn-full',onClick:submit},'Send Message →'))
+          :React.createElement('div',{className:'contact-form',style:{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',minHeight:260,gap:10}},
+              React.createElement('div',{style:{fontSize:32}},'✅'),
+              React.createElement('div',{style:{fontFamily:"'Cormorant Garamond',serif",fontSize:20,color:'var(--dark)'}},'Message Sent!'),
+              React.createElement('div',{style:{fontSize:12.5,color:'var(--muted)',textAlign:'center'}},"We'll get back to you within 24 hours.")))),
+    React.createElement(Footer,{onPolicy,onTerms}));
 }
 
-/* ═══════════════════════════
-   LOGIN PAGE
-═══════════════════════════ */
-function LoginPage() {
-  const { navigate } = useRouter();
-  const [tab, setTab] = useState('login');
-  const [form, setForm] = useState({ name: '', email: '', password: '' });
-  const set = k => e => setForm(f => ({ ...f, [k]: e.target.value }));
-  const submit = () => {
-    if (!form.email || !form.password) { toast('Please fill in all fields'); return; }
-    toast(tab === 'login' ? 'Welcome back!' : 'Account created!');
-    navigate('/');
-  };
-  return React.createElement("div", { className: "page-enter" },
-    React.createElement("div", { className: "auth-page" },
-      React.createElement("div", { className: "auth-box" },
-        React.createElement("div", { className: "auth-logo" }, "Bouquet", React.createElement("span", null, "Studio")),
-        React.createElement("div", { className: "auth-sub" }, tab === 'login' ? 'Welcome back' : 'Create your account'),
-        React.createElement("div", { className: "auth-tabs" },
-          React.createElement("button", { className: `auth-tab${tab === 'login' ? ' active' : ''}`, onClick: () => setTab('login') }, "Login"),
-          React.createElement("button", { className: `auth-tab${tab === 'register' ? ' active' : ''}`, onClick: () => setTab('register') }, "Register")),
-        React.createElement("button", { className: "auth-social" }, React.createElement("span", { style: { fontWeight: 700, fontSize: 13 } }, "G"), " Continue with Google"),
-        React.createElement("button", { className: "auth-social" }, React.createElement("span", { style: { fontWeight: 700, fontSize: 13 } }, "f"), " Continue with Facebook"),
-        React.createElement("div", { className: "auth-divider" }, "or"),
-        tab === 'register' && React.createElement("div", { className: "form-row" },
-          React.createElement("label", { className: "form-label" }, "Full Name"),
-          React.createElement("input", { className: "form-input", placeholder: "Your name", value: form.name, onChange: set('name') })),
-        React.createElement("div", { className: "form-row" },
-          React.createElement("label", { className: "form-label" }, "Email Address"),
-          React.createElement("input", { className: "form-input", type: "email", placeholder: "you@example.com", value: form.email, onChange: set('email') })),
-        React.createElement("div", { className: "form-row" },
-          React.createElement("label", { className: "form-label" }, "Password"),
-          React.createElement("input", { className: "form-input", type: "password", placeholder: "••••••••", value: form.password, onChange: set('password') })),
-        tab === 'login' && React.createElement("div", { className: "auth-forgot" }, "Forgot password?"),
-        React.createElement("button", { className: "btn-gold btn-full", onClick: submit }, tab === 'login' ? 'Sign In →' : 'Create Account →'),
-        React.createElement("div", { style: { marginTop: 18, textAlign: 'center', fontSize: 11.5, color: 'var(--muted)' } },
-          React.createElement("a", { style: { cursor: 'pointer', color: 'var(--gold)' }, onClick: () => navigate('/') }, "← Back to shop")))));
+/* ══════════════════ LOGIN PAGE ══════════════════ */
+function LoginPage(){
+  const{navigate}=useRouter();
+  const[tab,setTab]=useState('login');
+  const[form,setForm]=useState({name:'',email:'',password:''});
+  const set=k=>e=>setForm(f=>({...f,[k]:e.target.value}));
+  const submit=()=>{if(!form.email||!form.password){toast('Please fill in all fields');return;}toast(tab==='login'?'Welcome back!':'Account created!');navigate('/');};
+  return React.createElement('div',{className:'page-enter'},
+    React.createElement('div',{className:'auth-page'},
+      React.createElement('div',{className:'auth-box'},
+        React.createElement('div',{className:'auth-logo'},'Bouquet',React.createElement('span',null,'Studio')),
+        React.createElement('div',{className:'auth-sub'},tab==='login'?'Welcome back':'Create your account'),
+        React.createElement('div',{className:'auth-tabs'},
+          React.createElement('button',{className:'auth-tab'+(tab==='login'?' active':''),onClick:()=>setTab('login')},'Login'),
+          React.createElement('button',{className:'auth-tab'+(tab==='register'?' active':''),onClick:()=>setTab('register')},'Register')),
+        React.createElement('button',{className:'auth-social'},React.createElement('span',{style:{fontWeight:700,fontSize:13}},'G'),' Continue with Google'),
+        React.createElement('button',{className:'auth-social'},React.createElement('span',{style:{fontWeight:700,fontSize:13}},'f'),' Continue with Facebook'),
+        React.createElement('div',{className:'auth-divider'},'or'),
+        tab==='register'&&React.createElement('div',{className:'form-row'},React.createElement('label',{className:'form-label'},'Full Name'),React.createElement('input',{className:'form-input',placeholder:'Your name',value:form.name,onChange:set('name')})),
+        React.createElement('div',{className:'form-row'},React.createElement('label',{className:'form-label'},'Email Address'),React.createElement('input',{className:'form-input',type:'email',placeholder:'you@example.com',value:form.email,onChange:set('email')})),
+        React.createElement('div',{className:'form-row'},React.createElement('label',{className:'form-label'},'Password'),React.createElement('input',{className:'form-input',type:'password',placeholder:'••••••••',value:form.password,onChange:set('password')})),
+        tab==='login'&&React.createElement('div',{className:'auth-forgot'},'Forgot password?'),
+        React.createElement('button',{className:'btn-gold btn-full',onClick:submit},tab==='login'?'Sign In →':'Create Account →'),
+        React.createElement('div',{style:{marginTop:16,textAlign:'center',fontSize:11,color:'var(--muted)'}},
+          React.createElement('a',{style:{cursor:'pointer',color:'var(--gold)'},onClick:()=>navigate('/')},'← Back to shop')))));
 }
 
-/* ═══════════════════════════
-   APP
-═══════════════════════════ */
-function App() {
-  const { path } = useRouter();
-  const [policyOpen, setPolicyOpen] = useState(false);
-  const [termsOpen, setTermsOpen] = useState(false);
-  const policyProps = { onPolicy: () => setPolicyOpen(true), onTerms: () => setTermsOpen(true) };
-  const renderPage = () => {
-    switch (path) {
-      case '/bouquets': return React.createElement(BrowsePage, policyProps);
-      case '/cart':     return React.createElement(CartPage, policyProps);
-      case '/custom':   return React.createElement(CustomPage, policyProps);
-      case '/about':    return React.createElement(AboutPage, policyProps);
-      case '/contact':  return React.createElement(ContactPage, policyProps);
-      case '/login':    return React.createElement(LoginPage);
-      default:          return React.createElement(HomePage, policyProps);
-    }
-  };
-  return React.createElement("div", null,
-    React.createElement("div", { className: "grain", "aria-hidden": "true" }),
-    /* Removed: Cursor component */
-    React.createElement(Nav, { onPolicy: () => setPolicyOpen(true), onTerms: () => setTermsOpen(true) }),
-    renderPage(),
-    React.createElement(Modal, { open: policyOpen, onClose: () => setPolicyOpen(false), title: "Privacy Policy" },
-      React.createElement("p", null, "Last updated: May 2026"),
-      React.createElement("h4", null, "Information We Collect"),
-      React.createElement("p", null, "We collect information you provide when placing orders, subscribing to our newsletter, or contacting us. This includes name, email, delivery address and payment details."),
-      React.createElement("h4", null, "How We Use Your Information"),
-      React.createElement("p", null, "We use your information to fulfil orders and send order confirmations. We never sell your personal data to third parties."),
-      React.createElement("h4", null, "Data Storage"),
-      React.createElement("p", null, "Your data is stored securely in Australia in accordance with the Australian Privacy Act 1988."),
-      React.createElement("h4", null, "Contact"),
-      React.createElement("p", null, "For privacy enquiries email privacy@bouquetstudio.com.au")),
-    React.createElement(Modal, { open: termsOpen, onClose: () => setTermsOpen(false), title: "Terms & Conditions" },
-      React.createElement("p", null, "Last updated: May 2026"),
-      React.createElement("h4", null, "Orders & Payment"),
-      React.createElement("p", null, "All prices are in Australian dollars and include GST. Orders are confirmed once payment is received."),
-      React.createElement("h4", null, "Delivery"),
-      React.createElement("p", null, "Same-day delivery is available for orders placed before 12:00 PM AEST in Sydney, Melbourne and Brisbane."),
-      React.createElement("h4", null, "Returns & Refunds"),
-      React.createElement("p", null, "Due to the handcrafted nature of our products, we accept returns only for items damaged in transit. Please contact us within 24 hours with photo evidence."),
-      React.createElement("h4", null, "Custom Orders"),
-      React.createElement("p", null, "Custom orders require a 50% deposit and are non-refundable once production begins."),
-      React.createElement("h4", null, "Contact"),
-      React.createElement("p", null, "Legal enquiries: legal@bouquetstudio.com.au · ABN: 12 345 678 901")));
+/* ══════════════════ APP ══════════════════ */
+function App(){
+  const{path}=useRouter();
+  const[policyOpen,setPolicyOpen]=useState(false);
+  const[termsOpen,setTermsOpen]=useState(false);
+  const pp={onPolicy:()=>setPolicyOpen(true),onTerms:()=>setTermsOpen(true)};
+  const page=()=>{switch(path){
+    case'/bouquets':return React.createElement(BrowsePage,pp);
+    case'/cart':return React.createElement(CartPage,pp);
+    case'/custom':return React.createElement(CustomPage,pp);
+    case'/about':return React.createElement(AboutPage,pp);
+    case'/contact':return React.createElement(ContactPage,pp);
+    case'/login':return React.createElement(LoginPage);
+    default:return React.createElement(HomePage,pp);
+  }};
+  return React.createElement('div',null,
+    React.createElement('div',{className:'grain','aria-hidden':'true'}),
+    React.createElement(Nav,{onPolicy:()=>setPolicyOpen(true),onTerms:()=>setTermsOpen(true)}),
+    React.createElement(CartDrawer),
+    page(),
+    React.createElement(Modal,{open:policyOpen,onClose:()=>setPolicyOpen(false),title:'Privacy Policy'},
+      React.createElement('p',null,'Last updated: May 2026'),
+      React.createElement('h4',null,'Information We Collect'),
+      React.createElement('p',null,'We collect information you provide when placing orders or contacting us. This includes name, email, delivery address and payment details.'),
+      React.createElement('h4',null,'How We Use Your Information'),
+      React.createElement('p',null,'We use your information to fulfil orders. We never sell your personal data.'),
+      React.createElement('h4',null,'Data Storage'),
+      React.createElement('p',null,'Your data is stored securely in Australia under the Australian Privacy Act 1988.'),
+      React.createElement('h4',null,'Contact'),
+      React.createElement('p',null,'privacy@bouquetstudio.com.au')),
+    React.createElement(Modal,{open:termsOpen,onClose:()=>setTermsOpen(false),title:'Terms & Conditions'},
+      React.createElement('p',null,'Last updated: May 2026'),
+      React.createElement('h4',null,'Orders & Payment'),
+      React.createElement('p',null,'All prices are in Australian dollars and include GST.'),
+      React.createElement('h4',null,'Delivery'),
+      React.createElement('p',null,'Same-day delivery is available for orders placed before 12:00 PM AEST in Sydney, Melbourne and Brisbane.'),
+      React.createElement('h4',null,'Returns & Refunds'),
+      React.createElement('p',null,'We accept returns only for items damaged in transit. Contact us within 24 hours with photo evidence.'),
+      React.createElement('h4',null,'Custom Orders'),
+      React.createElement('p',null,'Custom orders require a 50% deposit and are non-refundable once production begins.')));
 }
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  React.createElement(RouterProvider, null,
-    React.createElement(CartProvider, null,
-      React.createElement(WishlistProvider, null,
-        React.createElement(App)))));
+  React.createElement(RouterProvider,null,
+    React.createElement(CartProvider,null,
+      React.createElement(WishlistProvider,null,
+        React.createElement(DrawerProvider,null,
+          React.createElement(App))))));
 </script>
 </body>
 </html>
